@@ -1,0 +1,38 @@
+% Formatierungseinstellungen für das Dokument
+
+% Seitenränder einstellen
+\usepackage[a4paper, margin=2.5cm]{geometry}
+
+% Zeilenabstand
+\usepackage{setspace}
+\onehalfspacing  % 1.5-facher Zeilenabstand
+
+% Schriften einstellen
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}  % Verwende die Latin Modern Schrift
+
+% Kopf- und Fußzeilen anpassen
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}  % Linke Kopfzeile: Kapitelname
+\fancyfoot[C]{\thepage}   % Zentrierte Fußzeile: Seitenzahl
+
+% Abstand zwischen Absätzen
+\setlength{\parskip}{1em}
+
+% Keine Einrückung der ersten Zeile eines neuen Absatzes
+\setlength{\parindent}{0pt}
+
+% Hyperlink-Farben (z.B. für Inhaltsverzeichnis und Links)
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+\usepackage[ngerman]{babel}  % Correctly use ngerman with babel
+\usepackage[autostyle=true]{csquotes}  % Load csquotes without language options
+

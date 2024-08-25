@@ -1,0 +1,36 @@
+\documentclass[a4paper]{report}  
+
+\input{settings/packages}  % Paketdefinitione
+\input{settings/commands}  % Eigene Befehle und Abkürzungen
+\input{settings/format}    % Formatierungseinstellungen
+
+\begin{document}
+
+\title{Framework für Embedded/Edge ML - Optimiertes Modell Deployment auf Embedded Systemen in der Fertigung}
+\author{Sebastian Munoz Segovia}
+\date{\today}
+\maketitle
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\input{chapters/einleitung}
+\input{chapters/theoretische_hintergrund}
+\input{chapters/methodik}
+\input{chapters/entwicklung_framework}
+\input{chapters/implementierung_optimierung}
+\input{chapters/evaluation}
+\input{chapters/diskussion}
+\input{chapters/fazit}
+
+\appendix
+\input{appendices/appendix_a}
+
+% Cite somewhere in the text
+As discussed by \cite{smith2024}, this is an important topic.
+
+\bibliographystyle{plain}
+\bibliography{bibliography}
+
+\end{document}
