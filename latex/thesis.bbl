@@ -1,18 +1,3 @@
-\begin{thebibliography}{1}
-
-\bibitem{johnson2023}
-Robert Johnson and Sarah Lee.
-\newblock Advances in computational methods.
-\newblock In Alice Brown and Charlie Green, editors, {\em Proceedings of the 2023 International Conference on Computing}, pages 120--130, San Francisco, CA, July 2023. IEEE.
-
-\bibitem{miller2022}
-Emily Miller.
-\newblock {\em A Comprehensive Guide to Research}.
-\newblock Research Press, New York, 2nd edition, 2022.
-
-\bibitem{smith2024}
-John Smith and Jane Doe.
-\newblock An analysis of something important.
-\newblock {\em Journal of Important Studies}, 12(3):45--67, March 2024.
+\begin{thebibliography}{}
 
 \end{thebibliography}
