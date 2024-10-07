@@ -240,11 +240,17 @@ INPUT chapters/theoretische_hintergrund.tex
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmr12.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmbx12.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmbx12.tfm
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmri10.tfm
 INPUT ./chapters/methodik.tex
 INPUT ./chapters/methodik.tex
 INPUT ./chapters/methodik.tex
 INPUT ./chapters/methodik.tex
 INPUT chapters/methodik.tex
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/lm/ts1lmr.fd
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/lm/ts1lmr.fd
+INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/lm/ts1lmr.fd
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ts1-lmr10.tfm
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc
 INPUT ./chapters/entwicklung_framework.tex
 INPUT ./chapters/entwicklung_framework.tex
 INPUT ./chapters/entwicklung_framework.tex
@@ -290,4 +296,5 @@ INPUT /usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmbx12.pfb
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr10.pfb
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr12.pfb
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr17.pfb
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmri10.pfb
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmtt10.pfb

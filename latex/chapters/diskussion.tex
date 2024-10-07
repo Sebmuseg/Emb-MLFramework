@@ -1,0 +1,89 @@
+\chapter{Diskussion}
+\label{chap:diskussion}
+
+In diesem Kapitel werden die wichtigsten Ergebnisse des entwickelten Frameworks sowie die Herausforderungen, die während der Implementierung und 
+Evaluation auftraten, diskutiert. Zudem werden mögliche Verbesserungen und Erweiterungen für zukünftige Arbeiten aufgezeigt. 
+Das Ziel der Diskussion ist es, die Leistung des Frameworks in Bezug auf die gesetzten Anforderungen zu bewerten und Schwachstellen aufzuzeigen, 
+die in zukünftigen Iterationen adressiert werden können.
+
+\section{Wichtigste Erkenntnisse}
+Die Evaluation des Frameworks hat gezeigt, dass die gewählten Optimierungstechniken und das Designprinzip einer modularen Architektur erfolgreich 
+umgesetzt wurden. Die wesentlichen Erkenntnisse lassen sich wie folgt zusammenfassen:
+
+\subsection{Erfüllung der Echtzeitanforderungen}
+Einer der zentralen Anforderungen war die Sicherstellung der Echtzeitfähigkeit, insbesondere für Anwendungen in der industriellen Fertigung. 
+Die Evaluation hat gezeigt, dass das Framework in der Lage ist, die vorgegebenen Latenzanforderungen zu erfüllen. 
+Durch den Einsatz von Optimierungstechniken wie Quantisierung und Pruning konnte die Modellgröße signifikant reduziert werden, 
+was zu einer Verbesserung der Vorhersagegeschwindigkeit führte. Auch bei ressourcenbeschränkten Geräten, wie Mikrocontrollern und SPS-Systemen, 
+blieb die Latenz innerhalb der tolerierbaren Grenzen.
+
+\subsection{Ressourceneffizienz und Speicherverbrauch}
+Ein weiteres wichtiges Ziel war die Reduktion des Speicherverbrauchs, um die Modelle auf Geräten mit begrenztem Speicher, 
+wie SPS und Mikrocontrollern, betreiben zu können. Die eingesetzten Optimierungen, insbesondere die Quantisierung, zeigten deutliche Verbesserungen. 
+Die Speichernutzung konnte um bis zu 70\% reduziert werden, ohne die Modellgenauigkeit signifikant zu beeinträchtigen. 
+Dies ermöglicht den Einsatz von komplexeren Modellen selbst auf stark ressourcenbeschränkten Geräten.
+
+\subsection{Modellgenauigkeit und Robustheit}
+Die Vorhersagegenauigkeit der Modelle blieb trotz der angewandten Optimierungen weitgehend erhalten. Es wurde jedoch festgestellt, 
+dass einige Modelle nach der Quantisierung eine leichte Abnahme der Genauigkeit zeigten. Dies war insbesondere bei Modellen der Fall, 
+die nicht für Quantization-Aware Training (QAT) vorbereitet waren. Dennoch war die Abnahme der Genauigkeit in den meisten Fällen akzeptabel, 
+insbesondere im Kontext von industriellen Anwendungen, in denen eine geringfügige Abweichung oft toleriert werden kann. 
+Die Robustheit des Frameworks gegen verrauschte Eingabedaten wurde ebenfalls bestätigt, was für den Einsatz in Echtzeitsystemen von 
+entscheidender Bedeutung ist.
+
+\section{Herausforderungen und Lessons Learned}
+Während der Entwicklung und Implementierung des Frameworks traten verschiedene Herausforderungen auf, die im Folgenden diskutiert werden:
+
+\subsection{Hardware-Einschränkungen}
+Eine der größten Herausforderungen war die Anpassung des Frameworks an die unterschiedlichen Ressourcenanforderungen der Zielhardware. 
+Mikrocontroller und SPS-Systeme haben im Vergleich zu IPCs und Edge-Geräten stark eingeschränkte Rechenleistung und Speicher. Insbesondere die 
+Modellgröße und die Laufzeitleistung mussten durch Optimierungstechniken drastisch verbessert werden, um die Modelle auf diesen Geräten 
+lauffähig zu machen. Obwohl Techniken wie Quantisierung und Pruning hilfreich waren, war es eine Herausforderung, das richtige Gleichgewicht 
+zwischen Modellgröße und Genauigkeit zu finden.
+
+\subsection{Modelloptimierung ohne Genauigkeitsverlust}
+Obwohl Techniken wie Pruning und Quantisierung den Speicher- und Rechenaufwand erheblich reduzierten, führten sie in einigen Fällen zu einem 
+gewissen Genauigkeitsverlust. Vor allem Modelle, die nicht für Quantization-Aware Training trainiert wurden, zeigten eine Verschlechterung der 
+Vorhersagequalität nach der Quantisierung. Ein weiteres Problem war, dass Pruning zwar die Modellgröße reduziert, aber in einigen Fällen 
+die Ausführungszeit durch unstrukturierte Gewichtsverteilung nicht wie erwartet verkürzte. Dies zeigt, dass es entscheidend ist, 
+Optimierungstechniken gezielt einzusetzen, je nach Modell und Anwendungsfall.
+
+\subsection{Integration in Echtzeitsysteme}
+Die Integration des Frameworks in industrielle Echtzeitsysteme stellte ebenfalls eine Herausforderung dar. Echtzeitsysteme erfordern eine 
+zuverlässige und deterministische Ausführung der ML-Modelle. Das Erreichen dieser deterministischen Ausführung bei ressourcenbeschränkten Geräten 
+war insbesondere bei der Anpassung von nicht-zeitkritischen Modellen eine Herausforderung. Die Priorisierung von Aufgaben und die 
+Überwachung der Laufzeit waren notwendig, um sicherzustellen, dass die Echtzeitanforderungen erfüllt wurden.
+
+\section{Mögliche Verbesserungen und zukünftige Arbeiten}
+Obwohl das Framework erfolgreich implementiert und evaluiert wurde, gibt es mehrere Bereiche, in denen zukünftige Arbeiten 
+Verbesserungen oder Erweiterungen vornehmen könnten:
+
+\subsection{Optimierte Unterstützung für unterschiedliche Hardware}
+Während das Framework bereits auf verschiedenen Hardwareplattformen erfolgreich ausgeführt werden konnte, könnten zukünftige Versionen 
+eine noch gezieltere Optimierung für spezifische Hardware bieten. Beispielsweise könnten benutzerdefinierte Optimierungsstrategien 
+für Mikrocontroller oder SPS-Systeme implementiert werden, um die Leistung weiter zu verbessern. Zudem könnte die Unterstützung für neue Plattformen, 
+wie spezialisierte Edge-Geräte oder FPGAs, ausgebaut werden.
+
+\subsection{Weiterentwicklungen bei der Modelloptimierung}
+Ein weiterer Bereich für zukünftige Verbesserungen ist die Verfeinerung der Modelloptimierungstechniken. 
+Der Einsatz von Quantization-Aware Training (QAT) könnte ausgeweitet werden, um sicherzustellen, dass Modelle bei der Quantisierung weniger 
+Genauigkeitsverluste erleiden. Auch neue Techniken zur Modellkompression und -optimierung, wie distillierte Modelle oder 
+neuronale Architektur-Suche (NAS), könnten untersucht und implementiert werden.
+
+\subsection{Verbesserte Task-Priorisierung und Scheduling}
+Die Priorisierung von Aufgaben und die Verwaltung von Ressourcen in Echtzeitsystemen könnte weiter verbessert werden, 
+um eine effizientere Nutzung der Hardware zu gewährleisten. Eine dynamische Anpassung der Aufgabenprioritäten in Abhängigkeit von 
+der aktuellen Systemauslastung oder externen Faktoren könnte zu einer besseren Einhaltung der Echtzeitanforderungen führen. 
+Auch die Integration von Machine-Learning-Modellen zur Vorhersage von Systemlasten könnte untersucht werden.
+
+\subsection{Erweiterung der Modellunterstützung}
+Während das Framework derzeit eine breite Palette von ML-Modellen unterstützt, könnte die Erweiterung auf neue Modelltypen oder 
+Frameworks die Flexibilität erhöhen. Dies könnte beispielsweise die Integration von Modellen beinhalten, die für spezielle 
+industrielle Anwendungen wie Anomalieerkennung oder Vorhersagemodellierung optimiert sind.
+
+\section{Zusammenfassung der Diskussion}
+Die Implementierung und Evaluation des Frameworks hat gezeigt, dass es möglich ist, Machine-Learning-Modelle erfolgreich auf 
+ressourcenbeschränkten Embedded-Systemen einzusetzen. Obwohl verschiedene Herausforderungen, wie die Anpassung an unterschiedliche Hardware 
+und der Umgang mit Optimierungstechniken, zu bewältigen waren, konnte das Framework die wichtigsten Anforderungen an Echtzeitfähigkeit 
+und Ressourceneffizienz erfüllen. Zukünftige Arbeiten könnten darauf abzielen, die Modelloptimierung weiter zu verfeinern, 
+die Hardwareunterstützung zu erweitern und die Effizienz in Echtzeitsystemen weiter zu verbessern.

@@ -1,0 +1,68 @@
+\chapter{Fazit}
+\label{chap:fazit}
+
+Die vorliegende Arbeit befasst sich mit der Entwicklung eines Frameworks zur effizienten Ausführung und Optimierung von \ML Modellen 
+auf ressourcenbeschränkten \Emb. Ziel war es, ein flexibles, anpassungsfähiges und ressourceneffizientes Framework zu entwickeln, 
+das die Anforderungen industrieller Anwendungen erfüllt, insbesondere im Hinblick auf Echtzeitleistung und Speicheroptimierung.
+
+\section{Zusammenfassung der Beiträge}
+Im Rahmen dieser Thesis wurden mehrere zentrale Beiträge geleistet:
+
+\subsection{Entwicklung eines modularen Frameworks}
+Ein modular aufgebautes Framework wurde entwickelt, das es ermöglicht, ML-Modelle flexibel auf Embedded- und Edge-Geräten einzusetzen. 
+Die Architektur des Frameworks wurde so gestaltet, dass verschiedene ML-Modelle integriert und optimiert werden können, um spezifische 
+Anforderungen ressourcenbeschränkter Umgebungen zu erfüllen. Die modulare Struktur erleichtert die Erweiterbarkeit und Wartbarkeit des Frameworks.
+
+\subsection{Anwendung von Optimierungstechniken für Embedded-ML}
+Das Framework unterstützt fortgeschrittene Optimierungstechniken wie Quantisierung, Pruning und Modellkompression, um ML-Modelle 
+für Embedded-Geräte mit begrenzten Ressourcen zu adaptieren. Diese Techniken haben sich als effektiv erwiesen, um den Speicherbedarf 
+und die Ausführungszeit der Modelle zu reduzieren, während die Genauigkeit der Vorhersagen weitgehend erhalten bleibt. 
+Dies stellt sicher, dass auch ressourcenintensive Modelle auf Geräten mit eingeschränkten Rechenkapazitäten eingesetzt werden können.
+
+\subsection{Erfüllung von Echtzeitanforderungen in industriellen Anwendungen}
+Ein wesentlicher Schwerpunkt dieser Arbeit lag auf der Sicherstellung der Echtzeitleistung der ML-Modelle. Die durchgeführte Evaluation hat gezeigt, 
+dass die entwickelten Optimierungen die Echtzeitanforderungen in verschiedenen industriellen Szenarien erfüllen können. 
+Durch gezielte Priorisierung und effiziente Ausführung der Modelle wurde eine geringe Latenz und eine hohe Vorhersagegeschwindigkeit erreicht, 
+was das Framework für den Einsatz in industriellen Echtzeitsystemen qualifiziert.
+
+\subsection{Breite Unterstützung von Embedded- und Edge-Plattformen}
+Das Framework wurde für eine Vielzahl von Embedded- und Edge-Geräten optimiert, darunter \SPS (SPS), \IPC (IPCs), 
+Mikrocontroller und leistungsstarke Edge-Devices. Diese breite Unterstützung ermöglicht es, das Framework in verschiedenen 
+industriellen Umgebungen einzusetzen, von stark ressourcenbeschränkten Geräten bis hin zu leistungsfähigeren Systemen.
+
+\section{Einschränkungen der Arbeit}
+Trotz der erzielten Erfolge gibt es einige Einschränkungen, die in zukünftigen Arbeiten adressiert werden können. Dazu gehören unter anderem:
+\begin{itemize}
+    \item Die Modelloptimierungstechniken wie Quantisierung und Pruning führten in einigen Fällen zu einem geringen Genauigkeitsverlust, 
+    der in besonders sensiblen Anwendungen problematisch sein könnte.
+    \item Die Integration des Frameworks auf sehr spezifische oder hochgradig spezialisierte Hardwareplattformen 
+    (z.B. FPGAs oder neuere spezialisierte Edge-Chips) wurde nicht im vollen Umfang untersucht.
+    \item Eine umfassende Integration von adaptiven Lerntechniken, die Modelle automatisch basierend auf der Systemauslastung oder 
+    Umweltbedingungen optimieren, könnte zukünftige Arbeiten bereichern.
+\end{itemize}
+
+\section{Ausblick und zukünftige Arbeiten}
+Basierend auf den Erkenntnissen dieser Arbeit gibt es mehrere interessante Ansätze für zukünftige Forschungs- und Entwicklungsarbeiten:
+
+\subsection{Weiterentwicklung der Optimierungstechniken}
+Zukünftige Arbeiten könnten sich auf die Verbesserung der Optimierungstechniken konzentrieren, insbesondere auf die Anwendung von Techniken 
+wie Quantization-Aware Training (QAT), um die Genauigkeitsverluste nach der Quantisierung zu minimieren. Zudem könnten neue Ansätze 
+zur Modellkompression und -optimierung untersucht werden, um noch bessere Ergebnisse auf extrem ressourcenbeschränkten Geräten zu erzielen.
+
+\subsection{Erweiterung auf neue Hardwareplattformen}
+Die Unterstützung für zusätzliche Hardwareplattformen, wie spezialisierte Edge-Prozessoren oder FPGAs, könnte die Anwendbarkeit des Frameworks 
+weiter erhöhen. Besonders die Möglichkeit, ML-Modelle auf energieeffizienteren und leistungsfähigeren spezialisierten Prozessoren auszuführen, 
+könnte die Reichweite des Frameworks vergrößern.
+
+\subsection{Adaptive Modelle und dynamisches Task-Management}
+Ein weiteres spannendes Forschungsfeld ist die Implementierung von adaptiven Modellen, die ihre Ressourcenanforderungen dynamisch 
+an die verfügbaren Systemressourcen anpassen. Solche Modelle könnten in Echtzeitsystemen von großem Nutzen sein, insbesondere in Situationen, 
+in denen sich die Systemauslastung oder Umweltbedingungen ändern.
+
+\section{Abschließende Bemerkungen}
+Die in dieser Arbeit vorgestellten Methoden und Ansätze haben gezeigt, dass es möglich ist, Machine-Learning-Modelle effizient auf 
+Embedded- und Edge-Systemen einzusetzen, die nur über begrenzte Ressourcen verfügen. Die Ergebnisse bestätigen, dass durch den Einsatz 
+von Modelloptimierungstechniken und einer flexiblen Framework-Architektur die Hürden für den Einsatz von KI in industriellen Echtzeitanwendungen 
+gesenkt werden können. Das Framework bietet eine solide Grundlage für zukünftige Entwicklungen und kann in verschiedenen industriellen Umgebungen 
+zur Optimierung von Produktionsprozessen und zur Automatisierung eingesetzt werden. Zukünftige Arbeiten werden auf den hier vorgestellten Ergebnissen 
+aufbauen und neue Optimierungsansätze sowie eine erweiterte Hardwareunterstützung integrieren.

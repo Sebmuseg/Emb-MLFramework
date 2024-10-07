@@ -1,0 +1,87 @@
+\chapter{Entwicklung des Frameworks}
+\label{chap:entwicklung_framework}
+
+In diesem Kapitel wird die Architektur und die Entwicklung des Frameworks detailliert beschrieben. Es wird erläutert, wie das Framework entworfen wurde, 
+um ML-Modelle für ressourcenbeschränkte Umgebungen, wie \Emb und Edge-Devices, zu optimieren. Der Fokus liegt auf der modularen Struktur des Frameworks, 
+der Flexibilität für verschiedene ML-Modelle und den Optimierungstechniken, die angewendet wurden, um die Ausführungseffizienz zu maximieren.
+
+\section{Architektur des Frameworks}
+Die Architektur des Frameworks ist modular aufgebaut, um Flexibilität, Erweiterbarkeit und einfache Wartbarkeit sicherzustellen. Die wichtigsten Komponenten 
+des Frameworks sind in einzelne Module unterteilt, die jeweils spezifische Aufgaben erfüllen. Das Framework ist darauf ausgelegt, in ressourcenbeschränkten 
+Umgebungen zu laufen und unterstützt sowohl neuronale Netze als auch klassische \ML Modelle.
+
+\subsection{Modulare Architektur}
+Das Framework besteht aus mehreren Modulen, die miteinander kommunizieren, um die Ausführung von \ML Modellen auf \Emb zu ermöglichen. 
+Die folgenden Hauptmodule wurden implementiert:
+
+\begin{itemize}
+    \item \textbf{Modul für Modelloptimierung}: Dieses Modul ist für die Optimierung der ML-Modelle verantwortlich. Es umfasst Techniken wie Pruning, 
+    Quantisierung und Modellkompression, um die Modelle für die Ausführung auf Geräten mit begrenzter Rechenleistung und Speicherressourcen vorzubereiten.
+    
+    \item \textbf{Modul für Datenverarbeitung}: Dieses Modul übernimmt die Vorverarbeitung und Filterung der Eingabedaten, die von den angeschlossenen Sensoren 
+    oder anderen Quellen bereitgestellt werden. Die Vorverarbeitung wird direkt auf dem Embedded Device durchgeführt, um die Datengröße zu reduzieren und nur 
+    relevante Informationen an das ML-Modell weiterzuleiten.
+    
+    \item \textbf{Modul für das Modelldepot}: Dieses Modul verwaltet die Speicherung und Bereitstellung von ML-Modellen. Es unterstützt verschiedene 
+    Modelldeployment-Strategien, darunter das lokale Deployment auf Embedded Devices und das remote Deployment über Edge-Server.
+    
+    \item \textbf{Modul für Echtzeitausführung}: Da viele industrielle Anwendungen Echtzeitanforderungen haben, sorgt dieses Modul dafür, dass ML-Modelle 
+    innerhalb vorgegebener Zeitgrenzen ausgeführt werden. Es überwacht die Laufzeitleistung und sorgt für eine effiziente Aufgabenpriorisierung.
+    
+    \item \textbf{Modul für Überwachung und Logging}: Dieses Modul bietet Funktionen zur Überwachung der Systemleistung und zur Protokollierung von Modellvorhersagen 
+    sowie Systemereignissen. Es ermöglicht es, Leistungskennzahlen wie CPU-Auslastung, Speichernutzung und Energieverbrauch zu überwachen.
+\end{itemize}
+
+\subsection{Kommunikationsschnittstellen und API}
+Die Architektur umfasst eine flexible API, die es ermöglicht, verschiedene ML-Modelle einfach in das Framework zu integrieren. Die API stellt Funktionen bereit, um:
+\begin{itemize}
+    \item ML-Modelle zu laden und zu konfigurieren.
+    \item Vorhersagen zu treffen und die Ergebnisse in Echtzeit zu übermitteln.
+    \item Modelle zu aktualisieren oder neu zu deployen.
+\end{itemize}
+Die API ist darauf ausgelegt, mit unterschiedlichen Protokollen (z.B. MQTT, HTTP, OPC-UA) zu arbeiten, um die Kommunikation zwischen Embedded Systems und Edge-Servern 
+zu ermöglichen.
+
+\section{Optimierung der ML-Modelle für ressourcenbeschränkte Umgebungen}
+
+Ein zentraler Bestandteil der Framework-Entwicklung war die Anpassung der ML-Modelle an die beschränkten Ressourcen von Embedded Systems. 
+Diese Optimierung erfolgte durch verschiedene Techniken, die im Folgenden erläutert werden.
+
+\subsection{Pruning}
+Pruning wurde verwendet, um unnötige Verbindungen in tiefen neuronalen Netzen zu entfernen und so die Komplexität der Modelle zu reduzieren. 
+Durch das Entfernen dieser Verbindungen konnte der Speicherbedarf der Modelle deutlich gesenkt werden, ohne dass die Genauigkeit signifikant beeinträchtigt wurde.
+
+\subsection{Quantisierung}
+Quantisierung ist eine Technik, die verwendet wird, um die Modellgewichte von 32-Bit-Floating-Point-Zahlen auf 8-Bit-Ganzzahlen zu reduzieren. 
+Diese Technik reduziert sowohl den Speicherbedarf als auch die Berechnungsanforderungen des Modells. Dies ist besonders wichtig für Geräte mit begrenzter Rechenleistung, 
+wie Mikrocontroller oder \Emb in der industriellen Fertigung.
+
+\subsection{Modellkompression}
+Um die Größe der ML-Modelle weiter zu reduzieren, wurden Techniken der Modellkompression angewendet. Hierbei wurden redundante oder weniger wichtige Parameter des Modells 
+komprimiert, um sowohl den Speicherverbrauch als auch die Ladezeiten der Modelle zu minimieren.
+
+\section{Anpassung an verschiedene Embedded- und Edge-Geräte}
+
+Das Framework wurde entwickelt, um auf einer Vielzahl von Hardwareplattformen zu laufen, von Mikrocontrollern bis hin zu leistungsstarken Edge-Geräten. Dabei wurde 
+sichergestellt, dass das Framework flexibel genug ist, um auf unterschiedlichen Geräten mit variierenden Ressourcenanforderungen zu funktionieren.
+
+\subsection{Unterstützte Hardwareplattformen}
+Das Framework wurde für die folgenden Hardwareplattformen optimiert:
+\begin{itemize}
+    \item \textbf{Speicherprogrammierbare Steuerungen (SPS)}: Diese Geräte werden in der industriellen Automatisierung verwendet und erfordern robuste und echtzeitfähige 
+    ML-Modelle.
+    \item \textbf{Industrie-PCs (IPCs)}: IPCs bieten mehr Rechenleistung und Speicher als SPS und eignen sich für komplexere ML-Modelle und Datenverarbeitungsaufgaben.
+    \item \textbf{Mikrocontroller}: Mikrocontroller sind stark ressourcenbeschränkte Geräte, auf denen besonders kleine und optimierte ML-Modelle eingesetzt werden müssen.
+    \item \textbf{Edge-Devices}: Leistungsstarke Edge-Geräte, die zur Vorverarbeitung großer Datenmengen und zur Ausführung komplexerer ML-Modelle verwendet werden können.
+\end{itemize}
+
+\subsection{Anpassung an verschiedene Ressourcenprofile}
+Jede Hardwareplattform hat unterschiedliche Anforderungen an Speicher, Rechenleistung und Energieverbrauch. Das Framework bietet Mechanismen, 
+um Modelle und ihre Ausführungsumgebung dynamisch an die verfügbaren Ressourcen der Zielplattform anzupassen. Dazu gehört die automatische Auswahl der geeigneten 
+Optimierungstechniken (z.B. Quantisierung oder Pruning) basierend auf den verfügbaren Ressourcen.
+
+\section{Zusammenfassung der Framework-Entwicklung}
+Das entwickelte Framework wurde so konzipiert, dass es ML-Modelle effizient auf Embedded- und Edge-Geräten ausführen kann. Durch die modulare Architektur und die 
+umfassende Unterstützung von Optimierungstechniken wie Pruning, Quantisierung und Modellkompression wird sichergestellt, dass das Framework in einer Vielzahl von 
+ressourcenbeschränkten Umgebungen eingesetzt werden kann. Die flexible API und die anpassbare Struktur ermöglichen es, unterschiedliche ML-Modelle einfach zu integrieren 
+und zu verwalten. Die Entwicklung des Frameworks legt den Grundstein für eine zukunftssichere Lösung, die in der industriellen Fertigung eingesetzt werden kann.

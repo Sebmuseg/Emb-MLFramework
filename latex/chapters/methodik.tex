@@ -1,0 +1,223 @@
+\chapter{Methodik}
+\label{chap:methodik}
+
+In diesem Kapitel wird die Methodik beschrieben, die für die Entwicklung des Frameworks verwendet wurde, das ML-Modelle für den Einsatz auf Embedded Systems optimiert. 
+Es umfasst die Auswahl der Entwicklungsumgebung, die verwendeten Optimierungstechniken und die Implementierungsschritte für das Framework. Der Fokus liegt auf der 
+effizienten Ausführung von ML-Modellen auf ressourcenbeschränkten Geräten wie \SPS und \IPC in der industriellen Fertigung.
+
+\section{Framework-Entwurf}
+
+Der erste Schritt zur Entwicklung des Frameworks war die Definition der Anforderungen basierend auf den spezifischen Einschränkungen von Embedded Systems. 
+Diese Anforderungen wurden in Zusammenarbeit mit Industriepartnern und durch eine umfassende Literaturrecherche zu bestehenden Lösungen festgelegt. 
+Dabei wurden nicht nur die Optimierung und Konfiguration der ML-Modelle berücksichtigt, sondern auch Aspekte wie die Datenverarbeitung, Priorisierung von Aufgaben, 
+Logging und das Deployment von Modellen auf unterschiedlichen Zielplattformen. Die Schwerpunkte des Frameworks lagen auf:
+
+\begin{itemize}
+    \item \textbf{Reduzierung der Modellgröße}: Um die effiziente Ausführung von ML-Modellen auf ressourcenbeschränkten Embedded Systems wie SPS oder IPCs zu ermöglichen, 
+    muss die Größe der Modelle reduziert werden, ohne dass die Modellgenauigkeit signifikant leidet. Dies ist insbesondere für den Einsatz in Echtzeitsystemen kritisch.
+    
+    \item \textbf{Datenverarbeitung und Vorverarbeitung}: Neben der Optimierung von ML-Modellen ist es essenziell, dass die Datenverarbeitung effizient abläuft. 
+    Dies umfasst die Vorverarbeitung von Sensordaten in Echtzeit, Filterung von irrelevanten Informationen und die Sicherstellung, dass nur relevante Daten für die 
+    Modellvorhersagen genutzt werden. Daten müssen schnell und effizient verarbeitet werden, um in Echtzeit Entscheidungen treffen zu können.
+    
+    \item \textbf{Deployment und Aktualisierung der Modelle}: Eine der Herausforderungen in industriellen Umgebungen ist das flexible Deployment von ML-Modellen auf 
+    verschiedenen Geräten (SPS, IPCs, etc.). Das Framework muss eine einfache Bereitstellung von neuen oder aktualisierten Modellen ermöglichen, ohne dass der 
+    Produktionsprozess gestört wird. Dies erfordert ein robustes Update-Management und eine reibungslose Integration in die bestehende Infrastruktur.
+    
+    \item \textbf{Priorisierung von Aufgaben}: In Produktionsumgebungen ist es oft notwendig, bestimmte Aufgaben zu priorisieren, um die Betriebsanforderungen zu erfüllen. 
+    Dies bedeutet, dass das Framework in der Lage sein muss, priorisierte ML-Tasks gegenüber weniger kritischen Aufgaben zu bevorzugen. Dies kann besonders wichtig sein, 
+    wenn Ressourcen begrenzt sind und mehrere Prozesse gleichzeitig laufen.
+    
+    \item \textbf{Logging und Überwachung}: Um die Ausführung und Wartung des Systems zu erleichtern, ist es wichtig, ein umfassendes Logging- und Überwachungssystem zu integrieren. 
+    Dieses System protokolliert sowohl Modellvorhersagen als auch Systemstatusinformationen (z.B. Ressourcenauslastung, Latenzen). Dies ist entscheidend, um Fehler zu identifizieren, 
+    die Leistung zu überwachen und die langfristige Wartung des Systems zu gewährleisten.
+    
+    \item \textbf{Sicherstellung der Echtzeitfähigkeit}: Da viele industrielle Anwendungen Echtzeitanforderungen haben, muss das Framework sicherstellen, dass Vorhersagen innerhalb 
+    vorgegebener Zeitgrenzen getroffen werden. Dies erfordert eine sorgfältige Optimierung der Laufzeitleistung von Modellen und die Einhaltung der zeitlichen Anforderungen des Produktionsprozesses.
+    
+    \item \textbf{Einfache Integration in bestehende industrielle Steuerungssysteme}: Schließlich muss das Framework so konzipiert sein, 
+    dass es sich leicht in bestehende Steuerungsarchitekturen (wie IPC oder SPS) integrieren lässt. 
+    Dies stellt sicher, dass der Einsatz des Frameworks keine grundlegenden Änderungen an der Infrastruktur erfordert.
+\end{itemize}
+
+Das Framework wurde als Middleware konzipiert, die als Adapter zwischen den ML-Modellen und den Zielsystemen (SPS, IPC) fungiert. 
+Es unterstützt verschiedene Optimierungstechniken, um die Ausführung der Modelle auf hardwarebeschränkten Systemen zu ermöglichen.
+
+\section{Programmiersprachen und Entwicklungsumgebungen}
+
+\subsection{Python}
+Python ist eine der am häufigsten verwendeten Programmiersprachen für Machine Learning und bietet eine Vielzahl von Bibliotheken und Frameworks, 
+die für industrielle Anwendungen und Embedded-Modelle nützlich sind. Es ist bekannt für seine einfache Handhabung und große Community, 
+was es zur ersten Wahl für viele ML-Entwickler macht.
+
+\begin{itemize}
+    \item \textbf{TensorFlow und TensorFlow Lite}: TensorFlow bietet eine leistungsstarke Umgebung für die Entwicklung von neuronalen Netzen. 
+    TensorFlow Lite wurde speziell entwickelt, um TensorFlow-Modelle für ressourcenbeschränkte Geräte zu optimieren und diese auf Embedded-Systemen lauffähig zu machen.
+    
+    \item \textbf{scikit-learn}: Dieses Framework bietet eine umfassende Bibliothek für klassische Machine-Learning-Algorithmen wie 
+    Entscheidungsbäume, Random Forests, Support Vector Machines (SVMs), lineare Modelle, K-Means und mehr. Diese Modelle sind oft weniger rechenintensiv 
+    und daher für viele industrielle Anwendungen gut geeignet.
+
+    \item \textbf{XGBoost}: XGBoost ist bekannt für seine Effizienz und Leistung bei Gradient-Boosting-Modellen und eignet sich gut für industrielle Anwendungen 
+    wie Anomalieerkennung, Qualitätskontrolle und vorausschauende Wartung.
+
+    \item \textbf{LightGBM}: LightGBM bietet eine ähnliche Funktionalität wie XGBoost, ist jedoch für größere Datensätze und schnellere Trainingszeiten optimiert. 
+    Es wird häufig in Echtzeitanwendungen verwendet.
+
+    \item \textbf{PyTorch}: PyTorch ist eine flexible Alternative zu TensorFlow, insbesondere für Forschungsprojekte und Produktionssysteme, 
+    die dynamische Berechnungsgrafen erfordern. Es wird auch in Embedded-ML-Anwendungen verwendet, wenn größere Modelle benötigt werden.
+
+    \item \textbf{CatBoost}: Ein Gradient-Boosting-Framework, das speziell für den Umgang mit kategorischen Daten entwickelt wurde. 
+    CatBoost eignet sich besonders gut für industrielle Anwendungen, bei denen viele der Eingabedaten kategorisch sind.
+
+    \item \textbf{ONNX}: ONNX bietet eine plattformübergreifende Möglichkeit, ML-Modelle zu konvertieren und auszuführen, die in verschiedenen Frameworks wie 
+    TensorFlow, PyTorch oder scikit-learn entwickelt wurden. ONNX erleichtert das Deployment von Modellen auf Embedded- und Edge-Geräten.
+\end{itemize}
+
+\subsection{Rust}
+Rust ist eine moderne Systemprogrammiersprache, die besonders für ihre Speicher- und Speichersicherheitsfunktionen bekannt ist. 
+Sie wird zunehmend für Embedded- und Edge-Anwendungen verwendet, da sie hohe Leistung und Sicherheit bietet.
+
+\begin{itemize}
+    \item \textbf{Rust-ML-Bibliotheken}: Obwohl Rust weniger bekannt für Machine Learning ist als Python, gibt es Bibliotheken wie \textbf{Linfa}, 
+    die klassische ML-Algorithmen wie lineare Regression, K-Means und Entscheidungsbäume bieten.
+
+    \item \textbf{Tch-RS (PyTorch in Rust)}: Tch-RS ist eine Rust-Bindung für PyTorch, die es ermöglicht, PyTorch-Modelle in der Rust-Umgebung zu verwenden. 
+    Diese Bibliothek bietet Zugriff auf viele der in PyTorch vorhandenen Funktionen und kann in eingebetteten Umgebungen verwendet werden, in denen Rust bevorzugt wird.
+
+    \item \textbf{SmartCore}: Eine weitere Machine-Learning-Bibliothek in Rust, die viele der klassischen ML-Algorithmen wie Entscheidungsbäume, 
+    Random Forests und lineare Modelle unterstützt. Sie eignet sich gut für eingebettete Anwendungen, bei denen Performance und Sicherheit eine Rolle spielen.
+
+    \item \textbf{ONNX mit Rust}: ONNX kann auch in Rust integriert werden, um neuronale Netze oder klassische Modelle, die in anderen Frameworks entwickelt wurden, 
+    auf Embedded-Systemen bereitzustellen.
+\end{itemize}
+
+\section{Tools für Modelloptimierung und Konvertierung}
+
+\subsection{TensorFlow Lite}
+TensorFlow Lite ist eine leichtgewichtige Version von TensorFlow, die speziell für den Einsatz auf mobilen und eingebetteten Geräten entwickelt wurde. 
+Es unterstützt verschiedene Techniken wie Quantisierung, Pruning und Delegates, um die Modellgröße und Rechenanforderungen zu reduzieren.
+
+\subsection{ONNX Runtime}
+ONNX Runtime ermöglicht es, ML-Modelle, die in verschiedenen Frameworks wie TensorFlow, PyTorch oder scikit-learn entwickelt wurden, 
+auf einer Vielzahl von Hardwareplattformen auszuführen. Es bietet eine Möglichkeit, Modelle plattformübergreifend zu optimieren und effizient auf 
+Edge- und Embedded-Systemen bereitzustellen.
+
+\subsection{Apache TVM}
+Apache TVM ist ein Maschinelles Learning Compiler-Framework, das es ermöglicht, ML-Modelle für eine Vielzahl von Hardwarearchitekturen zu optimieren. 
+TVM bietet spezielle Optimierungen für Embedded-Geräte und ermöglicht es, Modelle effizient auf Mikrocontrollern, GPUs und Edge Computing Plattformen auszuführen.
+
+\subsection{TinyML Frameworks}
+TinyML Frameworks wie TensorFlow Micro und uTensor sind speziell für die Ausführung von ML-Modellen auf extrem ressourcenbeschränkten Geräten wie 
+Mikrocontrollern und Sensoren konzipiert. Diese Frameworks ermöglichen es, Modelle auf Kleinstgeräten zu implementieren, ohne die Rechenressourcen zu überlasten.
+
+\subsection{TensorRT}
+TensorRT ist ein High-Performance-Deep-Learning-Inferenz-Optimierer, der von NVIDIA entwickelt wurde. Es wird verwendet, um die Inferenzleistung von 
+neuronalen Netzen auf NVIDIA-Plattformen wie Jetson Nano zu beschleunigen, und eignet sich besonders für Echtzeitanwendungen, die auf leistungsstarker Edge-Hardware laufen.
+
+\section{Tools für Deployment-Optimierung und Kontrolle}
+
+\subsection{Docker}
+Docker wird verwendet, um Machine-Learning-Modelle und deren Abhängigkeiten in Containern zu verpacken, sodass sie auf verschiedenen Plattformen 
+bereitgestellt werden können. Dies vereinfacht das Deployment von Modellen in Produktionsumgebungen und ermöglicht eine einfache Skalierbarkeit und Wiederholbarkeit.
+
+\subsection{K3s (leichtgewichtige Kubernetes-Distribution)}
+K3s ist eine leichtgewichtige Kubernetes-Distribution, die speziell für Edge- und IoT-Geräte entwickelt wurde. Es ermöglicht die Orchestrierung von 
+Machine-Learning-Modellen auf verschiedenen Geräten und die Verwaltung von ML-Diensten in einer Edge-Computing-Umgebung.
+
+\subsection{MLflow}
+MLflow wird zur Verwaltung des gesamten Lebenszyklus von Machine-Learning-Modellen eingesetzt. Es ermöglicht die Versionierung, das Tracking und das 
+Deployment von Modellen und ist besonders nützlich, wenn verschiedene Modellversionen verwaltet und überwacht werden müssen.
+
+\subsection{PyInstaller}
+PyInstaller wird verwendet, um Python-Anwendungen und Machine-Learning-Modelle in ausführbare Dateien zu konvertieren, die auf Geräten ohne 
+Python-Laufzeitumgebung ausgeführt werden können. Es ermöglicht das Deployment von ML-Modellen als Windows-Dienste oder eigenständige Anwendungen 
+auf IPCs oder Windows-basierten Embedded-Systemen.
+
+\subsection{Zephyr RTOS}
+Zephyr ist ein Echtzeitbetriebssystem (RTOS), das speziell für Embedded-Geräte entwickelt wurde. Es bietet eine stabile Plattform für die Ausführung 
+von ML-Modellen auf Mikrocontrollern und unterstützt Echtzeitanforderungen, die in der industriellen Fertigung entscheidend sind.
+
+Die Kombination dieser Werkzeuge ermöglichte es, ein Framework zu entwickeln, das ML-Modelle effizient auf Embedded Systems implementiert.
+
+\section{Optimierungstechniken}
+
+Die Optimierung von ML-Modellen für Embedded Systems ist ein kritischer Bestandteil dieses Projekts. Folgende Techniken wurden implementiert:
+
+\subsection{Quantisierung}
+Durch Quantisierung wird die Größe eines ML-Modells reduziert, indem die Genauigkeit der Gewichtungen von 32-Bit-Gleitkommazahlen auf 8-Bit-Ganzzahlen verringert wird. 
+Dies führt zu einer deutlichen Reduktion des Speicherbedarfs und ermöglicht es, die Modelle auf Geräten mit begrenzten Ressourcen auszuführen. 
+Diese Technik wurde insbesondere bei Modellen angewendet, die auf SPS und IPCs mit begrenzter Speicher- und Rechenkapazität eingesetzt werden.
+
+\subsection{Model Pruning}
+Beim Model Pruning werden unwichtige Neuronen und Verbindungen aus dem ML-Modell entfernt. Dieser Prozess verringert die Modellgröße, ohne die Genauigkeit signifikant 
+zu beeinträchtigen. Durch das Pruning konnten wir die Ausführungsgeschwindigkeit auf Embedded Systems verbessern, während die Genauigkeit nur minimal reduziert wurde.
+
+\subsection{Edge-Optimierte Algorithmen}
+Zusätzlich zu den oben genannten Techniken wurden speziell für Embedded Systems optimierte Algorithmen implementiert. Diese Algorithmen sind darauf ausgelegt, 
+mit minimalem Rechenaufwand auszukommen und gleichzeitig Echtzeitentscheidungen zu ermöglichen. Ein Beispiel hierfür sind binäre Entscheidungsbäume und lineare Modelle, 
+die weniger komplex sind als neuronale Netzwerke, jedoch in vielen industriellen Anwendungen ausreichend leistungsfähig sind.
+
+\section{Implementierungsschritte}
+
+\subsection{Anforderungsanalyse}
+Zunächst wurden die Anforderungen der industriellen Partner erfasst und eine Anforderungsanalyse durchgeführt. Die wichtigsten Anforderungen konzentrierten sich auf 
+die Reduktion der Modellgröße, die Sicherstellung der Echtzeitfähigkeit sowie die ressourcenschonende Ausführung auf Embedded-Devices. Besondere Beachtung fanden 
+dabei die spezifischen Hardware-Einschränkungen der eingesetzten SPS- und IPC-Systeme. Zudem wurden Zielfunktionen und Prioritäten festgelegt, um eine Balance 
+zwischen Modellkomplexität, Laufzeitleistung und Speicherverbrauch zu finden.
+
+\subsection{Entwicklung des Frameworks}
+Das Framework wurde so entworfen, dass es als flexible Schnittstelle zwischen den optimierten ML-Modellen und den Embedded Systems dient. Die Architektur wurde 
+in verschiedene Module unterteilt, die sowohl die Modelloptimierung als auch die Kommunikation zwischen den Geräten erleichtern. Wesentliche Aspekte der 
+Entwicklung umfassten:
+
+\begin{itemize}
+    \item \textbf{Architekturentwurf}: Die Architektur wurde modular entworfen, um die einfache Integration und den Austausch verschiedener ML-Modelle zu ermöglichen.
+    \item \textbf{Modelloptimierungstechniken}: Techniken wie Quantisierung, Pruning und Kompression wurden eingesetzt, um die Modellgröße zu reduzieren und die 
+    Ausführungseffizienz zu steigern.
+    \item \textbf{API-Design}: Eine flexible API wurde entwickelt, um den Zugriff auf verschiedene ML-Modelle zu ermöglichen und eine einfache 
+    Bereitstellung auf verschiedenen Embedded Devices sicherzustellen.
+\end{itemize}
+
+\subsection{Integration und Tests}
+Das Framework wurde auf verschiedene Embedded Devices, einschließlich SPS und IPCs, integriert und umfassend getestet. Dieser Schritt umfasste:
+
+\begin{itemize}
+    \item \textbf{Hardware-Integration}: Die Integration des Frameworks auf unterschiedlichen Embedded-Platformen und die Anpassung an deren spezifische 
+    Hardware-Eigenschaften.
+    \item \textbf{Unit-Tests}: Unit-Tests wurden verwendet, um die korrekte Funktionalität der wichtigsten Komponenten sicherzustellen.
+    \item \textbf{Hardware-in-the-Loop (HIL) Tests}: HIL-Tests wurden durchgeführt, um das Framework unter realen Bedingungen zu testen und sicherzustellen, 
+    dass die Modelle in Echtzeit mit der Hardware interagieren.
+    \item \textbf{Laufzeitleistungsprüfung}: Es wurden spezifische Benchmarks zur Überprüfung der Ausführungszeiten definiert, um sicherzustellen, 
+    dass die Echtzeitanforderungen der industriellen Anwendungen erfüllt werden.
+\end{itemize}
+
+\subsection{Evaluation der Ergebnisse}
+Nach der Integration wurde das Framework anhand vordefinierter Leistungsmetriken evaluiert:
+
+\begin{itemize}
+    \item \textbf{Leistungsmetriken}: Die wichtigsten Metriken umfassen die Ausführungszeit der Modelle, den Speicherverbrauch und den Energieverbrauch 
+    auf den Embedded Devices.
+    \item \textbf{Vergleich mit den Anforderungen}: Die Ergebnisse wurden mit den in der Anforderungsanalyse definierten Zielwerten verglichen, um zu überprüfen, 
+    inwieweit die Anforderungen erfüllt wurden.
+    \item \textbf{Robustheit und Fehlerbehandlung}: Es wurden Tests durchgeführt, um die Robustheit des Frameworks und seine Fähigkeit, auf Fehler wie 
+    Hardwareausfälle oder Modellfehler zu reagieren, zu bewerten.
+    \item \textbf{Optimierungspotential}: Basierend auf den Evaluierungsergebnissen wurde Potenzial für weitere Optimierungen, wie die Reduktion des 
+    Energieverbrauchs oder die Verbesserung der Ausführungszeiten, identifiziert.
+\end{itemize}
+
+\subsection{Zusätzliche Anforderungen}
+Weitere Themen die zu beachten sind:
+
+\begin{itemize}
+    \item \textbf{Sicherheit und Datenschutz}: Es wurde darauf geachtet, dass das Framework den Anforderungen an die Datensicherheit in der industriellen 
+    Fertigung entspricht.
+    \item \textbf{Flexibilität und Erweiterbarkeit}: Das Framework wurde so gestaltet, dass zukünftige Erweiterungen und neue ML-Modelle einfach integriert werden können.
+    \item \textbf{Wartung und Updates}: Mechanismen für einfache Wartung und Modell-Updates wurden implementiert, um die langfristige Verwendbarkeit 
+    des Frameworks zu gewährleisten.
+\end{itemize}
+
+\section{Zusammenfassung}
+Das entwickelte Framework wurde basierend auf einer detaillierten Anforderungsanalyse erstellt, modular entworfen und für die Ausführung auf 
+Embedded Devices optimiert. Durch umfassende Tests und Evaluationen konnte die Effizienz, Echtzeitfähigkeit und Robustheit des Frameworks sichergestellt werden. 
+Optimierungsmöglichkeiten wurden identifiziert und bilden die Grundlage für zukünftige Verbesserungen.
