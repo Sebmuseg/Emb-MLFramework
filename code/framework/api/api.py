@@ -22,19 +22,36 @@ class FrameworkAPI:
         self.framework = MLFramework()
     
     def load_model(self, model_name, model_path, framework_type):
-        #API call to load the model depending of the type of Framework
-        if framework_type == 'tensorflow':
-            model = TensorFlowModel(model_path)
-        elif framework_type == 'sklearn':
-            model = SklearnModel(model_path)
-        elif framework_type == 'xgboost':
-            model = XGBoostModel(model_path)
-        elif framework_type == 'lightgbm':
-            model = LightGBMModel(model_path)
-        else:
-            raise ValueError(f"Unsupported framework: {framework_type}")
-        
-        self.framework.load_model(model_name, model)
+            """
+            Loads a model from disk based on the type of framework.
+            
+            Parameters:
+            - model_name: The name you want to assign to the model in the framework.
+            - model_path: The path to the model file.
+            - framework_type: The framework type (e.g., 'tensorflow', 'sklearn', 'xgboost').
+            """
+            if framework_type == 'tensorflow':
+                model = TensorFlowModel(model_path)
+            elif framework_type == 'sklearn':
+                model = SklearnModel(model_path)
+            elif framework_type == 'xgboost':
+                model = XGBoostModel(model_path)
+            elif framework_type == 'lightgbm':
+                model = LightGBMModel(model_path)
+            elif framework_type == 'pytorch':
+                model = PyTorchModel(model_path)
+            elif framework_type == 'catboost':
+                model = CatBoostModel(model_path)
+            elif framework_type == 'onnx':
+                model = ONNXModel(model_path)
+            elif framework_type == 'tflite':
+                model = TFLiteModel(model_path)
+            else:
+                raise ValueError(f"Unsupported framework: {framework_type}")
+            
+            # Store the loaded model in the framework
+            self.framework.models[model_name] = model
+            print(f"Model {model_name} successfully loaded.")
         
     def remove_model(self, model_name):
         #API call to remove a model using MLFramework
@@ -61,21 +78,21 @@ class FrameworkAPI:
         
         if model:
             if framework_type == 'tensorflow':
-                model = TensorFlowModel(file_path)
+                model.save(file_path)
             elif framework_type == 'sklearn':
-                model = SklearnModel(file_path)
+                model.save(file_path)
             elif framework_type == 'xgboost':
-                model = XGBoostModel(file_path)
+                model.save(file_path)
             elif framework_type == 'lightgbm':
-                model = LightGBMModel(file_path)
+                model.save(file_path)
             elif framework_type == 'pytorch':
-                model = PyTorchModel(file_path)
+                model.save(file_path)
             elif framework_type == 'catboost':
-                model = CatBoostModel(file_path)
+                model.save(file_path)
             elif framework_type == 'onnx':
-                model = ONNXModel(file_path)
+                model.save(file_path)
             elif framework_type == 'tflite':
-                model = TFLiteModel(file_path)
+                model.save(file_path)
             else:
                 raise ValueError(f"Unsupported framework: {framework_type}")
         else:
