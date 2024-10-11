@@ -13,11 +13,16 @@ from optimizations.prune import prune_model
 from optimizations.quantize import quantize_model
 from conversion.onnx_conversion import convert_model_to_onnx
 from conversion.openvino_conversion import convert_to_openvino
-from sklearn.metrics import accuracy_score, mean_squared_error
+from deployment.deploy_model import deploy_model_to_device
+from deployment.deploy_model import package_model_in_docker
+
 
 
 
 class FrameworkAPI:
+    # -------------------------------
+    #  Model Loading and Management
+    # -------------------------------
     def __init__(self):
         self.framework = MLFramework()
 
@@ -82,6 +87,9 @@ class FrameworkAPI:
         model.save(file_path)  # Directly call the save method of the model
         print(f"Model {model_name} saved to {file_path}.")
         
+    #-------------------------------
+    #  Model Optimization Functions
+    # -------------------------------
         
     def quantize_model(self, model_name):
         """
@@ -129,6 +137,11 @@ class FrameworkAPI:
         compress_model(model, compressed_file_path)
         print(f"Model {model_name} compressed and saved to {compressed_file_path}")
     
+    
+    #-------------------------------
+    #  Model Conversion Functions
+    # -------------------------------
+    
     def convert_to_onnx(self, model_name, onnx_file_path):
         """
         Convert the loaded model to ONNX format.
@@ -145,6 +158,8 @@ class FrameworkAPI:
         convert_model_to_onnx(model, onnx_file_path)
         print(f"Model {model_name} converted to ONNX and saved to {onnx_file_path}")
 
+    # This is the function to convert models to OpenVINO format. For now, it's commented out.
+    '''
     def convert_to_openvino(self, model_name, framework_type, input_shape, output_dir):
         """
         Convert a loaded model to OpenVINO format using the OpenVINO Model Optimizer.
@@ -165,21 +180,106 @@ class FrameworkAPI:
         # Call the OpenVINO conversion function
         convert_to_openvino(model_path, output_dir, framework_type, input_shape)
         print(f"Model {model_name} successfully converted to OpenVINO format.")
-
-        
-    def evaluate_model(self, model_name, X_test, y_test):
-        # Evaluates the model's performance on a test set
+    '''
+    
+    # -------------------------------
+    #  Model Deployment Functions
+    # -------------------------------
+    
+    def deploy_model(self, model_name, device_ip, deployment_path, model_format):
+        """
+        API method to deploy a model to a device.
+        """
         model = self.models.get(model_name)
-        if model:
-            predictions = model.predict(X_test)
-            if hasattr(model, "predict_proba"):  # If it's a classifier
-                accuracy = accuracy_score(y_test, predictions)
-                print(f"Accuracy for model {model_name}: {accuracy:.2f}")
-                return accuracy
-            else:  # Assume it's a regressor if no probability prediction available
-                mse = mean_squared_error(y_test, predictions)
-                print(f"Mean Squared Error for model {model_name}: {mse:.2f}")
-                return mse
-        else:
+        if not model:
             raise ValueError(f"Model {model_name} not found!")
+
+        model_path = model.get_model_path()  # Assuming the model has a method to return its file path
+        
+        success = deploy_model_to_device(model_name, model_path, device_ip, "username", deployment_path, model_format)
+        return success
+    
+    
+    def deploy_model_in_docker(self, model_name, model_path, dockerfile_template, output_dir):
+        """
+        API method to package a model into a Docker container for deployment.
+
+        Parameters:
+        - model_name: The name of the model to package.
+        - model_path: The path to the model file.
+        - dockerfile_template: The path to the Dockerfile template.
+        - output_dir: The directory to store the Docker image.
+        """
+        package_model_in_docker(model_name, model_path, dockerfile_template, output_dir)
+    
+    def update_model_on_device(model_name, device_ip, deployment_path, model_format):
+        """
+        Updates an already deployed model on the target device with a new version.
+
+        Parameters:
+        - model_name: The name of the model to update.
+        - device_ip: The IP address of the target device.
+        - deployment_path: The file path where the model is stored on the device.
+        - model_format: The format of the model (e.g., ONNX, OpenVINO, TensorFlow Lite).
+
+        Steps:
+        - Check the current model status on the device.
+        - Upload the new model version to a temporary location.
+        - Swap the models (e.g., update symbolic link or replace files).
+        - Ensure no inference interruptions.
+        """
+        pass
+    
+    def rollback_model_on_device(device_ip, backup_path, deployment_path, model_format):
+        """
+        Rolls back the current model on the device to a previous version.
+
+        Parameters:
+        - device_ip: The IP address of the target device.
+        - backup_path: The file path where the previous model version is stored.
+        - deployment_path: The current deployment path of the model.
+        - model_format: The format of the model (e.g., ONNX, OpenVINO, TensorFlow Lite).
+
+        Steps:
+        - Check if a backup model exists.
+        - Replace the current model with the backup.
+        - Restart the inference engine if needed.
+        """
+        pass
+    
+    # -------------------------------
+    #  Model Monitoring Functions
+    # -------------------------------
+    
+    def monitor_device_resources(device_ip, resource_thresholds):
+        """
+        Monitors the resource usage (CPU, memory, GPU) of the device running the model.
+
+        Parameters:
+        - device_ip: The IP address of the target device.
+        - resource_thresholds: A dictionary of resource usage limits (e.g., {'cpu': 80%, 'memory': 70%}).
+
+        Steps:
+        - Continuously monitor CPU, memory, and GPU usage.
+        - Log the resource usage at regular intervals.
+        - Trigger alerts if usage exceeds the defined thresholds.
+        """
+        pass
+    
+    def log_predictions(device_ip, log_path, model_name):
+        """
+        Logs all predictions made by the deployed model for auditing and monitoring.
+
+        Parameters:
+        - device_ip: The IP address of the target device.
+        - log_path: The file path where predictions will be logged.
+        - model_name: The name of the deployed model.
+
+        Steps:  
+        - Intercept model predictions on the device.
+        - Log prediction inputs, outputs, and timestamps.
+        """
+        pass
+        
+
         
