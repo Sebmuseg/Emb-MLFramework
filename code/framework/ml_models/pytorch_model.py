@@ -1,7 +1,6 @@
 # ml_models/pytorch_model.py
 import torch
 
-
 class PyTorchModel:
     def __init__(self, model_path=None, model=None):
         """
