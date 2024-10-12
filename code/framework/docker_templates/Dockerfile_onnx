@@ -1,0 +1,8 @@
+# Use ONNX Runtime image
+FROM mcr.microsoft.com/onnxruntime/server
+
+# Copy the model into the container
+COPY model.onnx /models/model.onnx
+
+# Set the entrypoint for ONNX runtime
+ENTRYPOINT ["onnxruntime_server", "--model_path", "/models/model.onnx"]

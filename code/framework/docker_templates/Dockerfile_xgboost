@@ -1,0 +1,14 @@
+# Use a basic Python image
+FROM python:3.12-slim
+
+# Install XGBoost
+RUN pip install xgboost
+
+# Copy the XGBoost model
+COPY model.json /models/model.json
+
+# Copy the inference script
+COPY inference.py /app/inference.py
+
+# Set the entrypoint to the inference script
+ENTRYPOINT ["python", "/app/inference.py", "--model_path", "/models/model.json"]

@@ -1,0 +1,28 @@
+# Core Machine Learning Libraries
+catboost==1.2.7
+lightgbm==4.5.0
+onnx==1.17.0
+onnxmltools==1.12.0
+onnxruntime==1.19.2
+openvino==2024.4.0
+openvino-dev==2024.4.0
+scikit-learn==1.5.2
+tensorflow==2.17.0
+torch==2.4.1
+xgboost==2.1.1
+
+# Dependencies for model conversion and optimization
+tf2onnx==1.16.1
+tensorflow-model-optimization==0.8.0
+onnxconverter-common==1.13.0
+
+# Scientific and Data Libraries
+numpy==1.26.4
+scipy==1.14.1
+pandas==2.2.3
+
+# Utility Libraries
+paramiko==3.5.0  # For SSH and remote deployment
+protobuf==3.20.3  # Needed for TensorFlow and ONNX models
+urllib3==2.2.3
+requests==2.32.3

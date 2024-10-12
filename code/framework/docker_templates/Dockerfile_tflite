@@ -1,0 +1,20 @@
+# Use a lightweight Python image as the base
+FROM python:3.12-slim
+
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install TensorFlow Lite runtime
+RUN pip install --no-cache-dir tflite-runtime==2.5.0
+
+# Set up the working directory
+WORKDIR /app
+
+# Copy the TFLite model and inference script to the container
+COPY model.tflite /app/model.tflite
+COPY inference.py /app/inference.py
+
+# Set the entrypoint for the inference script
+ENTRYPOINT ["python", "/app/inference.py", "--model_path", "/app/model.tflite"]

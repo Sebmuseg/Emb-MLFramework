@@ -3,18 +3,22 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.12
+  - python=3.13
   - pip
+  - numpy
+  - pandas
+  - scipy
+  - protobuf
+  - paramiko
   - pip:
       - skl2onnx
       - tf2onnx
       - scikit-learn
-      - tensorflow
+      - tensorflow==2.17.0
       - onnx
       - onnxruntime
       - xgboost
       - lightgbm
       - tensorflow-model-optimization
-      - sklearn
       - catboost
       - torch
