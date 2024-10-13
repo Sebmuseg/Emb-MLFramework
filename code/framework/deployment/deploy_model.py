@@ -2,10 +2,11 @@
 import os
 import subprocess
 from utils.model_utils import get_model_extension, get_inference_service_name
-from transfer_model import transfer_model_to_device
-from backup_replace import backup_existing_model, replace_model_on_device
-from service_management import restart_inference_service
+from transfer_model import transfer_model_to_device, transfer_docker_image_to_device
+from backup_replace import backup_existing_model, replace_model_on_device, docker_container_exists, backup_existing_docker_container, replace_docker_container
+from service_management import restart_inference_service, stop_existing_container, run_docker_container
 from utils.logging_utils import log_deployment_event
+from utils.device_utils import check_if_model_exists
 
 
 def deploy_model(model_name, model_path, model_format, device_ip, device_username, deployment_path, is_docker=False, docker_template=None):
@@ -32,8 +33,19 @@ def deploy_model(model_name, model_path, model_format, device_ip, device_usernam
 
     # Step 2: Package the model into Docker if necessary
     if is_docker:
-        package_model_in_docker(model_name, model_path, docker_template, deployment_path)
-        return True  # Docker-based deployments are handled separately
+        # Step 2.1: Package the model into Docker
+        docker_image_tag = package_model_in_docker(model_name, model_path, docker_template, deployment_path)
+        if not docker_image_tag:
+            log_deployment_event(f"Failed to package model {model_name} into Docker.", log_level="error")
+            return False  # Exit if packaging fails
+
+        # Step 2.2: Deploy the Docker image to the target device
+        deploy_container = deploy_docker_container(model_name, device_ip, device_username, docker_image_tag, deployment_path)
+        if not deploy_container:
+            log_deployment_event(f"Failed to deploy service for {model_name} on device {device_ip}.", log_level="error")
+            return False
+
+        return True  # Docker-based deployment completed successfully
 
     # Step 3: Transfer the model to the device
     model_extension = get_model_extension(model_format)
@@ -43,11 +55,18 @@ def deploy_model(model_name, model_path, model_format, device_ip, device_usernam
         log_deployment_event(f"Failed to transfer model {model_name} to device {device_ip}", log_level='error')
         return False
 
-    # Step 4: Backup the existing model and replace it with the new one
-    backup_success = backup_existing_model(device_ip, device_username, deployment_path, model_name, model_extension)
-    if not backup_success:
-        log_deployment_event(f"Failed to backup existing model {model_name} on device {device_ip}", log_level='error')
-        return False
+    # Step 4: Optionally backup the existing model (if it exists)
+    existing_model_found = check_if_model_exists(device_ip, device_username, deployment_path, model_name, model_extension)
+
+    if existing_model_found:
+        # Backup the existing model if it exists
+        backup_success = backup_existing_model(device_ip, device_username, deployment_path, model_name, model_extension)
+        if not backup_success:
+            log_deployment_event(f"Failed to backup existing model {model_name} on device {device_ip}", log_level='error')
+            return False
+    else:
+        log_deployment_event(f"No existing model found on {device_ip}. Skipping backup.", log_level='info')
+
 
     replace_success = replace_model_on_device(device_ip, device_username, deployment_path, temp_model_name, model_name, model_extension)
     if not replace_success:
@@ -95,41 +114,75 @@ def package_model_in_docker(model_name, model_path, model_format, output_dir="/a
         # Copy the Dockerfile and the model to the output directory (inside the container)
         subprocess.run(["cp", dockerfile_template, os.path.join(output_dir, "Dockerfile")], check=True)
         subprocess.run(["cp", model_path, os.path.join(output_dir, os.path.basename(model_path))], check=True)
+        
+        # Define the Docker image tag (e.g., model_name:latest)
+        docker_image_tag = f"{model_name}_docker_image:latest"
 
         # Build the Docker image (from inside the container)
-        build_command = ["docker", "build", "-t", f"{model_name}_docker_image", output_dir]
+        build_command = ["docker", "build", "-t", docker_image_tag, output_dir]
         subprocess.run(build_command, check=True)
 
         log_deployment_event(f"Model {model_name} successfully packaged into a Docker container.", log_level="info")
+        
+        return docker_image_tag
+    
     except subprocess.CalledProcessError as e:
         log_deployment_event(f"Error building Docker image: {e}", log_level="error")
     except ValueError as ve:
         log_deployment_event(str(ve), log_level="error")
 
-def deploy_docker_container(device_ip, device_username, image_name):
+def deploy_docker_container(model_name, device_ip, device_username, docker_image_tag, deployment_path="/app/deployment"):
     """
-    Deploy the Docker container on the edge device.
+    Deploys a Docker container to a target device.
 
     Parameters:
-    - device_ip: IP address of the target device.
-    - device_username: SSH login username for the device.
-    - image_name: Name of the Docker image to run.
-
-    Returns: True if successful, False otherwise.
+    - model_name: The name of the model to be deployed.
+    - device_ip: The IP address of the target device.
+    - device_username: The username for SSH login to the device.
+    - docker_image_tag: The Docker image tag to deploy (e.g., 'model_docker_image').
+    - deployment_path: The path on the target device where the Docker container will be deployed.
+    
+    Returns: True if the deployment was successful, False otherwise.
     """
     try:
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(device_ip, username=device_username)
+        # Step 1: Check if a Docker container already exists
+        container_exists = docker_container_exists(device_ip, device_username, docker_image_tag)
+        
+        if container_exists:
+            # Step 2: Backup the existing Docker container if it exists
+            backup_success = backup_existing_docker_container(device_ip, device_username, docker_image_tag)
+            if not backup_success:
+                log_deployment_event(f"Failed to backup existing Docker container {docker_image_tag} on device {device_ip}", log_level='error')
+                return False
 
-        run_command = f"docker run -d --name {image_name}_container {image_name}"
-        ssh.exec_command(run_command)
-        log_deployment_event(f"Docker container {image_name} deployed successfully on {device_ip}.", log_level="info")
+            # Step 3: Stop the existing Docker container
+            stop_success = stop_existing_container(device_ip, device_username, docker_image_tag)
+            if not stop_success:
+                log_deployment_event(f"Failed to stop existing Docker container {docker_image_tag} on device {device_ip}", log_level='error')
+                return False
+        else:
+            log_deployment_event(f"No existing Docker container found for {docker_image_tag} on device {device_ip}. Proceeding with deployment.", log_level="info")
+        
+        # Step 4: Transfer Docker image to the target device
+        transfer_success = transfer_docker_image_to_device(device_ip, device_username, docker_image_tag, deployment_path)
+        if not transfer_success:
+            log_deployment_event(f"Failed to transfer Docker image {docker_image_tag} to device {device_ip}", log_level='error')
+            return False
 
-        ssh.close()
+        # Step 5: Run the new Docker container on the target device
+        run_success = run_docker_container(device_ip, device_username, docker_image_tag, model_name, deployment_path)
+        if not run_success:
+            log_deployment_event(f"Failed to run Docker container {docker_image_tag} on device {device_ip}", log_level='error')
+            return False
+
+        # Step 6: Optionally restart services or log success
+        # Uncomment the following line if a service restart is necessary for orchestration or monitoring
+        # restart_service_on_device(device_ip, device_username, f"docker-{model_name}-service")
+        log_deployment_event(f"Successfully deployed Docker container {docker_image_tag} for model {model_name} on device {device_ip}.", log_level='info')
         return True
+
     except Exception as e:
-        log_deployment_event(f"Failed to deploy Docker container on {device_ip}: {e}", log_level="error")
+        log_deployment_event(f"Deployment failed for {model_name} on device {device_ip}: {e}", log_level="error")
         return False
         
 
@@ -143,8 +196,46 @@ def validate_device_environment(device_ip, device_username):
     
     Returns: True if the environment is ready, False otherwise.
     """
-    # Logic to check device status, available storage, etc.
-    pass
+    """
+    try:
+        # Step 1: Set up SSH client to connect to the target device
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(device_ip, username=device_username)
+
+        # Step 2: Check if Docker is installed on the target device
+        stdin, stdout, stderr = ssh.exec_command("docker --version")
+        docker_output = stdout.read().decode().strip()
+        error_output = stderr.read().decode().strip()
+        
+        if error_output or "Docker version" not in docker_output:
+            log_deployment_event(f"Docker not installed or not running on device {device_ip}.", log_level="error")
+            return False
+
+        # Step 3: Optionally, check if there is enough disk space
+        stdin, stdout, stderr = ssh.exec_command("df -h /")
+        disk_usage_output = stdout.read().decode().strip()
+        if "100%" in disk_usage_output:
+            log_deployment_event(f"Not enough disk space on device {device_ip}.", log_level="error")
+            return False
+        
+        # Step 4: Optionally, check if necessary ports are open (e.g., 2375 for Docker)
+        stdin, stdout, stderr = ssh.exec_command("netstat -tuln | grep 2375")
+        netstat_output = stdout.read().decode().strip()
+        if not netstat_output:
+            log_deployment_event(f"Necessary ports for Docker communication not open on {device_ip}.", log_level="warning")
+        
+        # Step 5: Close SSH connection
+        ssh.close()
+
+        # If all checks pass, return True
+        log_deployment_event(f"Device {device_ip} is ready for deployment.", log_level="info")
+        return True
+
+    except Exception as e:
+        log_deployment_event(f"Failed to validate device environment for {device_ip}: {e}", log_level="error")
+        return False
+    """
 
         
 def update_model(model_name, model_path, model_format, device_ip, device_username, deployment_path):
