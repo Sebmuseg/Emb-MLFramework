@@ -138,6 +138,17 @@ auf IPCs oder Windows-basierten Embedded-Systemen.
 Zephyr ist ein Echtzeitbetriebssystem (RTOS), das speziell für Embedded-Geräte entwickelt wurde. Es bietet eine stabile Plattform für die Ausführung 
 von ML-Modellen auf Mikrocontrollern und unterstützt Echtzeitanforderungen, die in der industriellen Fertigung entscheidend sind.
 
+\subsection{Conda und Pip}
+\textbf{Conda} und \textbf{Pip} sind essentielle Werkzeuge, um Abhängigkeiten für Machine-Learning-Projekte zu verwalten. Beide Systeme wurden verwendet, 
+um die unterschiedlichen Anforderungen des Projekts zu erfüllen:
+\begin{itemize}
+    \item \textbf{Conda} wurde zur Verwaltung von umfangreichen Abhängigkeiten wie \textit{TensorFlow}, \textit{PyTorch} und \textit{OpenVINO} verwendet. 
+    Conda bietet eine effizientere Verwaltung großer Bibliotheken und ermöglicht die Integration von Systembibliotheken mit Python-Paketen. Dadurch wurde 
+    sichergestellt, dass das Framework auch auf ressourcenbeschränkten Geräten effizient läuft.
+    \item \textbf{Pip} wurde für Bibliotheken eingesetzt, die nicht über Conda verfügbar sind oder spezifische Anforderungen haben, wie z.B. \textit{onnxmltools} 
+    oder \textit{tensorflow-model-optimization}.
+\end{itemize}
+
 Die Kombination dieser Werkzeuge ermöglichte es, ein Framework zu entwickeln, das ML-Modelle effizient auf Embedded Systems implementiert.
 
 \section{Optimierungstechniken}
