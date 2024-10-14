@@ -17,6 +17,7 @@ from deployment.deploy_model import deploy_model, package_model_in_docker, updat
 from deployment.backup_replace import check_backup_exists, transfer_backup_model
 from deployment.service_management import restart_inference_service
 from utils.logging_utils import log_deployment_event
+from utils.model_utils import get_inference_service_name
 
 
 
@@ -297,7 +298,8 @@ class FrameworkAPI:
             return False
 
         # Step 3: Restart the inference service if necessary
-        restart_success = restart_inference_service(device_ip, "username", service_name)
+        service_name = get_inference_service_name(model_format)
+        restart_success = restart_inference_service(device_ip, user, service_name)
         if not restart_success:
             log_deployment_event(f"Failed to restart service for {model_name} on device {device_ip}.", log_level="error")
             return False
