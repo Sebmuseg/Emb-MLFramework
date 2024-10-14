@@ -6,10 +6,10 @@ from transfer_model import transfer_model_to_device, transfer_docker_image_to_de
 from backup_replace import backup_existing_model, replace_model_on_device, docker_container_exists, backup_existing_docker_container, replace_docker_container
 from service_management import restart_inference_service, stop_existing_container, run_docker_container
 from utils.logging_utils import log_deployment_event
-from utils.device_utils import check_if_model_exists
+from utils.device_utils import check_if_model_exists, check_disk_space, check_docker_installed, check_ssh_connection
 
 
-def deploy_model(model_name, model_path, model_format, device_ip, device_username, deployment_path, is_docker=False, docker_template=None):
+def deploy_model(model_name, model_path, model_format, device_ip, device_username, deployment_path, is_docker=False, docker_template='../framework/docker_templates/'):
     """
     Orchestrates the deployment of a model to a device. Supports both regular models and Docker-based models.
     
@@ -26,7 +26,7 @@ def deploy_model(model_name, model_path, model_format, device_ip, device_usernam
     Returns: True if deployment was successful, False otherwise.
     """
     # Step 1: Validate the device environment
-    environment_ready = validate_device_environment(device_ip, device_username)
+    environment_ready = validate_device_environment(device_ip, device_username, is_docker)
     if not environment_ready:
         log_deployment_event(f"Environment validation failed for device {device_ip}", log_level='error')
         return False
@@ -186,59 +186,39 @@ def deploy_docker_container(model_name, device_ip, device_username, docker_image
         return False
         
 
-def validate_device_environment(device_ip, device_username):
+def validate_device_environment(device_ip, device_username, is_docker=False):
     """
     Validates that the target device is ready to receive a model for deployment.
     
     Parameters:
     - device_ip: IP address of the target device.
     - device_username: Username for SSH login.
+    - is_docker: Boolean. If deployment runs as a container.
     
     Returns: True if the environment is ready, False otherwise.
     """
-    """
     try:
-        # Step 1: Set up SSH client to connect to the target device
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(device_ip, username=device_username)
-
-        # Step 2: Check if Docker is installed on the target device
-        stdin, stdout, stderr = ssh.exec_command("docker --version")
-        docker_output = stdout.read().decode().strip()
-        error_output = stderr.read().decode().strip()
-        
-        if error_output or "Docker version" not in docker_output:
-            log_deployment_event(f"Docker not installed or not running on device {device_ip}.", log_level="error")
+        # Step 1: Check SSH connection to the device
+        if not check_ssh_connection(device_ip, device_username):
             return False
 
-        # Step 3: Optionally, check if there is enough disk space
-        stdin, stdout, stderr = ssh.exec_command("df -h /")
-        disk_usage_output = stdout.read().decode().strip()
-        if "100%" in disk_usage_output:
-            log_deployment_event(f"Not enough disk space on device {device_ip}.", log_level="error")
+        # Step 2: Check for Docker environment if applicable
+        if is_docker and not check_docker_installed(device_ip, device_username):
             return False
-        
-        # Step 4: Optionally, check if necessary ports are open (e.g., 2375 for Docker)
-        stdin, stdout, stderr = ssh.exec_command("netstat -tuln | grep 2375")
-        netstat_output = stdout.read().decode().strip()
-        if not netstat_output:
-            log_deployment_event(f"Necessary ports for Docker communication not open on {device_ip}.", log_level="warning")
-        
-        # Step 5: Close SSH connection
-        ssh.close()
 
-        # If all checks pass, return True
-        log_deployment_event(f"Device {device_ip} is ready for deployment.", log_level="info")
+        # Step 3: Check if sufficient disk space is available
+        if not check_disk_space(device_ip, device_username):
+            return False
+
+        log_deployment_event(f"Device {device_ip} environment validated successfully.", log_level="info")
         return True
 
     except Exception as e:
-        log_deployment_event(f"Failed to validate device environment for {device_ip}: {e}", log_level="error")
+        log_deployment_event(f"Failed to validate device environment on {device_ip}: {e}", log_level="error")
         return False
-    """
 
         
-def update_model(model_name, model_path, model_format, device_ip, device_username, deployment_path):
+def update_model(model_name, model_path, model_format, device_ip, device_username, deployment_path, backup_existing=True, restart_service=True):
     """
     Orchestrates the update of a model on the target device, handling backup and replacement separately.
     
@@ -249,9 +229,12 @@ def update_model(model_name, model_path, model_format, device_ip, device_usernam
     - device_ip: The IP address of the target device.
     - device_username: The username for SSH login to the device.
     - deployment_path: The file path where the model will be stored on the device.
+    - backup_existing: Boolean indicating whether to backup the existing model (default is True).
+    - restart_service: Boolean indicating whether to restart the inference service after deployment (default is True).
     
     Returns: True if the update was successful, False otherwise.
     """
+    
     # Step 1: Validate the environment
     environment_ready = validate_device_environment(device_ip, device_username)
     if not environment_ready:
@@ -266,11 +249,16 @@ def update_model(model_name, model_path, model_format, device_ip, device_usernam
         log_deployment_event(f"Failed to transfer model {model_name} to device {device_ip}", log_level='error')
         return False
 
-    # Step 3: Backup the existing model
-    backup_success = backup_existing_model(device_ip, device_username, deployment_path, model_name, model_extension)
-    if not backup_success:
-        log_deployment_event(f"Failed to backup model {model_name} on device {device_ip}", log_level='error')
-        return False
+    # Step 3: Backup the existing model (if required and if it exists)
+    if backup_existing:
+        model_exists = check_if_model_exists(device_ip, deployment_path, model_name, model_extension)
+        if model_exists:
+            backup_success = backup_existing_model(device_ip, device_username, deployment_path, model_name, model_extension)
+            if not backup_success:
+                log_deployment_event(f"Failed to backup model {model_name} on device {device_ip}", log_level='error')
+                return False
+        else:
+            log_deployment_event(f"No existing model found to backup on device {device_ip}. Proceeding with update.", log_level="info")
 
     # Step 4: Replace the existing model with the new one
     replace_success = replace_model_on_device(device_ip, device_username, deployment_path, temp_model_name, model_name, model_extension)
@@ -278,12 +266,13 @@ def update_model(model_name, model_path, model_format, device_ip, device_usernam
         log_deployment_event(f"Failed to replace model {model_name} on device {device_ip}", log_level='error')
         return False
 
-    # Step 5: Restart the inference service to activate the new model
-    service_name = get_inference_service_name(model_format)
-    restart_success = restart_inference_service(device_ip, device_username, service_name)
-    if not restart_success:
-        log_deployment_event(f"Failed to restart inference service for model {model_name} on device {device_ip}", log_level='error')
-        return False
+    # Step 5: Optionally restart the inference service to activate the new model
+    if restart_service:
+        service_name = get_inference_service_name(model_format)
+        restart_success = restart_inference_service(device_ip, device_username, service_name)
+        if not restart_success:
+            log_deployment_event(f"Failed to restart inference service for model {model_name} on device {device_ip}", log_level='error')
+            return False
 
     log_deployment_event(f"Successfully updated model {model_name} on device {device_ip}")
     return True

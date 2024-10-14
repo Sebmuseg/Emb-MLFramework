@@ -189,3 +189,65 @@ def replace_docker_container(device_ip, device_username, container_name):
     except Exception as e:
         log_deployment_event(f"Failed to replace Docker container {container_name}: {e}", log_level="error")
         return False
+    
+    
+def check_backup_exists(device_ip, user, backup_path):
+    """
+    Checks if the backup model exists on the target device.
+    
+    Parameters:
+    - device_ip: The IP address of the target device.
+    - backup_path: The path to the backup model on the target device.
+
+    Returns: True if the backup exists, False otherwise.
+    """
+    try:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(device_ip, username=user)  
+
+        # Check if the backup file exists on the device
+        sftp = ssh.open_sftp()
+        try:
+            sftp.stat(backup_path)  # Check if the file exists
+            return True
+        except FileNotFoundError:
+            return False
+        finally:
+            sftp.close()
+            ssh.close()
+
+    except Exception as e:
+        log_deployment_event(f"Error checking backup on device {device_ip}: {e}", log_level="error")
+        return False
+    
+    
+def transfer_backup_model(device_ip, user, backup_path, deployment_path, model_format):
+    """
+    Transfers the backup model from the backup path to the deployment path on the target device.
+    
+    Parameters:
+    - device_ip: The IP address of the target device.
+    - backup_path: The path to the backup model.
+    - deployment_path: The destination path for the deployment.
+    - model_format: The format of the model (used for extensions, etc.).
+
+    Returns: True if the transfer was successful, False otherwise.
+    """
+    try:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(device_ip, username=user)  # Replace with actual username
+        
+        # Transfer the backup model to the deployment path
+        sftp = ssh.open_sftp()
+        sftp.put(backup_path, deployment_path)
+        sftp.close()
+        ssh.close()
+        
+        return True
+    except Exception as e:
+        log_deployment_event(f"Error transferring backup model on device {device_ip}: {e}", log_level="error")
+        return False
+    
+    

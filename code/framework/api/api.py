@@ -13,8 +13,11 @@ from optimizations.prune import prune_model
 from optimizations.quantize import quantize_model
 from conversion.onnx_conversion import convert_model_to_onnx
 from conversion.openvino_conversion import convert_to_openvino
-from deployment.deploy_model import deploy_model_to_device
-from deployment.deploy_model import package_model_in_docker
+from deployment.deploy_model import deploy_model, package_model_in_docker, update_model
+from deployment.backup_replace import check_backup_exists, transfer_backup_model
+from deployment.service_management import restart_inference_service
+from utils.logging_utils import log_deployment_event
+
 
 
 
@@ -55,14 +58,14 @@ class FrameworkAPI:
         """
         model = self._get_model_class(framework_type, model_path)
         self.framework.models[model_name] = model
-        print(f"Model {model_name} successfully loaded.")
+        log_deployment_event(f"Model {model_name} successfully loaded.")
 
     def remove_model(self, model_name):
         """
         API call to remove a model from the framework.
         """
         self.framework.remove_model(model_name)
-        print(f"Model {model_name} removed from framework.")
+        log_deployment_event(f"Model {model_name} removed from framework.")
 
     def predict(self, model_name, input_data):
         """
@@ -85,7 +88,7 @@ class FrameworkAPI:
             raise ValueError(f"Model {model_name} not found!")
         
         model.save(file_path)  # Directly call the save method of the model
-        print(f"Model {model_name} saved to {file_path}.")
+        log_deployment_event(f"Model {model_name} saved to {file_path}.")
         
     #-------------------------------
     #  Model Optimization Functions
@@ -104,7 +107,7 @@ class FrameworkAPI:
         
         quantized_model = quantize_model(model)  # Call the quantize utility function
         self.framework.models[model_name] = quantized_model
-        print(f"Model {model_name} quantized.")
+        log_deployment_event(f"Model {model_name} quantized.")
 
     def prune_model(self, model_name, amount=0.3):
         """
@@ -120,7 +123,7 @@ class FrameworkAPI:
         
         pruned_model = prune_model(model, amount)  # Call the prune utility function
         self.framework.models[model_name] = pruned_model
-        print(f"Model {model_name} pruned by {amount*100}%.")
+        log_deployment_event(f"Model {model_name} pruned by {amount*100}%.")
         
     def compress_model(self, model_name, compressed_file_path):
         """
@@ -135,7 +138,7 @@ class FrameworkAPI:
             raise ValueError(f"Model {model_name} not found!")
         
         compress_model(model, compressed_file_path)
-        print(f"Model {model_name} compressed and saved to {compressed_file_path}")
+        log_deployment_event(f"Model {model_name} compressed and saved to {compressed_file_path}")
     
     
     #-------------------------------
@@ -156,7 +159,7 @@ class FrameworkAPI:
         
         # Call a utility function to convert the model to ONNX
         convert_model_to_onnx(model, onnx_file_path)
-        print(f"Model {model_name} converted to ONNX and saved to {onnx_file_path}")
+        log_deployment_event(f"Model {model_name} converted to ONNX and saved to {onnx_file_path}")
 
     # This is the function to convert models to OpenVINO format. For now, it's commented out.
     '''
@@ -186,7 +189,7 @@ class FrameworkAPI:
     #  Model Deployment Functions
     # -------------------------------
     
-    def deploy_model(self, model_name, device_ip, deployment_path, model_format):
+    def deploy_model(self, model_name, device_ip, username, deployment_path, is_docker=False):
         """
         API method to deploy a model to a device.
         """
@@ -194,9 +197,9 @@ class FrameworkAPI:
         if not model:
             raise ValueError(f"Model {model_name} not found!")
 
-        model_path = model.get_model_path()  # Assuming the model has a method to return its file path
+        model_path = model.get_model_path()  
         
-        success = deploy_model_to_device(model_name, model_path, device_ip, "username", deployment_path, model_format)
+        success = deploy_model(model_name, model_path, device_ip, username, deployment_path, is_docker)
         return success
     
     
@@ -209,43 +212,98 @@ class FrameworkAPI:
         - model_path: The path to the model file.
         - dockerfile_template: The path to the Dockerfile template.
         - output_dir: The directory to store the Docker image.
+
+        Returns: True if packaging was successful, False otherwise.
         """
-        package_model_in_docker(model_name, model_path, dockerfile_template, output_dir)
+        # Input validation
+        if not model_name or not model_path or not dockerfile_template or not output_dir:
+            log_deployment_event(f"Invalid input parameters for Docker packaging of model {model_name}", log_level="error")
+            return False
+
+        try:
+            # Call the function to package the model into Docker
+            package_model_in_docker(model_name, model_path, dockerfile_template, output_dir)
+            
+            # Log successful packaging
+            log_deployment_event(f"Model {model_name} successfully packaged into Docker container.", log_level="info")
+            return True
+
+        except Exception as e:
+            # Log and handle any errors that occurred during packaging
+            log_deployment_event(f"Error packaging model {model_name} into Docker container: {e}", log_level="error")
+            return False
     
-    def update_model_on_device(model_name, device_ip, deployment_path, model_format):
+    def update_model_on_device(self, model_name, device_ip, username, deployment_path, model_format, backup_existing=True, restart_service=True):
         """
-        Updates an already deployed model on the target device with a new version.
+        API method to update an already deployed model on the target device with a new version.
 
         Parameters:
         - model_name: The name of the model to update.
         - device_ip: The IP address of the target device.
         - deployment_path: The file path where the model is stored on the device.
-        - model_format: The format of the model (e.g., ONNX, OpenVINO, TensorFlow Lite).
+        - model_format: The format of the model (e.g., ONNX, TensorFlow Lite).
+        - backup_existing: Boolean indicating whether to backup the existing model (default is True).
+        - restart_service: Boolean indicating whether to restart the inference service after deployment (default is True).
 
-        Steps:
-        - Check the current model status on the device.
-        - Upload the new model version to a temporary location.
-        - Swap the models (e.g., update symbolic link or replace files).
-        - Ensure no inference interruptions.
+        Returns:
+        - True if the update was successful, False otherwise.
         """
-        pass
+        # Step 1: Check if the model exists in the framework
+        model = self.models.get(model_name)
+        if not model:
+            raise ValueError(f"Model {model_name} not found!")
+
+        # Step 2: Get the model path from the model object (assuming this is implemented)
+        model_path = model.get_model_path()  # e.g., "/path/to/model.onnx"
+
+        # Step 3: Call the deployment logic for updating the model
+        success = update_model(
+            model_name=model_name,
+            model_path=model_path,
+            model_format=model_format,
+            device_ip=device_ip,
+            device_username=username,  
+            deployment_path=deployment_path,
+            backup_existing=backup_existing,
+            restart_service=restart_service
+        )
+
+        return success
     
-    def rollback_model_on_device(device_ip, backup_path, deployment_path, model_format):
+    def rollback_model_on_device(self, model_name, device_ip, user, backup_path, deployment_path, model_format):
         """
         Rolls back the current model on the device to a previous version.
 
         Parameters:
+        - model_name: The name of the model to rollback.
         - device_ip: The IP address of the target device.
         - backup_path: The file path where the previous model version is stored.
         - deployment_path: The current deployment path of the model.
         - model_format: The format of the model (e.g., ONNX, OpenVINO, TensorFlow Lite).
 
-        Steps:
-        - Check if a backup model exists.
-        - Replace the current model with the backup.
-        - Restart the inference engine if needed.
+        Returns:
+        - True if rollback was successful, False otherwise.
         """
-        pass
+        # Step 1: Validate if backup exists
+        backup_exists = check_backup_exists(device_ip, user, backup_path)
+        if not backup_exists:
+            log_deployment_event(f"Backup not found for {model_name} on device {device_ip}.", log_level="error")
+            return False
+
+        # Step 2: Transfer the backup model to the deployment path
+        transfer_success = transfer_backup_model(device_ip, user, backup_path, deployment_path, model_format)
+        if not transfer_success:
+            log_deployment_event(f"Failed to transfer backup model {model_name} to device {device_ip}.", log_level="error")
+            return False
+
+        # Step 3: Restart the inference service if necessary
+        restart_success = restart_inference_service(device_ip, "username", service_name)
+        if not restart_success:
+            log_deployment_event(f"Failed to restart service for {model_name} on device {device_ip}.", log_level="error")
+            return False
+
+        log_deployment_event(f"Successfully rolled back model {model_name} on device {device_ip}.", log_level="info")
+        return True
     
     # -------------------------------
     #  Model Monitoring Functions
