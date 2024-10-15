@@ -1,0 +1,34 @@
+global:
+  scrape_interval: 15s  # How frequently to scrape targets (default is every 15 seconds)
+  evaluation_interval: 15s  # How frequently to evaluate rules
+
+scrape_configs:
+  # Scrape Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Scrape your FeatherML API (adjust the IP/hostname and port as needed)
+  - job_name: 'featherml_api'
+    static_configs:
+      - targets: ['featherml_api:8000']
+
+  # Scrape your FeatherML frontend
+  - job_name: 'featherml_frontend'
+    static_configs:
+      - targets: ['featherml_frontend:5001']
+
+  # Scrape Grafana (optional)
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']
+
+  # Scrape Elasticsearch (optional)
+  - job_name: 'elasticsearch'
+    static_configs:
+      - targets: ['elasticsearch:9200']
+
+  # Scrape additional services as needed
+  - job_name: 'other_service'
+    static_configs:
+      - targets: ['some_other_service:some_port']

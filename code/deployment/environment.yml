@@ -1,0 +1,15 @@
+name: featherml_env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy
+  - pandas
+  - scipy
+  - protobuf
+  - paramiko
+  - pip
+  - pip:
+      - skl2onnx
+      - tf2onnx
+      - tensorflow-model-optimization

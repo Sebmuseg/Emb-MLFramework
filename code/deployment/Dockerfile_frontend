@@ -1,0 +1,32 @@
+# Base image with Miniconda
+FROM continuumio/miniconda3
+
+# Set environment variables
+ENV PATH /opt/conda/envs/featherml_env/bin:$PATH
+
+# Install system dependencies (build-essential includes gcc, g++, etc.)
+# RUN apt-get update && apt-get install -y \
+#     build-essential \
+#     gcc \
+#     g++ \
+#     make \
+#     && rm -rf /var/lib/apt/lists/*
+
+# Copy environment.yml if using conda as a base
+COPY ./code/deployment/environment.yml /tmp/environment.yml
+
+# Create Conda environment for FeatherML
+RUN conda env create -f /tmp/environment.yml
+
+# Activate the environment
+SHELL ["conda", "run", "-n", "featherml_env", "/bin/bash", "-c"]
+
+# Set the workdir and copy the project files
+WORKDIR /app
+COPY ./code/framework /app
+
+# Expose the port
+EXPOSE 5000
+
+# Default command
+CMD ["/bin/bash"]
