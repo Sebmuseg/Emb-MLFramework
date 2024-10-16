@@ -1,6 +1,7 @@
 # ml_models/onnx_model.py
 import onnx
 import onnxruntime as rt
+from pathlib import Path
 
 class ONNXModel:
     def __init__(self, model_path=None, model=None):
@@ -18,6 +19,11 @@ class ONNXModel:
             self.model = model  # Use the provided ONNX model session
         else:
             raise ValueError("Either model_path or model must be provided.")
+        
+        # Define the path to the `data` directory relative to this file's location
+        self.data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
+        if not self.data_dir.exists():
+            self.data_dir.mkdir(parents=True, exist_ok=True)
     
     def predict(self, input_data):
         """

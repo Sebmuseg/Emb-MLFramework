@@ -8,6 +8,8 @@ dependencies:
   - scipy
   - protobuf
   - paramiko
+  - fastapi
+  - uvicorn
   - pip
   - pip:
       - skl2onnx

@@ -27,69 +27,7 @@ class FrameworkAPI:
     # -------------------------------
     #  Model Loading and Management
     # -------------------------------
-    def __init__(self):
-        self.framework = MLFramework()
 
-    def _get_model_class(self, framework_type, model_path=None):
-        """
-        Helper method to get the correct model class based on the framework type.
-        """
-        if framework_type == 'tensorflow':
-            return TensorFlowModel(model_path)
-        elif framework_type == 'sklearn':
-            return SklearnModel(model_path)
-        elif framework_type == 'xgboost':
-            return XGBoostModel(model_path)
-        elif framework_type == 'lightgbm':
-            return LightGBMModel(model_path)
-        elif framework_type == 'pytorch':
-            return PyTorchModel(model_path)
-        elif framework_type == 'catboost':
-            return CatBoostModel(model_path)
-        elif framework_type == 'onnx':
-            return ONNXModel(model_path)
-        elif framework_type == 'tflite':
-            return TFLiteModel(model_path)
-        else:
-            raise ValueError(f"Unsupported framework: {framework_type}")
-
-    def load_model(self, model_name, model_path, framework_type):
-        """
-        Loads a model from disk based on the type of framework.
-        """
-        model = self._get_model_class(framework_type, model_path)
-        self.framework.models[model_name] = model
-        log_deployment_event(f"Model {model_name} successfully loaded.")
-
-    def remove_model(self, model_name):
-        """
-        API call to remove a model from the framework.
-        """
-        self.framework.remove_model(model_name)
-        log_deployment_event(f"Model {model_name} removed from framework.")
-
-    def predict(self, model_name, input_data):
-        """
-        API call to predict using the loaded model in the framework.
-        """
-        return self.framework.predict(model_name, input_data)
-
-    def list_models(self):
-        """
-        API call to list all loaded models in the framework.
-        """
-        return self.framework.list_models()
-
-    def save_model(self, model_name, file_path):
-        """
-        Saves the model to disk.
-        """
-        model = self.framework.models.get(model_name)
-        if not model:
-            raise ValueError(f"Model {model_name} not found!")
-        
-        model.save(file_path)  # Directly call the save method of the model
-        log_deployment_event(f"Model {model_name} saved to {file_path}.")
         
     #-------------------------------
     #  Model Optimization Functions
