@@ -1,5 +1,8 @@
 # ml_models/pytorch_model.py
 import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, Dataset
 from pathlib import Path
 from utils.logging_utils import log_deployment_event
 
@@ -47,10 +50,23 @@ class PyTorchModel:
         
         Parameters:
         - file_name: The file name to save the model.
+        
+        Returns:
+        - A dictionary with the status and the path of the saved model.
         """
-        file_path = self.data_dir / file_name
-        torch.save(self.model.state_dict(), file_path)
-        log_deployment_event(f"Model saved to {file_path}")
+        file_path = self.data_dir / file_name.with_suffix('.pth')
+        try:
+            torch.save(self.model.state_dict(), file_path)
+            log_deployment_event(f"Model saved to {file_path}")
+            
+            return {"status": "success", "model_path": str(file_path)}
+        except Exception as e:
+            # Log the error and raise it
+            log_deployment_event(f"Error during model saving: {str(e)}", log_level='error')
+            
+            return {"status": "error", "message": str(e)}
+        
+        
         
     def train(self, train_data, model_params, num_epochs=10, batch_size=32, learning_rate=0.001):
         """
@@ -78,7 +94,7 @@ class PyTorchModel:
             optimizer = optim.Adam(self.model.parameters(), lr=learning_rate)
 
             # Log the training start
-            self.logger.info(f"Starting PyTorch model training for {num_epochs} epochs with batch size {batch_size}.")
+            log_deployment_event(f"Starting PyTorch model training for {num_epochs} epochs with batch size {batch_size}.")
 
             # Training loop
             for epoch in range(num_epochs):
@@ -100,17 +116,17 @@ class PyTorchModel:
 
                 # Log the average loss for the epoch
                 avg_loss = running_loss / len(train_loader)
-                self.logger.info(f"Epoch {epoch + 1}/{num_epochs}, Loss: {avg_loss:.4f}")
+                log_deployment_event(f"Epoch {epoch + 1}/{num_epochs}, Loss: {avg_loss:.4f}")
 
             # Save the trained model
             model_file_path = self.data_dir / "trained_pytorch_model.pth"
             torch.save(self.model.state_dict(), model_file_path)
-            self.logger.info(f"PyTorch model saved to {model_file_path}")
+            log_deployment_event(f"PyTorch model saved to {model_file_path}")
 
             return self.model
 
         except Exception as e:
             # Log the error and raise it
-            self.logger.error(f"Error during PyTorch model training: {str(e)}")
-            raise e
+            log_deployment_event(f"Error during PyTorch model training: {str(e)}",log_level='error')
+            return{"status": "error", "message": str(e)}
     

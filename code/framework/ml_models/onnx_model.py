@@ -2,6 +2,7 @@
 import onnx
 import onnxruntime as rt
 from pathlib import Path
+from utils.logging_utils import log_deployment_event
 
 class ONNXModel:
     def __init__(self, model_path=None, model=None):
@@ -38,13 +39,22 @@ class ONNXModel:
         input_name = self.model.get_inputs()[0].name  # Get input tensor name
         return self.model.run(None, {input_name: input_data})[0]  # Run the model and return predictions
 
-    def save(self, file_path):
+    def save(self, file_name):
         """
         Save the ONNX model to disk.
 
         Parameters:
-        - file_path: The file path to save the ONNX model.
+        - file_name: The file name to save the ONNX model.
+        
+        Returns:
+        - A dictionary with the status and the path of the saved model.
         """
-        # ONNX models typically use the `onnx.save_model()` function
-        onnx.save(self.model, file_path)
-        print(f"ONNX model saved to {file_path}")
+        file_path = self.data_dir / file_name.with_suffix('.onnx')
+        try:
+            onnx.save(self.model, file_path)
+            log_deployment_event(f"ONNX model saved to {file_path}")
+            return {"status": "success", "model_path": str(file_path)}
+        except Exception as e:
+            log_deployment_event(f"Error saving ONNX model: {str(e)}", log_level="error")
+            return {"status": "error", "message": f"Error saving model: {str(e)}"}
+        

@@ -43,10 +43,19 @@ class LightGBMModel:
 
         Parameters:
         - file_name: The file name to save the model.
+        
+        Returns:
+        - A dictionary with the status and the path of the saved model.
         """
-        file_path = self.data_dir / file_name
-        self.model.save_model(file_path)
-        log_deployment_event(f"LightGBM model saved to {file_path}")
+        file_path = self.data_dir / file_name.with_suffix('.txt')
+        try:
+            self.model.save_model(file_path)
+            log_deployment_event(f"LightGBM model saved to {file_path}")
+            return {"status": "success", "model_path": str(file_path)}
+        except Exception as e:
+            log_deployment_event(f"Error saving LightGBM model: {str(e)}", log_level="error")
+            return {"status": "error", "message": f"Error saving model: {str(e)}"}
+        
         
     def train(self, train_data_path, params, num_rounds=100):
         """
@@ -79,4 +88,4 @@ class LightGBMModel:
         except Exception as e:
             # Log the error
             log_deployment_event(f"Error during training: {str(e)}", log_level='error')
-            raise e
+            return {"status": "error", "message": str(e)}

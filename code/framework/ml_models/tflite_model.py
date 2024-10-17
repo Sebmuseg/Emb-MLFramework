@@ -1,5 +1,7 @@
 # ml_models/tflite_model.py
 import tensorflow as tf
+from pathlib import Path
+from utils.logging_utils import log_deployment_event
 
 class TFLiteModel:
     def __init__(self, model_path=None, model=None):
@@ -18,6 +20,11 @@ class TFLiteModel:
             self.interpreter = model  # Use the provided TensorFlow Lite interpreter instance
         else:
             raise ValueError("Either model_path or model must be provided.")
+        
+        # Define the path to the `data` directory relative to this file's location
+        self.data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
+        if not self.data_dir.exists():
+            self.data_dir.mkdir(parents=True, exist_ok=True)
     
     def predict(self, input_data):
         """
@@ -43,14 +50,90 @@ class TFLiteModel:
         output_data = self.interpreter.get_tensor(output_details[0]['index'])
         return output_data
 
-    def save(self, file_path):
+    def save(self, file_name):
         """
         Save the TensorFlow Lite model to disk.
 
         Parameters:
-        - file_path: Path to save the TFLite model (usually after converting from TensorFlow model).
+        - file_name: The file name to save the TFLite model.
+
+        Returns:
+        - A dictionary with the status and the path of the saved model.
         """
-        # For TensorFlow Lite models, they are saved as FlatBuffers, typically after conversion
-        with open(file_path, 'wb') as f:
-            f.write(self.interpreter._get_model())  # Save the flatbuffer model
-        print(f"TFLite model saved to {file_path}")
+        # Create the complete file path with a `.tflite` extension
+        file_path = self.data_dir / file_name.with_suffix('.tflite')
+        
+        try:
+            # Open the file in binary mode and save the TFLite model (FlatBuffers format)
+            with open(file_path, 'wb') as f:
+                f.write(self.interpreter._get_model())  # This assumes `self.interpreter` has the model loaded
+            
+            # Log the deployment event after a successful save
+            log_deployment_event(f"TFLite model saved to {file_path}")
+            
+            # Return a success status with the saved model path
+            return {"status": "success", "model_path": str(file_path)}
+
+        except Exception as e:
+            # Log any errors that occurred during the saving process
+            log_deployment_event(f"Error saving TFLite model: {str(e)}", log_level="error")
+            
+            # Return an error status with the error message
+            return {"status": "error", "message": str(e)}
+        
+    def train(self, train_data, train_labels, validation_data=None, validation_labels=None, epochs=10, batch_size=32, model_save_name="trained_model.tflite"):
+        """
+        Train a TensorFlow model and convert it to TensorFlow Lite.
+
+        Parameters:
+        - train_data: Training data (numpy array or tf.data.Dataset).
+        - train_labels: Labels corresponding to the training data.
+        - validation_data: Validation data (optional).
+        - validation_labels: Labels corresponding to the validation data (optional).
+        - epochs: Number of epochs to train the model (default: 10).
+        - batch_size: Batch size for training (default: 32).
+        - model_save_name: The name to save the converted TensorFlow Lite model as.
+
+        Returns:
+        - A dictionary with the status and the path of the saved TensorFlow Lite model.
+        """
+        try:
+            # Define a basic TensorFlow model (or load a pre-defined one)
+            model = tf.keras.Sequential([
+                tf.keras.layers.InputLayer(input_shape=train_data.shape[1:]),
+                tf.keras.layers.Dense(128, activation='relu'),
+                tf.keras.layers.Dense(len(set(train_labels)), activation='softmax')
+            ])
+            
+            # Compile the TensorFlow model
+            model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+            # Train the TensorFlow model
+            model.fit(
+                train_data, 
+                train_labels, 
+                validation_data=(validation_data, validation_labels) if validation_data is not None else None, 
+                epochs=epochs, 
+                batch_size=batch_size
+            )
+            
+            # Convert the trained model to TensorFlow Lite
+            converter = tf.lite.TFLiteConverter.from_keras_model(model)
+            tflite_model = converter.convert()
+
+            # Save the TensorFlow Lite model to disk
+            file_path = self.data_dir / model_save_name
+            with open(file_path, 'wb') as f:
+                f.write(tflite_model)
+
+            # Log the deployment event
+            log_deployment_event(f"TFLite model saved to {file_path}")
+            
+            return {"status": "success", "model_path": str(file_path)}
+
+        except Exception as e:
+            # Log any errors that occur during the training or conversion process
+            log_deployment_event(f"Error during TFLite model training: {str(e)}", log_level="error")
+            
+            # Return an error status with the exception message
+            return {"status": "error", "message": str(e)}
