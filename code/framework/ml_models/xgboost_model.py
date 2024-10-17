@@ -2,6 +2,7 @@
 import xgboost as xgb
 from pathlib import Path
 from utils.logging_utils import log_deployment_event
+import numpy as np
 
 class XGBoostModel:
     def __init__(self, model_path=None, model=None):
@@ -94,4 +95,23 @@ class XGBoostModel:
             return {"status": "success", "message": "Training completed."}
         except Exception as e:
             log_deployment_event(f"Error during XGBoost model training: {str(e)}", log_level='error')
+            return {"status": "error", "message": str(e)}
+        
+    def evaluate(self, data_path, true_labels):
+        """
+        Evaluate the XGBoost model using the provided evaluation data.
+
+        Parameters:
+        - data_path: Path to evaluation data in DMatrix format.
+        - true_labels: True labels for the evaluation data.
+        
+        Returns:
+        - A dictionary with evaluation metrics (e.g., accuracy).
+        """
+        try:
+            dtest = xgb.DMatrix(data_path)
+            preds = self.model.predict(dtest)
+            accuracy = np.mean(preds == true_labels)
+            return {"accuracy": accuracy}
+        except Exception as e:
             return {"status": "error", "message": str(e)}

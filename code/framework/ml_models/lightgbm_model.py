@@ -2,6 +2,7 @@
 import lightgbm as lgb
 from pathlib import Path
 from utils.logging_utils import log_deployment_event
+import numpy as np
 
 class LightGBMModel:
     def __init__(self, model_path=None, model=None):
@@ -88,4 +89,23 @@ class LightGBMModel:
         except Exception as e:
             # Log the error
             log_deployment_event(f"Error during training: {str(e)}", log_level='error')
+            return {"status": "error", "message": str(e)}
+        
+    def evaluate(self, eval_data, eval_labels):
+        """
+        Evaluate the LightGBM model using the provided data and labels.
+
+        Parameters:
+        - eval_data: Features for evaluation (NumPy array or pandas DataFrame).
+        - eval_labels: True labels for evaluation (NumPy array or pandas DataFrame).
+        
+        Returns:
+        - A dictionary with evaluation metrics (e.g., accuracy).
+        """
+        try:
+            preds = self.model.predict(eval_data)
+            preds_binary = np.round(preds)  # Assuming binary classification, round predictions to 0 or 1
+            accuracy = np.mean(preds_binary == eval_labels)
+            return {"accuracy": accuracy}
+        except Exception as e:
             return {"status": "error", "message": str(e)}

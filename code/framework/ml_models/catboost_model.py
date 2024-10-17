@@ -2,6 +2,7 @@
 from catboost import CatBoostClassifier, Pool
 from pathlib import Path
 from utils.logging_utils import log_deployment_event
+import numpy as np
 
 class CatBoostModel:
     def __init__(self, model_path=None, model=None):
@@ -98,4 +99,22 @@ class CatBoostModel:
         except Exception as e:
             # Log the error
             log_deployment_event(f"Error during training: {str(e)}", log_level='error')
+            return {"status": "error", "message": str(e)}
+        
+    def evaluate(self, eval_data, eval_labels):
+        """
+        Evaluate the CatBoost model using the provided data and labels.
+
+        Parameters:
+        - eval_data: Features (NumPy array).
+        - eval_labels: Labels (NumPy array).
+        
+        Returns:
+        - A dictionary with evaluation metrics (e.g., accuracy).
+        """
+        try:
+            preds = self.model.predict(eval_data)
+            accuracy = np.mean(preds == eval_labels)
+            return {"accuracy": accuracy}
+        except Exception as e:
             return {"status": "error", "message": str(e)}

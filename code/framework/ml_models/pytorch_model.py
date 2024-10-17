@@ -130,3 +130,24 @@ class PyTorchModel:
             log_deployment_event(f"Error during PyTorch model training: {str(e)}",log_level='error')
             return{"status": "error", "message": str(e)}
     
+    def evaluate(self, eval_data, eval_labels):
+        """
+        Evaluate the PyTorch model using the provided evaluation data and labels.
+
+        Parameters:
+        - eval_data: Features (torch.Tensor or NumPy array).
+        - eval_labels: Labels (torch.Tensor or NumPy array).
+        
+        Returns:
+        - A dictionary with evaluation metrics (e.g., accuracy).
+        """
+        try:
+            self.model.eval()  # Set model to evaluation mode
+            with torch.no_grad():
+                outputs = self.model(torch.from_numpy(eval_data))
+                _, predicted = torch.max(outputs, 1)
+                correct = (predicted == torch.from_numpy(eval_labels)).sum().item()
+                accuracy = correct / len(eval_labels)
+                return {"accuracy": accuracy}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}

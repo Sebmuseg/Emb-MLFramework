@@ -2,6 +2,7 @@
 import tensorflow as tf
 from pathlib import Path
 from utils.logging_utils import log_deployment_event
+import numpy as np
 
 class TFLiteModel:
     def __init__(self, model_path=None, model=None):
@@ -136,4 +137,42 @@ class TFLiteModel:
             log_deployment_event(f"Error during TFLite model training: {str(e)}", log_level="error")
             
             # Return an error status with the exception message
+            return {"status": "error", "message": str(e)}
+        
+    def evaluate(self, eval_data, eval_labels):
+        """
+        Evaluate the TensorFlow Lite model using the provided data and labels.
+
+        Parameters:
+        - eval_data: Features for evaluation (NumPy array).
+        - eval_labels: True labels for evaluation (NumPy array).
+        
+        Returns:
+        - A dictionary with evaluation metrics (e.g., accuracy).
+        """
+        try:
+            input_details = self.interpreter.get_input_details()
+            output_details = self.interpreter.get_output_details()
+            
+            correct_predictions = 0
+
+            for i in range(len(eval_data)):
+                # Set input tensor
+                self.interpreter.set_tensor(input_details[0]['index'], [eval_data[i]])
+                
+                # Run inference
+                self.interpreter.invoke()
+                
+                # Get output tensor
+                output = self.interpreter.get_tensor(output_details[0]['index'])
+                predicted_label = np.argmax(output)
+
+                # Compare predicted label to the actual label
+                if predicted_label == eval_labels[i]:
+                    correct_predictions += 1
+
+            accuracy = correct_predictions / len(eval_labels)
+            return {"accuracy": accuracy}
+
+        except Exception as e:
             return {"status": "error", "message": str(e)}

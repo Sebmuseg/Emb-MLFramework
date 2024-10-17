@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from core.framework_api import FrameworkAPI
 from pydantic import BaseModel
-from utils.model_utils import train_model, evaluate_model, update_model_on_device, rollback_model_on_device
+from utils.model_utils import evaluate_model, update_model_on_device, rollback_model_on_device
 
 router = APIRouter()
 framework_api = FrameworkAPI()
@@ -53,7 +53,7 @@ async def save_model(model_name: str, file_path: str):
 @router.post("/model/train")
 def train_model_endpoint(request: TrainModelRequest):
     """
-    Endpoint to trigger the training of a model using the provided data and parameters.
+    API endpoint to trigger the training of a model using the provided data and parameters.
 
     Parameters:
     - request: Contains model_name (str), model_data_path (str), model_params (dict).
@@ -63,7 +63,7 @@ def train_model_endpoint(request: TrainModelRequest):
     """
     model_name = request.model_name
     model_data_path = request.model_data_path
-    model_params = request.model_params
+    model_params = request.model_params  # Model-specific parameters (flexible)
     
     try:
         # Retrieve the model class from FrameworkAPI and trigger the training process
@@ -72,8 +72,8 @@ def train_model_endpoint(request: TrainModelRequest):
         if not model:
             raise HTTPException(status_code=404, detail=f"Model {model_name} not found in the framework.")
         
-        # Assuming each model class has a `train` method that handles the training logic
-        training_result = model.train(model_data_path, model_params)
+        # Pass model_params and let each model handle its specific training needs
+        training_result = model.train(model_data_path, **model_params)
         
         return {
             "status": "Success", 
@@ -84,7 +84,7 @@ def train_model_endpoint(request: TrainModelRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error starting training for model {model_name}: {str(e)}")
 
-# Example: Evaluate a Model
+# Evaluate a Model
 @router.post("/model/evaluate")
 def evaluate_model_endpoint(model_name: str, test_data_path: str, metrics: list):
     """
@@ -107,7 +107,7 @@ def evaluate_model_endpoint(model_name: str, test_data_path: str, metrics: list)
         raise HTTPException(status_code=500, detail=f"Error evaluating model {model_name}: {str(e)}")
 
 
-# Example: Update a Model on a Device
+# Update a Model on a Device
 @router.post("/model/update")
 def update_model_endpoint(model_name: str, device_ip: str, deployment_path: str, model_format: str):
     """
@@ -136,7 +136,7 @@ def update_model_endpoint(model_name: str, device_ip: str, deployment_path: str,
 
 # Example: Rollback a Model on a Device
 @router.post("/model/rollback")
-def rollback_model_endpoint(device_ip: str, backup_path: str, deployment_path: str, model_format: str):
+def rollback_model_endpoint(device_ip: str, backup_path: str, deployment_path: str, model_format: str, username: str):
     """
     Rollback a model to a previous version on the target device.
 
@@ -145,6 +145,7 @@ def rollback_model_endpoint(device_ip: str, backup_path: str, deployment_path: s
     - backup_path: Path to the backup model.
     - deployment_path: Path where the current model is deployed.
     - model_format: The format of the model (e.g., ONNX, TensorFlow, etc.).
+    - username: The SSH login username for the target device.
 
     Returns:
     - JSON response confirming that the rollback was successful.

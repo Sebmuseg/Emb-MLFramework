@@ -3,6 +3,7 @@ import onnx
 import onnxruntime as rt
 from pathlib import Path
 from utils.logging_utils import log_deployment_event
+import numpy as np
 
 class ONNXModel:
     def __init__(self, model_path=None, model=None):
@@ -58,3 +59,36 @@ class ONNXModel:
             log_deployment_event(f"Error saving ONNX model: {str(e)}", log_level="error")
             return {"status": "error", "message": f"Error saving model: {str(e)}"}
         
+    def evaluate(self, eval_data, eval_labels):
+        """
+        Evaluate the ONNX model using the provided data and labels.
+
+        Parameters:
+        - eval_data: Features for evaluation (NumPy array).
+        - eval_labels: True labels for evaluation (NumPy array).
+        
+        Returns:
+        - A dictionary with evaluation metrics (e.g., accuracy).
+        """
+        try:
+            # Get input and output names
+            input_name = self.session.get_inputs()[0].name
+            output_name = self.session.get_outputs()[0].name
+
+            correct_predictions = 0
+
+            # Predict for each data point
+            for i in range(len(eval_data)):
+                input_data = eval_data[i].reshape(1, -1)  # Reshape if necessary
+                preds = self.session.run([output_name], {input_name: input_data})
+                predicted_label = np.argmax(preds)
+
+                # Compare predicted label with the true label
+                if predicted_label == eval_labels[i]:
+                    correct_predictions += 1
+
+            accuracy = correct_predictions / len(eval_labels)
+            return {"accuracy": accuracy}
+
+        except Exception as e:
+            return {"status": "error", "message": str(e)}

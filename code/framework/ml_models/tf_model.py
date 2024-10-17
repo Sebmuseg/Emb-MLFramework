@@ -101,3 +101,20 @@ class TensorFlowModel:
                 "status": "error",
                 "message": f"Error during training: {str(e)}"
             }
+            
+    def evaluate(self, eval_data, eval_labels):
+        """
+        Evaluate the TensorFlow model using the provided data and labels.
+
+        Parameters:
+        - eval_data: NumPy array or TensorFlow Tensor of evaluation features.
+        - eval_labels: NumPy array or TensorFlow Tensor of true labels.
+        
+        Returns:
+        - A dictionary with evaluation metrics (e.g., loss, accuracy).
+        """
+        try:
+            results = self.model.evaluate(eval_data, eval_labels)
+            return {"loss": results[0], "accuracy": results[1]}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}

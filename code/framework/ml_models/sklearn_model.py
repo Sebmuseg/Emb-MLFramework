@@ -112,3 +112,19 @@ class SklearnModel:
             log_deployment_event(f"Error during Scikit-learn model training: {str(e)}", log_level='error')
             return {"status": "error", "message": str(e)}
         
+    def evaluate(self, X, y):
+        """
+        Evaluate the Scikit-learn model using the provided data and labels.
+
+        Parameters:
+        - X: NumPy array or pandas DataFrame of features.
+        - y: NumPy array or pandas DataFrame of true labels.
+        
+        Returns:
+        - A dictionary with evaluation metrics (e.g., accuracy).
+        """
+        try:
+            accuracy = self.model.score(X, y)
+            return {"accuracy": accuracy}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
