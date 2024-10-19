@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from .monitoring_api import router as monitoring_router
-from .model_api import router as model_router
-from .logging_api import router as logging_router
-from .deployment_api import router as deployment_router
+from api.monitoring_api import router as monitoring_router
+from api.model_api import router as model_router
+from api.logging_api import router as logging_router
+from api.deployment_api import router as deployment_router
 
 # Create an instance of FastAPI
 app = FastAPI()

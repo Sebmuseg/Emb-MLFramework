@@ -1,24 +1,32 @@
-# Base image with Miniconda
+# Use the official Miniconda3 image as the base
 FROM continuumio/miniconda3
 
-# Set environment variables
-ENV PATH /opt/conda/envs/nicegui_env/bin:$PATH
-
-# Copy environment.yml if using conda as a base
-COPY ./code/framework/frontend/environment.yml /tmp/environment.yml
+# Copy the environment.yml to a temporary location
+COPY ./code/framework/frontend/environment.yml /tmp/
 
 # Create Conda environment for FeatherML
 RUN conda env create -f /tmp/environment.yml
 
-# Activate the environment
-SHELL ["conda", "activate", "nicegui_env"]
+# Clean up conda packages to reduce image size
+RUN conda clean -afy
 
-# Set the workdir and copy the project files
+# Set environment variables
+ENV PYTHONPATH="/app"
+
+# Set the working directory
 WORKDIR /app
-COPY ./code/framework/frontend /app
 
-# Expose the port
-EXPOSE 5001
+# Copy the project files into /app
+COPY ./code/framework/frontend/ /app
 
-# Entry point that ensures the Conda environment is fully activated
+# Activate the environment
+SHELL ["conda", "run", "-n", "nicegui_env", "/bin/bash", "-c"]
+
+# Expose port 5002 to the host
+EXPOSE 5002
+
+# Set the command to activate the environment and run demo.py
 CMD ["python", "demo.py"]
+
+
+
