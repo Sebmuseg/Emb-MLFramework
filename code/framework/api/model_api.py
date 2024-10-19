@@ -1,46 +1,49 @@
 from fastapi import APIRouter, HTTPException
 from core.framework_api import FrameworkAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from utils.model_utils import evaluate_model, update_model_on_device, rollback_model_on_device
 from utils.logging_utils import log_deployment_event
 
 router = APIRouter()
 framework_api = FrameworkAPI()
 
+class CustomBaseModel(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
 # Create a Pydantic model for validating input
-class loadModelRequest(BaseModel):
+class loadModelRequest(CustomBaseModel):
     model_name: str
     model_path: str
     framework_type: str
 
-class predictRequest(BaseModel):
+class predictRequest(CustomBaseModel):
     model_name: str
     input_data: dict
 
-class removeModelRequest(BaseModel):
+class removeModelRequest(CustomBaseModel):
     model_name: str
 
-class saveModelRequest(BaseModel):
+class saveModelRequest(CustomBaseModel):
     model_name: str
     file_path: str
 
-class TrainModelRequest(BaseModel):
+class TrainModelRequest(CustomBaseModel):
     model_name: str
     model_data_path: str
     model_params: dict
 
-class EvaluateModelRequest(BaseModel):
+class EvaluateModelRequest(CustomBaseModel):
     model_name: str
     test_data_path: str
     metrics: list
     
-class UpdateModelRequest(BaseModel):
+class UpdateModelRequest(CustomBaseModel):
     model_name: str
     device_ip: str
     deployment_path: str
     model_format: str
     
-class RollbackModelRequest(BaseModel):
+class RollbackModelRequest(CustomBaseModel):
     device_ip: str
     backup_path: str
     deployment_path: str

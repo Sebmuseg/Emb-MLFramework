@@ -8,13 +8,16 @@ from utils.model_utils import get_inference_service_name
 from deployment.service_management import restart_inference_service
 from deployment.deploy_model import package_model_in_docker, update_model
 from core.framework_api import FrameworkAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 router = APIRouter()
 framework = FrameworkAPI()
+
+class CustomBaseModel(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     
-class DeployModelRequest(BaseModel):
+class DeployModelRequest(CustomBaseModel):
     model_name: str
     device_ip: str
     model_format: str
@@ -22,14 +25,14 @@ class DeployModelRequest(BaseModel):
     device_username: str
     is_docker: bool = False
 
-class BackupModelRequest(BaseModel):
+class BackupModelRequest(CustomBaseModel):
     model_name: str
     device_ip: str
     device_username: str
     deployment_path: str
     model_extension: str
 
-class TransferModelRequest(BaseModel):
+class TransferModelRequest(CustomBaseModel):
     model_path: str 
     model_name: str 
     device_ip: str
@@ -37,13 +40,13 @@ class TransferModelRequest(BaseModel):
     deployment_path: str
     temp_model_name: str
     
-class DeployDockerModelRequest(BaseModel):
+class DeployDockerModelRequest(CustomBaseModel):
     model_name: str
     model_path: str
     dockerfile_template: str
     output_dir: str
     
-class UpdateModelRequest(BaseModel):
+class UpdateModelRequest(CustomBaseModel):
     model_name: str
     device_ip: str
     username: str
@@ -52,7 +55,7 @@ class UpdateModelRequest(BaseModel):
     backup_existing: bool = True
     restart_service: bool = True
     
-class RollbackModelRequest(BaseModel):
+class RollbackModelRequest(CustomBaseModel):
     device_ip: str
     backup_path: str
     deployment_path: str

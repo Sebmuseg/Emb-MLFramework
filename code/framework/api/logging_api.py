@@ -1,15 +1,18 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from utils.logging_utils import log_deployment_event, log_monitoring_event
 
 router = APIRouter()
 
-class LogEventRequest(BaseModel):
+class CustomBaseModel(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+class LogEventRequest(CustomBaseModel):
     model_name: str
     status: str
     details: str
 
-class MonitoringEventRequest(BaseModel):
+class MonitoringEventRequest(CustomBaseModel):
     device_ip: str
     resource_usage: dict
 
