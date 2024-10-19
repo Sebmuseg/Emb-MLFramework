@@ -27,6 +27,11 @@ def main_page():
         ui.button('Get Status', on_click=lambda: ui.notify(get_status()))
         ui.button('Update Config', on_click=lambda: ui.notify(update_config({'key': 'value'})))
 
+@ui.page('/health')
+def health_page():
+    ui.label('Health Check')
+    ui.notify({'status': 'running'})
+
 # Start the NiceGUI app
 if __name__ in {"__main__", "__mp_main__"}:
     ui.run(host='0.0.0.0', port=5002)
