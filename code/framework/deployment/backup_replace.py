@@ -2,7 +2,7 @@
 import paramiko
 import os
 from utils.logging_utils import log_deployment_event
-from service_management import stop_existing_container
+
 
 
 def backup_existing_model(device_ip, device_username, deployment_path, model_name, model_extension):

@@ -2,31 +2,23 @@
 FROM continuumio/miniconda3
 
 # Set environment variables
-ENV PATH /opt/conda/envs/featherml_env/bin:$PATH
-
-# Install system dependencies (build-essential includes gcc, g++, etc.)
-# RUN apt-get update && apt-get install -y \
-#     build-essential \
-#     gcc \
-#     g++ \
-#     make \
-#     && rm -rf /var/lib/apt/lists/*
+ENV PATH /opt/conda/envs/nicegui_env/bin:$PATH
 
 # Copy environment.yml if using conda as a base
-COPY ./code/deployment/environment.yml /tmp/environment.yml
+COPY ./code/framework/frontend/environment.yml /tmp/environment.yml
 
 # Create Conda environment for FeatherML
 RUN conda env create -f /tmp/environment.yml
 
 # Activate the environment
-SHELL ["conda", "run", "-n", "featherml_env", "/bin/bash", "-c"]
+SHELL ["conda", "activate", "nicegui_env"]
 
 # Set the workdir and copy the project files
 WORKDIR /app
-COPY ./code/framework /app
+COPY ./code/framework/frontend /app
 
 # Expose the port
-EXPOSE 5000
+EXPOSE 5001
 
-# Default command
-CMD ["/bin/bash"]
+# Entry point that ensures the Conda environment is fully activated
+CMD ["python", "demo.py"]

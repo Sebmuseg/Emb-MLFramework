@@ -11,12 +11,12 @@ scrape_configs:
   # Scrape your FeatherML API (adjust the IP/hostname and port as needed)
   - job_name: 'featherml_api'
     static_configs:
-      - targets: ['featherml_api:8000']
+      - targets: ['localhost:5002']
 
   # Scrape your FeatherML frontend
   - job_name: 'featherml_frontend'
     static_configs:
-      - targets: ['featherml_frontend:5001']
+      - targets: ['localhost:5001']
 
   # Scrape Grafana (optional)
   - job_name: 'grafana'

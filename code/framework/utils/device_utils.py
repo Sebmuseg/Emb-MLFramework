@@ -1,7 +1,7 @@
 # utils/device_utils.py
 import paramiko
 import os
-from logging_utils import log_deployment_event
+from utils.logging_utils import log_deployment_event
 
 
 def check_if_model_exists(device_ip, device_username, deployment_path, model_name, model_extension):

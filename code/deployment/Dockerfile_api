@@ -10,8 +10,8 @@ COPY ./code/deployment/environment.yml /tmp/environment.yml
 # Create Conda environment for FeatherML
 RUN conda env create -f /tmp/environment.yml
 
-# Activate the environment
-SHELL ["conda", "run", "-n", "featherml_env", "/bin/bash", "-c"]
+# Ensure conda is initialized in every new shell
+RUN echo "source /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
 
 # Arguments to conditionally install specific frameworks
 ARG INSTALL_TENSORFLOW=false
@@ -24,35 +24,35 @@ ARG INSTALL_LIGHTGBM=false
 ARG INSTALL_TFLITE=false
 
 # Install TensorFlow if specified
-RUN if [ "$INSTALL_TENSORFLOW" = "true" ]; then conda install -n featherml_env -c conda-forge tensorflow; fi
+RUN /bin/bash -c "source activate featherml_env && if [ \"$INSTALL_TENSORFLOW\" = \"true\" ]; then conda install -n featherml_env -c conda-forge tensorflow; fi"
 
 # Install PyTorch if specified
-RUN if [ "$INSTALL_PYTORCH" = "true" ]; then conda install -n featherml_env -c conda-forge pytorch torchvision torchaudio; fi
+RUN /bin/bash -c "source activate featherml_env && if [ \"$INSTALL_PYTORCH\" = \"true\" ]; then conda install -n featherml_env -c conda-forge pytorch torchvision torchaudio; fi"
 
 # Install ONNX if specified
-RUN if [ "$INSTALL_ONNX" = "true" ]; then conda install -n featherml_env -c conda-forge onnx onnxruntime; fi
+RUN /bin/bash -c "source activate featherml_env && if [ \"$INSTALL_ONNX\" = \"true\" ]; then conda install -n featherml_env -c conda-forge onnx onnxruntime; fi"
 
 # Install scikit-learn if specified
-RUN if [ "$INSTALL_SKLEARN" = "true" ]; then conda install -n featherml_env -c conda-forge scikit-learn; fi
+RUN /bin/bash -c "source activate featherml_env && if [ \"$INSTALL_SKLEARN\" = \"true\" ]; then conda install -n featherml_env -c conda-forge scikit-learn; fi"
 
 # Install XGBoost if specified
-RUN if [ "$INSTALL_XGBOOST" = "true" ]; then conda install -n featherml_env -c conda-forge xgboost; fi
+RUN /bin/bash -c "source activate featherml_env && if [ \"$INSTALL_XGBOOST\" = \"true\" ]; then conda install -n featherml_env -c conda-forge xgboost; fi"
 
 # Install CatBoost if specified
-RUN if [ "$INSTALL_CATBOOST" = "true" ]; then conda install -n featherml_env -c conda-forge catboost; fi
+RUN /bin/bash -c "source activate featherml_env && if [ \"$INSTALL_CATBOOST\" = \"true\" ]; then conda install -n featherml_env -c conda-forge catboost; fi"
 
 # Install LightGBM if specified
-RUN if [ "$INSTALL_LIGHTGBM" = "true" ]; then conda install -n featherml_env -c conda-forge lightgbm; fi
+RUN /bin/bash -c "source activate featherml_env && if [ \"$INSTALL_LIGHTGBM\" = \"true\" ]; then conda install -n featherml_env -c conda-forge lightgbm; fi"
 
 # Install TensorFlow Lite if specified (via pip)
-RUN if [ "$INSTALL_TFLITE" = "true" ]; then pip install tflite-runtime; fi
+RUN /bin/bash -c "source activate featherml_env && if [ \"$INSTALL_TFLITE\" = \"true\" ]; then pip install tflite-runtime; fi"
 
 # Set the workdir and copy the project files
 WORKDIR /app
 COPY ./code/framework .
 
 # Expose port for API
-EXPOSE 5001
+EXPOSE 5002
 
 # Start the FastAPI app
-CMD ["uvicorn", "api.__init__:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "api.__init__:app", "--host", "0.0.0.0", "--port", "5002"]

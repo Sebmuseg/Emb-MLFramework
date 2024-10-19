@@ -2,9 +2,9 @@
 import os
 import subprocess
 from utils.model_utils import get_model_extension, get_inference_service_name
-from transfer_model import transfer_model_to_device, transfer_docker_image_to_device
-from backup_replace import backup_existing_model, replace_model_on_device, docker_container_exists, backup_existing_docker_container, replace_docker_container
-from service_management import restart_inference_service, stop_existing_container, run_docker_container
+from deployment.transfer_model import transfer_model_to_device, transfer_docker_image_to_device
+from deployment.backup_replace import backup_existing_model, replace_model_on_device, docker_container_exists, backup_existing_docker_container
+from deployment.service_management import restart_inference_service, stop_existing_container, run_docker_container
 from utils.logging_utils import log_deployment_event
 from utils.device_utils import check_if_model_exists, check_disk_space, check_docker_installed, check_ssh_connection
 
