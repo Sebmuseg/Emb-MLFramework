@@ -17,3 +17,5 @@ dependencies:
       - skl2onnx
       - tf2onnx
       - tensorflow-model-optimization
+      - python-logstash
+      - prometheus-client

@@ -136,6 +136,76 @@ def model_management():
         # Fetch models from the API
         models = fetch_models()
         
+        def update_chart(selected_metric_1, selected_metric_2):
+            model_names = [model['model_name'] for model in models]
+            metric_1_data = [model.get('performance_metrics', {}).get(selected_metric_1, 0) for model in models]
+            metric_2_data = [model.get('performance_metrics', {}).get(selected_metric_2, 0) for model in models]
+
+            chart_data = {
+                'tooltip': {
+                    'trigger': 'axis',
+                    'formatter': """
+                    function (params) {
+                        let tooltipText = `<strong>${params[0].name}</strong><br>`;
+                        params.forEach((param, index) => {
+                            tooltipText += `${param.seriesName}: ${param.data}<br>`;
+                        });
+                        return tooltipText;
+                    }
+                    """
+                },
+                'xAxis': {
+                    'type': 'category',
+                    'data': model_names,
+                    'name': 'Model Name',
+                    'nameLocation': 'middle',
+                    'nameGap': 25
+                },
+                'yAxis': [
+                    {
+                        'type': 'value',
+                        'name': selected_metric_1.capitalize(),
+                        'position': 'left',
+                        'axisLabel': {'formatter': '{value}'}
+                    },
+                    {
+                        'type': 'value',
+                        'name': selected_metric_2.capitalize(),
+                        'position': 'right',
+                        'axisLabel': {'formatter': '{value}'}
+                    }
+                ],
+                'series': [
+                    {
+                        'name': selected_metric_1.capitalize(),
+                        'type': 'bar',
+                        'data': metric_1_data,
+                        'yAxisIndex': 0,
+                        'itemStyle': {'color': '#1f77b4'},
+                        'label': {
+                            'show': True,
+                            'position': 'insideTop',
+                            'formatter': '{c}',
+                            'color': 'white'
+                        }
+                    },
+                    {
+                        'name': selected_metric_2.capitalize(),
+                        'type': 'bar',
+                        'data': metric_2_data,
+                        'yAxisIndex': 1,
+                        'itemStyle': {'color': '#ff7f0e'},
+                        'label': {
+                            'show': True,
+                            'position': 'insideTop',
+                            'formatter': '{c}',
+                            'color': 'white'
+                        }
+                    }
+                ]
+            }
+            return chart_data
+        
         # Overall model statistics and chart
         with ui.card().classes('p-4 m-2 w-full'):
             ui.label('Overall Model Stats').classes('text-h6')
@@ -143,76 +213,21 @@ def model_management():
             active_models = sum(1 for model in models if random.choice([True, False]))  # Replace with actual logic
             ui.label(f'Active Models: {active_models}').classes('text-body1')
             
-        # Add a chart to visualize some metrics across models (this is an example of using echart)
+        # Initial setup for the UI
         with ui.card().classes('w-full'):
             ui.label('Performance Metrics').classes('text-h6')
 
-            # Prepare data for chart
-            model_names = [model['model_name'] for model in models]
-            accuracy_data = [model.get('performance_metrics', {}).get('accuracy', 0) for model in models]
-            rmse_data = [model.get('performance_metrics', {}).get('rmse', 0) for model in models]
+            # Create dropdown menus for selecting metrics
+            available_metrics = ['accuracy', 'rmse', 'mae', 'r2_score']
+            selected_metric_1 = ui.select(available_metrics, label='Select Metric 1').classes('mb-2')
+            selected_metric_2 = ui.select(available_metrics, label='Select Metric 2').classes('mb-2')
 
-            chart_data = {
-                'tooltip': {
-                    'trigger': 'axis',
-                    'axisPointer': {'type': 'shadow'}  # Shows tooltip on hover
-                },
-                'xAxis': {
-                    'type': 'category',
-                    'data': model_names,
-                    'name': 'Model Name',
-                    'nameLocation': 'middle',
-                    'nameGap': 25  # Distance from the label to the axis
-                },
-                'yAxis': [
-                    {
-                        'type': 'value',
-                        'name': 'Accuracy',
-                        'min': 0,
-                        'max': 1,
-                        'position': 'left',
-                        'axisLabel': {'formatter': '{value} %'}  # Adds a percentage sign
-                    },
-                    {
-                        'type': 'value',
-                        'name': 'RMSE',
-                        'min': 0,
-                        'position': 'right',
-                        'axisLabel': {'formatter': '{value}'}
-                    }
-                ],
-                'series': [
-                    {
-                        'name': 'Accuracy',
-                        'type': 'bar',
-                        'data': accuracy_data,
-                        'yAxisIndex': 0,  # Links to the first yAxis (Accuracy)
-                        'itemStyle': {'color': '#1f77b4'},  # Blue color
-                        'label': {
-                            'show': True,
-                            'position': 'insideTop',
-                            'formatter': '{c}',  # Shows values on top of the bars
-                            'color': 'white'
-                        }
-                    },
-                    {
-                        'name': 'RMSE',
-                        'type': 'bar',
-                        'data': rmse_data,
-                        'yAxisIndex': 1,  # Links to the second yAxis (RMSE)
-                        'itemStyle': {'color': '#ff7f0e'},  # Orange color
-                        'label': {
-                            'show': True,
-                            'position': 'insideTop',
-                            'formatter': '{c}',  # Shows values on top of the bars
-                            'color': 'white'
-                        }
-                    }
-                ]
-            }
-            
-            ui.echart(chart_data).classes('w-full h-64')
+            # Initial chart data with default metric selections
+            chart = ui.echart(update_chart('accuracy', 'rmse')).classes('w-full h-64')
 
+            # Update chart dynamically when selections change
+            selected_metric_1.on('change', lambda value: chart.update(update_chart(selected_metric_1.value, selected_metric_2.value)))
+            selected_metric_2.on('change', lambda value: chart.update(update_chart(selected_metric_1.value, selected_metric_2.value)))
         # Create a grid layout for the cards
         with ui.row().classes('flex-wrap justify-around'):  # Ensures that items wrap and spread evenly across rows
             for model in models:

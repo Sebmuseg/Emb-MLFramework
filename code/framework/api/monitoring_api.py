@@ -1,7 +1,13 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, BackgroundTasks
 import psutil
+from utils.resource_monitoring import monitor_system_resources
 
 router = APIRouter()
+
+# Variables to control the background task and its state
+monitoring_task_running = False
+collected_data = []
+background_task = None
 
 # Example: Monitor System Resources
 @router.get("/monitor/system_resources")
@@ -100,3 +106,38 @@ def monitor_device_metrics(device_ip: str):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+# API to start the resource monitoring task
+@router.post("/start-monitoring/")
+def start_monitoring(background_tasks: BackgroundTasks, cpu_threshold: int = 80, memory_threshold: int = 70, disk_threshold: int = 90):
+    global monitoring_task_running, background_task
+    if not monitoring_task_running:
+        monitoring_task_running = True
+        resource_thresholds = {'cpu': cpu_threshold, 'memory': memory_threshold, 'disk': disk_threshold}
+        background_tasks.add_task(monitor_system_resources, resource_thresholds)
+        return {"status": "Monitoring started"}
+    else:
+        return {"status": "Monitoring is already running"}
+
+# API to stop the resource monitoring task
+@router.post("/stop-monitoring/")
+def stop_monitoring():
+    global monitoring_task_running
+    if monitoring_task_running:
+        monitoring_task_running = False
+        return {"status": "Monitoring stopped"}
+    else:
+        return {"status": "No monitoring task is running"}
+
+# API to check the status of the monitoring task
+@router.get("/monitoring-status/")
+def get_monitoring_status():
+    if monitoring_task_running:
+        return {"status": "Monitoring is running", "data_collected": len(collected_data)}
+    else:
+        return {"status": "Monitoring is not running"}
+
+# API to get the collected data
+@router.get("/monitoring-data/")
+def get_monitoring_data():
+    return {"collected_data": collected_data}
