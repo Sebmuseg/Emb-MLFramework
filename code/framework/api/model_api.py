@@ -5,7 +5,18 @@ from utils.model_utils import evaluate_model, update_model_on_device, rollback_m
 from utils.logging_utils import log_deployment_event
 
 router = APIRouter()
-framework_api = FrameworkAPI()
+framework_api = FrameworkAPI(metadata_dir='./model_metadata')
+
+#sample model metadata
+model_metadata = {
+    "model_name": "sample_model",
+    "framework_type": "onnx",
+    "model_path": "/path/to/your/model.onnx",
+    "version": "1.0.0",
+    "description": "This is a sample ONNX model.",
+    "additional_params": {}
+}
+framework_api.register_model("sample_model", model_metadata)
 
 class CustomBaseModel(BaseModel):
     model_config = ConfigDict(protected_namespaces=())

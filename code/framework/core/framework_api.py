@@ -3,6 +3,11 @@ from core.framework import MLFramework
 from utils.logging_utils import log_deployment_event
 import subprocess
 import importlib
+import logging
+import threading
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 class FrameworkAPI:
     """
@@ -10,19 +15,52 @@ class FrameworkAPI:
     load them into the framework, perform predictions, and handle deployment.
     """
 
-    def __init__(self):
+    def __init__(self, metadata_dir: str = './model_metadata'):
         """
         Initializes the FrameworkAPI by creating an instance of the MLFramework 
         which will store and manage models.
-        """
-        self.framework = MLFramework()
         
-    def _install_if_missing(self, package_name):
-        try:
-            importlib.import_module(package_name)
-        except ImportError:
-            subprocess.check_call(["pip", "install", package_name])
+        Attributes:
+        - framework: An instance of MLFramework to manage machine learning models.
+        - installed_packages: A set to keep track of installed packages.
+        - install_lock: A threading lock to ensure thread-safe package installation.
+        """
+        self.framework = MLFramework(metadata_dir=metadata_dir)
+        self.installed_packages = set()
+        self.install_lock = threading.Lock()
+        
+    def _install_if_missing(self, package_name: str) -> None:
+        """
+        Installs the specified package if it is not already installed.
 
+        Parameters:
+        - package_name: The name of the package to check and install if missing.
+
+        Raises:
+        - RuntimeError: If the package could not be installed or imported.
+        """
+        with self.install_lock:
+            if package_name in self.installed_packages:
+                return  # Package already installed
+
+            try:
+                importlib.import_module(package_name)
+                self.installed_packages.add(package_name)
+                logger.info(f"Package '{package_name}' is already installed.")
+            except ImportError:
+                logger.info(f"Package '{package_name}' not found. Installing...")
+                try:
+                    subprocess.check_call(["pip", "install", package_name])
+                    importlib.import_module(package_name)
+                    self.installed_packages.add(package_name)
+                    logger.info(f"Package '{package_name}' installed successfully.")
+                except subprocess.CalledProcessError as e:
+                    logger.error(f"Failed to install package '{package_name}': {e}")
+                    raise RuntimeError(f"Could not install package '{package_name}'") from e
+                except ImportError as e:
+                    logger.error(f"Package '{package_name}' was installed but could not be imported: {e}")
+                    raise RuntimeError(f"Could not import package '{package_name}' after installation") from e
+                
     def _get_model_class(self, framework_type, model_path=None):
         """
         Helper method to return the appropriate model class based on the framework type.
@@ -31,58 +69,53 @@ class FrameworkAPI:
         - framework_type: The type of the machine learning framework (e.g., 'tensorflow', 'sklearn', etc.).
         - model_path: The path to the model file that needs to be loaded.
 
-        Returns: An instance of the corresponding model class (e.g., TensorFlowModel).
+        Returns: An instance of the corresponding model class.
 
         Raises:
         - ValueError: If the framework type is not supported.
+        - RuntimeError: If the package installation fails.
         """
-        if framework_type == 'tensorflow':
-            self._install_if_missing('tensorflow')
-            TensorFlowModel = importlib.import_module('ml_models.tf_model').TensorFlowMode
-            return TensorFlowModel(model_path)
-        elif framework_type == 'sklearn':
-            self._install_if_missing('scikit-learn')
-            SklearnModel = importlib.import_module('ml_models.sklearn_model').SklearnModel
-            return SklearnModel(model_path)
-        elif framework_type == 'xgboost':
-            self._install_if_missing('xgboost')
-            XGBoostModel = importlib.import_module('ml_models.xgboost_model').XGBoostModel
-            return XGBoostModel(model_path)
-        elif framework_type == 'lightgbm':
-            self._install_if_missing('lightgbm')
-            LightGBMModel = importlib.import_module('ml_models.lightgbm_model').LightGBMModel
-            return LightGBMModel(model_path)
-        elif framework_type == 'pytorch':
-            self._install_if_missing('torch')
-            PyTorchModel = importlib.import_module('ml_models.pytorch_model').PyTorchModel
-            return PyTorchModel(model_path)
-        elif framework_type == 'catboost':
-            self._install_if_missing('catboost')
-            CatBoostModel = importlib.import_module('ml_models.catboost_model').CatBoostModel
-            return CatBoostModel(model_path)
-        elif framework_type == 'onnx':
-            self._install_if_missing('onnx')
-            ONNXModel = importlib.import_module('ml_models.onnx_model').ONNXModel
-            return ONNXModel(model_path)
-        elif framework_type == 'tflite':
-            self._install_if_missing('tflite')
-            TFLiteModel = importlib.import_module('ml_models.tflite_model').TFLiteModel
-            return TFLiteModel(model_path)
-        else:
+        framework_mapping = {
+            'tensorflow': ('tensorflow', 'ml_models.tf_model', 'TensorFlowModel'),
+            'sklearn': ('scikit-learn', 'ml_models.sklearn_model', 'SklearnModel'),
+            'xgboost': ('xgboost', 'ml_models.xgboost_model', 'XGBoostModel'),
+            'lightgbm': ('lightgbm', 'ml_models.lightgbm_model', 'LightGBMModel'),
+            'pytorch': ('torch', 'ml_models.pytorch_model', 'PyTorchModel'),
+            'catboost': ('catboost', 'ml_models.catboost_model', 'CatBoostModel'),
+            'onnx': ('onnx', 'ml_models.onnx_model', 'ONNXModel'),
+            'tflite': ('tflite', 'ml_models.tflite_model', 'TFLiteModel'),
+        }
+
+        if framework_type not in framework_mapping:
             raise ValueError(f"Unsupported framework: {framework_type}")
 
-    def load_model(self, model_name, model_path, framework_type):
+        package_name, module_path, class_name = framework_mapping[framework_type]
+        self._install_if_missing(package_name)
+
+        try:
+            module = importlib.import_module(module_path)
+            ModelClass = getattr(module, class_name)
+            return ModelClass(model_path)
+        except ImportError as e:
+            logger.error(f"Could not import module '{module_path}': {e}")
+            raise
+        except AttributeError as e:
+            logger.error(f"Class '{class_name}' not found in module '{module_path}': {e}")
+            raise
+
+    def load_model(self, model_name: str, model_path: str, framework_type: str) -> bool:
         """
         Loads a machine learning model into the framework.
 
         Parameters:
-        - model_name: The name to assign to the model in the framework.
-        - model_path: The path to the model file that needs to be loaded.
-        - framework_type: The type of the machine learning framework (e.g., 'tensorflow', 'sklearn', etc.).
+        - model_name (str): The name to assign to the model in the framework.
+        - model_path (str): The path to the model file that needs to be loaded.
+        - framework_type (str): The type of the machine learning framework (e.g., 'tensorflow', 'sklearn', etc.).
 
         Logs a deployment event upon successful loading of the model.
 
-        Returns: True if the model is loaded successfully, False otherwise.
+        Returns:
+        - bool: True if the model is loaded successfully, False otherwise.
 
         Raises:
         - ValueError: If the framework type is not supported.
@@ -93,10 +126,34 @@ class FrameworkAPI:
             log_deployment_event(f"Model {model_name} successfully loaded.")
             return True
         except ValueError as ve:
-            log_deployment_event(f"Failed to load model {model_name}: {str(ve)}")
+            log_deployment_event(f"Failed to load model {model_name}: {str(ve)}",log_level="error")
             raise
         except Exception as e:
-            log_deployment_event(f"Unexpected error while loading model {model_name}: {str(e)}")
+            log_deployment_event(f"Unexpected error while loading model {model_name}: {str(e)}", log_level="error")
+            return False
+        
+    def register_model(self, model_name: str, metadata: dict):
+        """
+        Registers a model with the given name and metadata.
+
+        This method saves the provided metadata for the specified model name
+        using the framework's save_metadata method. If the operation is successful,
+        it logs an informational message and returns True. If an error occurs,
+        it logs the exception and returns False.
+
+        Args:
+            model_name (str): The name of the model to register.
+            metadata (dict): A dictionary containing metadata for the model.
+
+        Returns:
+            bool: True if the model was successfully registered, False otherwise.
+        """
+        try:
+            self.framework.save_metadata(model_name, metadata)
+            logger.info(f"Model '{model_name}' registered with metadata.")
+            return True
+        except Exception as e:
+            logger.exception(f"Error registering model '{model_name}': {e}")
             return False
 
     def remove_model(self, model_name):
