@@ -22,7 +22,7 @@ Functions:
 The application runs on host '0.0.0.0' and port 5002.
 """
 
-API_URL = 'http://localhost/api'  # Ensure that this URL is reachable from the app
+API_URL = 'http://featherml_api:5001/api'
 
 # Create plotly figure to display metrics in application
 import plotly.express as px
@@ -67,40 +67,26 @@ def fetch_model_metrics(model_id):
         return {}
 
 def show_model_details(model):
-    model_data = fetch_model_metrics(model)
-
-    if 'error' in model_data:
-        ui.notify(model_data['error'])
-        return
     with ui.dialog() as dialog:
         with ui.card():
-            ui.label(f"Metrics for {model_data['model_name']}").classes('text-h5')
+            ui.label(f"Details for {model['model_name']}").classes('text-h5')
             ui.markdown(f"""
-            **Framework:** {model_data['framework_type']}
-            **Version:** {model_data['version']}
-            **Description:** {model_data['description']}
-            **RMSE:** {model_data['performance_metrics']['rmse']}
-            **MAE:** {model_data['performance_metrics']['mae']}
-            **R² Score:** {model_data['performance_metrics']['r2_score']}
-            **Created At:** {model_data['created_at']}
-            **Updated At:** {model_data['updated_at']}
+            **Framework:** {model['framework_type']}
+            **Version:** {model['version']}
+            **Description:** {model['description']}
+            **Model Path:** {model['model_path']}
             """)
 
-            # EChart for visualizing performance metrics
-            chart_data = {
-                'xAxis': {'type': 'category', 'data': ['RMSE', 'MAE', 'R² Score']},
-                'yAxis': {'type': 'value'},
-                'series': [{
-                    'name': 'Metric Value',
-                    'type': 'bar',
-                    'data': [
-                        model_data['performance_metrics']['rmse'],
-                        model_data['performance_metrics']['mae'],
-                        model_data['performance_metrics']['r2_score']
-                    ]
-                }]
-            }
-            ui.echart(chart_data).classes('w-full h-64')
+            # Safely access performance_metrics, defaulting to an empty dict if not present
+            metrics = model.get('performance_metrics', {})
+            if metrics:
+                ui.label('Performance Metrics').classes('text-h6')
+                ui.markdown(f"""
+                {', '.join([f'{metric}: {value}' for metric, value in metrics.items()])}
+                """)
+            else:
+                ui.markdown("No performance metrics available.")
+
             ui.button('Close', on_click=dialog.close)
 
     dialog.open()
@@ -144,32 +130,123 @@ def dashboard():
 @ui.page('/models')
 def model_management():
     create_header()
-    with ui.column():
+    with ui.column().classes('w-full'):
         ui.label('Model Management').classes('text-h4 text-center')
+
+        # Fetch models from the API
         models = fetch_models()
-        for model in models:
-            with ui.card().classes('p-4 m-2'):
-                ui.label(model['name']).classes('text-h6')
-                ui.label(f"Version: {model['version']}").classes('text-body1')
-                ui.label(f"Size: {model['size_mb']} MB").classes('text-body1')
-                ui.label(f"Accuracy: {model['accuracy']}%").classes('text-body1')
-                with ui.row().classes('justify-between'):
-                    ui.button('Trigger', on_click=lambda m=model: ui.notify(f'{m["name"]} triggered!'))
-                    ui.button('Configure', on_click=lambda m=model: ui.notify(f'Configure {m["name"]}'))
-                    ui.button('View', on_click=lambda m=model: show_model_details(m))
         
-        with ui.card().classes('p-4 m-2'):
+        # Overall model statistics and chart
+        with ui.card().classes('p-4 m-2 w-full'):
             ui.label('Overall Model Stats').classes('text-h6')
             ui.label(f'Total Models: {len(models)}').classes('text-body1')
-            active_models = sum(1 for model in models if random.choice([True, False]))
+            active_models = sum(1 for model in models if random.choice([True, False]))  # Replace with actual logic
             ui.label(f'Active Models: {active_models}').classes('text-body1')
-            average_accuracy = sum(model['accuracy'] for model in models) / len(models) if models else 0
-            ui.label(f'Average Accuracy: {average_accuracy:.2f}%').classes('text-body1')
             
+        # Add a chart to visualize some metrics across models (this is an example of using echart)
         with ui.card().classes('w-full'):
-            ui.label('Linear Regression Demo').classes('text-h6')
-            ui.button('Update Model', on_click=update_model).classes('my-2')
-            ui.echart(fig).classes('w-full h-64')
+            ui.label('Performance Metrics').classes('text-h6')
+
+            # Prepare data for chart
+            model_names = [model['model_name'] for model in models]
+            accuracy_data = [model.get('performance_metrics', {}).get('accuracy', 0) for model in models]
+            rmse_data = [model.get('performance_metrics', {}).get('rmse', 0) for model in models]
+
+            chart_data = {
+                'tooltip': {
+                    'trigger': 'axis',
+                    'axisPointer': {'type': 'shadow'}  # Shows tooltip on hover
+                },
+                'xAxis': {
+                    'type': 'category',
+                    'data': model_names,
+                    'name': 'Model Name',
+                    'nameLocation': 'middle',
+                    'nameGap': 25  # Distance from the label to the axis
+                },
+                'yAxis': [
+                    {
+                        'type': 'value',
+                        'name': 'Accuracy',
+                        'min': 0,
+                        'max': 1,
+                        'position': 'left',
+                        'axisLabel': {'formatter': '{value} %'}  # Adds a percentage sign
+                    },
+                    {
+                        'type': 'value',
+                        'name': 'RMSE',
+                        'min': 0,
+                        'position': 'right',
+                        'axisLabel': {'formatter': '{value}'}
+                    }
+                ],
+                'series': [
+                    {
+                        'name': 'Accuracy',
+                        'type': 'bar',
+                        'data': accuracy_data,
+                        'yAxisIndex': 0,  # Links to the first yAxis (Accuracy)
+                        'itemStyle': {'color': '#1f77b4'},  # Blue color
+                        'label': {
+                            'show': True,
+                            'position': 'insideTop',
+                            'formatter': '{c}',  # Shows values on top of the bars
+                            'color': 'white'
+                        }
+                    },
+                    {
+                        'name': 'RMSE',
+                        'type': 'bar',
+                        'data': rmse_data,
+                        'yAxisIndex': 1,  # Links to the second yAxis (RMSE)
+                        'itemStyle': {'color': '#ff7f0e'},  # Orange color
+                        'label': {
+                            'show': True,
+                            'position': 'insideTop',
+                            'formatter': '{c}',  # Shows values on top of the bars
+                            'color': 'white'
+                        }
+                    }
+                ]
+            }
+            
+            ui.echart(chart_data).classes('w-full h-64')
+
+        # Create a grid layout for the cards
+        with ui.row().classes('flex-wrap justify-around'):  # Ensures that items wrap and spread evenly across rows
+            for model in models:
+                with ui.card().classes('p-2 m-2 w-1/4'):  # Adjusts card size to be smaller (1/4 of the row width)
+                    # Display model name, framework, and version
+                    ui.label(model['model_name']).classes('text-h6')
+                    ui.label(f"Framework: {model['framework_type']}").classes('text-body1')
+                    ui.label(f"Version: {model['version']}").classes('text-body1')
+                    ui.label(f"Description: {model['description']}").classes('text-body2')
+                    
+                    # Display performance metrics (handle different types of metrics dynamically)
+                    metrics = model.get('performance_metrics', {})
+                    if metrics:
+                        ui.label('Performance Metrics:').classes('text-h6')
+                        with ui.column():
+                            for metric, value in metrics.items():
+                                ui.label(f"{metric.capitalize()}: {value}").classes('text-body2')
+
+                    # Display additional parameters
+                    additional_params = model.get('additional_params', {})
+                    if additional_params:
+                        ui.label('Additional Parameters:').classes('text-h6')
+                        with ui.column():
+                            for param, value in additional_params.items():
+                                ui.label(f"{param}: {value}").classes('text-body2')
+
+                    # Action buttons (Trigger, Configure, View Details)
+                    with ui.row().classes('justify-between'):
+                        ui.button('Trigger', on_click=lambda m=model: ui.notify(f'{m["model_name"]} triggered!'))
+                        ui.button('Configure', on_click=lambda m=model: ui.notify(f'Configure {m["model_name"]}'))
+                        ui.button('View', on_click=lambda m=model: show_model_details(m))
+
+        
+
 
 @ui.page('/analytics')
 def analytics():
