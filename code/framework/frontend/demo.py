@@ -1,23 +1,41 @@
-from nicegui import ui
+from nicegui import ui, app
 import requests
 import random
 from io import BytesIO
 import base64
+from fastapi.responses import RedirectResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 
 API_URL = 'http://localhost/api'  # Ensure that this URL is reachable from the app
 
-# Global authentication state (for simplicity)
-user_authenticated = False
+# List of routes that don't require authentication
+unrestricted_routes = {'/login', '/api', '/health'}
+
+class AuthMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        if not app.storage.user.get('authenticated', False):
+            if not request.url.path.startswith('/_nicegui') and request.url.path not in unrestricted_routes:
+                app.storage.user['referrer_path'] = request.url.path  # Remember where the user wanted to go
+                return RedirectResponse('/login')
+        return await call_next(request)
+
+# Add the authentication middleware to the app
+app.add_middleware(AuthMiddleware)
 
 def login(username, password):
-    global user_authenticated
     # Replace with actual authentication logic
     if username == 'admin' and password == 'admin':
-        user_authenticated = True
+        app.storage.user.update({'username': username, 'authenticated': True})
         ui.notify('Login successful!')
+        # ui.navigate.to(app.storage.user.get('referrer_path', '/'))  # Go back to where the user wanted to go
         ui.navigate.to('/')
     else:
         ui.notify('Invalid credentials')
+
+def logout():
+    app.storage.user.clear()
+    ui.notify('Logged out successfully')
+    ui.navigate.to('/login')
 
 def fetch_models():
     try:
@@ -27,7 +45,7 @@ def fetch_models():
     except requests.RequestException as e:
         ui.notify(f"Error fetching models: {e}")
         return []
-    
+
 def fetch_model_metrics(model_id):
     try:
         response = requests.get(f'{API_URL}/models/{model_id}/metrics')
@@ -67,22 +85,19 @@ def show_model_details(model):
                 }
                 ui.chart(chart_data).classes('w-full h-64')
             ui.button('Close', on_click=dialog.close)
-    dialog.open()
+    dialog.navigate.to()
 
 @ui.page('/login')
 def login_page():
-    ui.label('Please Log In').classes('text-h4 text-center')
-    username = ui.input('Username')
-    password = ui.input('Password', password=True)
-    ui.button('Login', on_click=lambda: login(username.value, password.value))
-
-def require_authentication(page_function):
-    def wrapper():
-        if not user_authenticated:
-            ui.navigate.to('/login')
-        else:
-            page_function()
-    return wrapper
+    if app.storage.user.get('authenticated', False):
+        return RedirectResponse('/')
+    def try_login():
+        login(username.value, password.value)
+    with ui.card().classes('absolute-center'):
+        ui.label('Please Log In').classes('text-h4 text-center')
+        username = ui.input('Username').on('keydown.enter', try_login)
+        password = ui.input('Password', password=True).on('keydown.enter', try_login)
+        ui.button('Login', on_click=try_login)
 
 def create_header():
     with ui.header().classes('justify-between'):
@@ -92,9 +107,9 @@ def create_header():
             ui.link('Models', '/models').classes('text-white text-decoration-none')
             ui.link('Analytics', '/analytics').classes('text-white text-decoration-none')
             ui.link('Configuration', '/config').classes('text-white text-decoration-none')
+            ui.button('Logout', on_click=logout).classes('text-white')
 
 @ui.page('/')
-@require_authentication
 def dashboard():
     create_header()
     with ui.column():
@@ -114,7 +129,6 @@ def dashboard():
             ui.button('Refresh Data', on_click=lambda: ui.notify('Data refreshed!'))
 
 @ui.page('/models')
-@require_authentication
 def model_management():
     create_header()
     with ui.column():
@@ -145,7 +159,6 @@ def model_management():
             ui.label(f'Average Accuracy: {average_accuracy:.2f}%').classes('text-body1')
 
 @ui.page('/analytics')
-@require_authentication
 def analytics():
     create_header()
     # Analytics content here
@@ -177,11 +190,14 @@ def analytics():
                 ui.image(f'data:image/png;base64,{img_data}')
 
 @ui.page('/config')
-@require_authentication
 def config_page():
     create_header()
     # Add configuration management content here
 
-# Start the NiceGUI app
+@ui.page('/health')
+def health_check():
+    return {'status': 'Healthy'}
+
+# Run the NiceGUI app with a storage secret for session security
 if __name__ in {"__main__", "__mp_main__"}:
-    ui.run(host='0.0.0.0', port=5002)
+    ui.run(host='0.0.0.0', port=5002, storage_secret='CHANGE_THIS_SECRET')

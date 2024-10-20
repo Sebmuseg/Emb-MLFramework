@@ -29,4 +29,5 @@ EXPOSE 5002
 # CMD ["python", "demo.py"]
 
 # Set the command to run demo.py within the conda environment
-CMD ["conda", "run", "--no-capture-output", "-n", "nicegui_env", "python", "demo.py"]
+# CMD ["conda", "run", "--no-capture-output", "-n", "nicegui_env", "python", "demo.py"]
+CMD ["conda", "run", "--no-capture-output", "-n", "nicegui_env", "python", "main.py"]

@@ -6,10 +6,12 @@ dependencies:
   - requests
   - prometheus_client
   - grafana-client
+  - fastapi
+  - plotly
+  - pandas
+  - uvicorn
+  - pydantic
+  - elasticsearch
   - pip
   - pip:
       - nicegui
-      - fastapi
-      - uvicorn
-      - pydantic
-      - elasticsearch
