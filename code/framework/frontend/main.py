@@ -130,104 +130,108 @@ def dashboard():
 @ui.page('/models')
 def model_management():
     create_header()
-    with ui.column().classes('w-full'):
-        ui.label('Model Management').classes('text-h4 text-center')
 
-        # Fetch models from the API
-        models = fetch_models()
-        
-        def update_chart(selected_metric_1, selected_metric_2):
-            model_names = [model['model_name'] for model in models]
-            metric_1_data = [model.get('performance_metrics', {}).get(selected_metric_1, 0) for model in models]
-            metric_2_data = [model.get('performance_metrics', {}).get(selected_metric_2, 0) for model in models]
+    # Fetch models from the API
+    models = fetch_models()
 
-            chart_data = {
-                'tooltip': {
-                    'trigger': 'axis',
-                    'formatter': """
-                    function (params) {
-                        let tooltipText = `<strong>${params[0].name}</strong><br>`;
-                        params.forEach((param, index) => {
-                            tooltipText += `${param.seriesName}: ${param.data}<br>`;
-                        });
-                        return tooltipText;
-                    }
-                    """
+    # Function to generate chart data with selected metrics
+    def get_chart_data(selected_metric_1, selected_metric_2):
+        model_names = [model['model_name'] for model in models]
+        metric_1_data = [model.get('performance_metrics', {}).get(selected_metric_1, 0) for model in models]
+        metric_2_data = [model.get('performance_metrics', {}).get(selected_metric_2, 0) for model in models]
+
+        return {
+            'tooltip': {
+                'trigger': 'axis',
+                'axisPointer': {'type': 'shadow'},  # Shows tooltip on hover
+            },
+            'xAxis': {
+                'type': 'category',
+                'data': model_names,
+                'name': 'Model Name',
+                'nameLocation': 'middle',
+                'nameGap': 25,
+            },
+            'yAxis': [
+                {
+                    'type': 'value',
+                    'name': selected_metric_1.capitalize(),
+                    'position': 'left',
+                    'axisLabel': {'formatter': '{value}'},
                 },
-                'xAxis': {
-                    'type': 'category',
-                    'data': model_names,
-                    'name': 'Model Name',
-                    'nameLocation': 'middle',
-                    'nameGap': 25
+                {
+                    'type': 'value',
+                    'name': selected_metric_2.capitalize(),
+                    'position': 'right',
+                    'axisLabel': {'formatter': '{value}'},
+                }
+            ],
+            'series': [
+                {
+                    'name': selected_metric_1.capitalize(),
+                    'type': 'bar',
+                    'data': metric_1_data,
+                    'yAxisIndex': 0,
+                    'itemStyle': {'color': '#1f77b4'},
+                    'label': {
+                        'show': True,
+                        'position': 'insideTop',
+                        'formatter': '{c}',
+                        'color': 'white',
+                    },
                 },
-                'yAxis': [
-                    {
-                        'type': 'value',
-                        'name': selected_metric_1.capitalize(),
-                        'position': 'left',
-                        'axisLabel': {'formatter': '{value}'}
+                {
+                    'name': selected_metric_2.capitalize(),
+                    'type': 'bar',
+                    'data': metric_2_data,
+                    'yAxisIndex': 1,
+                    'itemStyle': {'color': '#ff7f0e'},
+                    'label': {
+                        'show': True,
+                        'position': 'insideTop',
+                        'formatter': '{c}',
+                        'color': 'white',
                     },
-                    {
-                        'type': 'value',
-                        'name': selected_metric_2.capitalize(),
-                        'position': 'right',
-                        'axisLabel': {'formatter': '{value}'}
-                    }
-                ],
-                'series': [
-                    {
-                        'name': selected_metric_1.capitalize(),
-                        'type': 'bar',
-                        'data': metric_1_data,
-                        'yAxisIndex': 0,
-                        'itemStyle': {'color': '#1f77b4'},
-                        'label': {
-                            'show': True,
-                            'position': 'insideTop',
-                            'formatter': '{c}',
-                            'color': 'white'
-                        }
-                    },
-                    {
-                        'name': selected_metric_2.capitalize(),
-                        'type': 'bar',
-                        'data': metric_2_data,
-                        'yAxisIndex': 1,
-                        'itemStyle': {'color': '#ff7f0e'},
-                        'label': {
-                            'show': True,
-                            'position': 'insideTop',
-                            'formatter': '{c}',
-                            'color': 'white'
-                        }
-                    }
-                ]
-            }
-            return chart_data
+                }
+            ]
+        }
+
+    # Set the initial values for dropdowns
+    initial_metric_1 = 'accuracy'
+    initial_metric_2 = 'rmse'
+
+    # Overall model statistics and chart
+    with ui.card().classes('p-4 m-2 w-full'):
+        ui.label('Overall Model Stats').classes('text-h6')
+        ui.label(f'Total Models: {len(models)}').classes('text-body1')
+        active_models = sum(1 for model in models if random.choice([True, False]))  # Replace with actual logic
+        ui.label(f'Active Models: {active_models}').classes('text-body1')
+
+    # Initial setup for the UI
+    with ui.card().classes('w-full'):
+        ui.label('Performance Metrics').classes('text-h6')
+
+        # Create dropdown menus for selecting metrics
+        available_metrics = ['accuracy', 'rmse', 'mae', 'r2_score']
+
+        # Dropdowns for selecting metrics
+        selected_metric_1 = ui.select(available_metrics, value=initial_metric_1, label='Select Metric 1').classes('mb-2')
+        selected_metric_2 = ui.select(available_metrics, value=initial_metric_2, label='Select Metric 2').classes('mb-2')
+
+        # Initial chart data with default metric selections
+        chart = ui.echart(get_chart_data(initial_metric_1, initial_metric_2)).classes('w-full h-64')
+
+        # Refresh button to update the chart
+        refresh_button = ui.button('Refresh Chart', on_click=lambda: update_chart_data()).classes('mt-4')
+
+        # Update chart dynamically when the refresh button is clicked
+        def update_chart_data():
+            # Update the chart with the selected metrics
+            chart.options = get_chart_data(selected_metric_1.value, selected_metric_2.value)
+            chart.update()
+
         
-        # Overall model statistics and chart
-        with ui.card().classes('p-4 m-2 w-full'):
-            ui.label('Overall Model Stats').classes('text-h6')
-            ui.label(f'Total Models: {len(models)}').classes('text-body1')
-            active_models = sum(1 for model in models if random.choice([True, False]))  # Replace with actual logic
-            ui.label(f'Active Models: {active_models}').classes('text-body1')
-            
-        # Initial setup for the UI
-        with ui.card().classes('w-full'):
-            ui.label('Performance Metrics').classes('text-h6')
-
-            # Create dropdown menus for selecting metrics
-            available_metrics = ['accuracy', 'rmse', 'mae', 'r2_score']
-            selected_metric_1 = ui.select(available_metrics, label='Select Metric 1').classes('mb-2')
-            selected_metric_2 = ui.select(available_metrics, label='Select Metric 2').classes('mb-2')
-
-            # Initial chart data with default metric selections
-            chart = ui.echart(update_chart('accuracy', 'rmse')).classes('w-full h-64')
-
-            # Update chart dynamically when selections change
-            selected_metric_1.on('change', lambda value: chart.update(update_chart(selected_metric_1.value, selected_metric_2.value)))
-            selected_metric_2.on('change', lambda value: chart.update(update_chart(selected_metric_1.value, selected_metric_2.value)))
+    with ui.card().classes('w-full'):        
         # Create a grid layout for the cards
         with ui.row().classes('flex-wrap justify-around'):  # Ensures that items wrap and spread evenly across rows
             for model in models:

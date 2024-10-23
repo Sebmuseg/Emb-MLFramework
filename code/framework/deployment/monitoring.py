@@ -1,7 +1,7 @@
 # deployment/monitoring.py
 from deployment.deploy_model import validate_device_environment
 from utils.logging_utils import log_deployment_event
-from utils.ressource_monitoring import monitor_docker_resources, monitor_system_resources
+from code.framework.utils.resource_monitoring import monitor_docker_resources, monitor_system_resources
 import time 
 
 def monitor_device_resources(device_ip, device_username, resource_thresholds, is_docker=False, container_name=None):

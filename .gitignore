@@ -100,8 +100,6 @@ venv.bak/
 *.env
 
 # Docker
-**/Dockerfile
-**/docker-compose.yml
 **/.dockerignore
 
 # Logs and temp files

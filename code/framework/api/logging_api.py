@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, ConfigDict
 from utils.logging_utils import log_deployment_event, log_monitoring_event
-
 router = APIRouter()
 
 class CustomBaseModel(BaseModel):

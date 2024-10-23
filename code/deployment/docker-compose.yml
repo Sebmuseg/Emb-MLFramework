@@ -1,0 +1,133 @@
+services:
+  # FeatherML API
+  featherml_api:
+    build: 
+      context: ../.. 
+      dockerfile: ./code/deployment/Dockerfile_api
+    container_name: featherml_api
+    expose:
+    - "5001" 
+    volumes:
+      - ../../code/examples:/app/model_metadata
+      - ./output:/app/output
+    environment:
+      - ENV=production
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend
+  featherml_frontend:
+    build:
+      context: ../.. 
+      dockerfile: ./code/deployment/Dockerfile_frontend
+    container_name: featherml_frontend
+    expose:
+    - "5002" 
+    environment:
+      - ENV=production
+    networks:
+      - app_network
+    depends_on:
+      - featherml_api
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - app_network
+    depends_on:
+      - featherml_api    
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - app_network
+    depends_on:
+      - prometheus  
+    
+    
+
+  # Elasticsearch
+  elasticsearch:
+    image: elasticsearch:8.15.2
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    networks:
+      - app_network   
+    
+    
+
+  # Logstash
+  logstash:
+    image: logstash:8.15.2
+    container_name: logstash
+    ports:
+      - "50003:5003"
+      - "5044:5044"
+    volumes:
+      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    networks:
+      - app_network
+    depends_on:
+      - elasticsearch   
+    
+    
+
+  # Kibana
+  kibana:
+    image: kibana:8.15.2
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    networks:
+      - app_network
+    depends_on:
+      - elasticsearch   
+    
+    
+
+  # NGINX Reverse Proxy
+  nginx:
+    image: nginx:latest
+    container_name: nginx_reverse_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - app_network
+    depends_on:
+      - grafana
+      - featherml_api
+      - featherml_frontend
+    
+    
+
+networks:
+  app_network:
+    driver: bridge
