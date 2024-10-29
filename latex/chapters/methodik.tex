@@ -1,47 +1,74 @@
 \chapter{Methodik}
 \label{chap:methodik}
 
-In diesem Kapitel wird die Methodik beschrieben, die für die Entwicklung des Frameworks verwendet wurde, das ML-Modelle für den Einsatz auf Embedded Systems optimiert. 
-Es umfasst die Auswahl der Entwicklungsumgebung, die verwendeten Optimierungstechniken und die Implementierungsschritte für das Framework. Der Fokus liegt auf der 
-effizienten Ausführung von ML-Modellen auf ressourcenbeschränkten Geräten wie \SPS und \IPC in der industriellen Fertigung.
+n diesem Kapitel wird die Methodik beschrieben, die für die Entwicklung des Frameworks verwendet wird, das ML-Modelle für den Einsatz auf Embedded Systems optimiert. 
+Dazu gehören die Durchführung der \textbf{Literaturrecherche}, die \textbf{Anforderungsanalyse} sowie die Auswahl der \textbf{Entwicklungsumgebung}, die verwendeten 
+\textbf{Optimierungstechniken} und die \textbf{Implementierungsschritte} für das Framework. Der Fokus liegt auf der effizienten Ausführung von ML-Modellen auf 
+ressourcenbeschränkten Geräten wie SPS und IPC in der industriellen Fertigung.
+
+\section{Literaturrecherche und Anforderungsanalyse}
+
+Um eine fundierte Basis für die Entwicklung des Frameworks zu schaffen, werden sowohl eine strukturierte Literaturrecherche als auch eine Anforderungsanalyse durchgeführt.
+\subsection{Literaturrecherche}
+
+Die Literaturrecherche dient dazu, aktuelle Ansätze und Techniken im Bereich der Embedded Systems und des Machine Learning in der Industrie 4.0 zu identifizieren. 
+Folgende Schritte werden befolgt:
+\begin{quote}
+\textbf{Prozess:}
+\begin{enumerate}
+\item Definition der Forschungsfrage: Die zentrale Fragestellung zielt darauf ab, die Herausforderungen und Lösungsansätze zur effizienten Implementierung von ML-Modellen auf Embedded Systems in industriellen Anwendungen zu identifizieren.
+\item Festlegung der Suchstrategie: Relevante wissenschaftliche Datenbanken wie IEEE Xplore, ACM Digital Library und SpringerLink werden genutzt. Suchbegriffe wie „Embedded Systems“, „Machine Learning“, „Edge Computing“ und „Industrie 4.0“ bilden die Grundlage für die Suche.
+\item Filterung und Auswahl: Durch spezifische Inklusions- und Exklusionskriterien, wie Veröffentlichungsjahr und Relevanz für industrielle Anwendungen, werden die Suchergebnisse eingegrenzt. Insgesamt werden über 50 Fachartikel und Berichte analysiert, von denen 30 für die weitere Untersuchung relevant sind.
+\item Analyse und Synthese: Die ausgewählten Artikel werden systematisch analysiert und die Ergebnisse in Bezug auf Schlüsselthemen und Herausforderungen zusammengefasst.
+\end{enumerate}
+\end{quote}
+\subsection{Anforderungsanalyse}
+
+Parallel zur Literaturrecherche wird eine Anforderungsanalyse durchgeführt, um spezifische Anforderungen der Industriepartner zu berücksichtigen. Diese Analyse folgt einem strukturierten Ansatz:
+\begin{quote}
+\textbf{Prozess:}
+\begin{enumerate}
+\item \textbf{Interviews und Workshops mit Industriepartnern}: Zur Identifikation praxisrelevanter Anforderungen werden Interviews und Workshops mit Industriepartnern durchgeführt, die Embedded Systems im Produktionsumfeld einsetzen. Hier werden Anforderungen bezüglich Rechenleistung, Energieeffizienz, Echtzeitanforderungen und Modellflexibilität identifiziert.
+\item \textbf{Analyse der technischen Dokumentationen}: Technische Spezifikationen der verwendeten Hardware (z. B. SPS und IPC) werden untersucht, um Hardware-Einschränkungen und Schnittstellenanforderungen zu berücksichtigen.
+\item \textbf{Kategorisierung der Anforderungen}: Die identifizierten Anforderungen werden in technische und funktionale Anforderungen unterteilt. Technische Anforderungen beziehen sich auf die Hardwareeinschränkungen und notwendige Optimierungstechniken, während funktionale Anforderungen Aspekte wie Echtzeitfähigkeit und Robustheit umfassen.
+\item \textbf{Priorisierung}: Eine Priorisierung der Anforderungen wird vorgenommen, um sicherzustellen, dass die wichtigsten Kriterien wie Echtzeitanforderungen und Effizienz bei der Entwicklung des Frameworks berücksichtigt werden.
+\end{enumerate}
+\end{quote}
+Priorisierung: Eine Priorisierung der Anforderungen wurde vorgenommen, um sicherzustellen, dass die wichtigsten Kriterien wie Echtzeitanforderungen und Effizienz bei der Entwicklung des Frameworks berücksichtigt werden.
 
 \section{Framework-Entwurf}
 
-Der erste Schritt zur Entwicklung des Frameworks war die Definition der Anforderungen basierend auf den spezifischen Einschränkungen von Embedded Systems. 
-Diese Anforderungen wurden in Zusammenarbeit mit Industriepartnern und durch eine umfassende Literaturrecherche zu bestehenden Lösungen festgelegt. 
-Dabei wurden nicht nur die Optimierung und Konfiguration der ML-Modelle berücksichtigt, sondern auch Aspekte wie die Datenverarbeitung, Priorisierung von Aufgaben, 
-Logging und das Deployment von Modellen auf unterschiedlichen Zielplattformen. Die Schwerpunkte des Frameworks lagen auf:
-
+Der erste Schritt zur Entwicklung des Frameworks ist die Definition der Anforderungen basierend auf den spezifischen Einschränkungen von Embedded Systems. 
+Diese Anforderungen werden in Zusammenarbeit mit Industriepartnern und durch eine umfassende Literaturrecherche zu bestehenden Lösungen festgelegt. Hierbei werden nicht 
+nur die Optimierung und Konfiguration der ML-Modelle berücksichtigt, sondern auch Aspekte wie die Datenverarbeitung, Priorisierung von Aufgaben, Logging und das Deployment 
+von Modellen auf unterschiedlichen Zielplattformen. Die Schwerpunkte des Frameworks liegen auf:
 \begin{itemize}
     \item \textbf{Reduzierung der Modellgröße}: Um die effiziente Ausführung von ML-Modellen auf ressourcenbeschränkten Embedded Systems wie SPS oder IPCs zu ermöglichen, 
-    muss die Größe der Modelle reduziert werden, ohne dass die Modellgenauigkeit signifikant leidet. Dies ist insbesondere für den Einsatz in Echtzeitsystemen kritisch.
-    
-    \item \textbf{Datenverarbeitung und Vorverarbeitung}: Neben der Optimierung von ML-Modellen ist es essenziell, dass die Datenverarbeitung effizient abläuft. 
-    Dies umfasst die Vorverarbeitung von Sensordaten in Echtzeit, Filterung von irrelevanten Informationen und die Sicherstellung, dass nur relevante Daten für die 
-    Modellvorhersagen genutzt werden. Daten müssen schnell und effizient verarbeitet werden, um in Echtzeit Entscheidungen treffen zu können.
-    
-    \item \textbf{Deployment und Aktualisierung der Modelle}: Eine der Herausforderungen in industriellen Umgebungen ist das flexible Deployment von ML-Modellen auf 
-    verschiedenen Geräten (SPS, IPCs, etc.). Das Framework muss eine einfache Bereitstellung von neuen oder aktualisierten Modellen ermöglichen, ohne dass der 
-    Produktionsprozess gestört wird. Dies erfordert ein robustes Update-Management und eine reibungslose Integration in die bestehende Infrastruktur.
-    
-    \item \textbf{Priorisierung von Aufgaben}: In Produktionsumgebungen ist es oft notwendig, bestimmte Aufgaben zu priorisieren, um die Betriebsanforderungen zu erfüllen. 
-    Dies bedeutet, dass das Framework in der Lage sein muss, priorisierte ML-Tasks gegenüber weniger kritischen Aufgaben zu bevorzugen. Dies kann besonders wichtig sein, 
-    wenn Ressourcen begrenzt sind und mehrere Prozesse gleichzeitig laufen.
-    
-    \item \textbf{Logging und Überwachung}: Um die Ausführung und Wartung des Systems zu erleichtern, ist es wichtig, ein umfassendes Logging- und Überwachungssystem zu integrieren. 
-    Dieses System protokolliert sowohl Modellvorhersagen als auch Systemstatusinformationen (z.B. Ressourcenauslastung, Latenzen). Dies ist entscheidend, um Fehler zu identifizieren, 
-    die Leistung zu überwachen und die langfristige Wartung des Systems zu gewährleisten.
-    
-    \item \textbf{Sicherstellung der Echtzeitfähigkeit}: Da viele industrielle Anwendungen Echtzeitanforderungen haben, muss das Framework sicherstellen, dass Vorhersagen innerhalb 
-    vorgegebener Zeitgrenzen getroffen werden. Dies erfordert eine sorgfältige Optimierung der Laufzeitleistung von Modellen und die Einhaltung der zeitlichen Anforderungen des Produktionsprozesses.
-    
-    \item \textbf{Einfache Integration in bestehende industrielle Steuerungssysteme}: Schließlich muss das Framework so konzipiert sein, 
-    dass es sich leicht in bestehende Steuerungsarchitekturen (wie IPC oder SPS) integrieren lässt. 
-    Dies stellt sicher, dass der Einsatz des Frameworks keine grundlegenden Änderungen an der Infrastruktur erfordert.
+    wird die Modellgröße reduziert, ohne dass die Genauigkeit signifikant leidet. Dies ist besonders für Echtzeitanwendungen entscheidend.   
+    \item \textbf{Datenverarbeitung und Vorverarbeitung}: Neben der Modelloptimierung ist eine effiziente Datenverarbeitung erforderlich. Die Vorverarbeitung von Sensordaten 
+    erfolgt in Echtzeit und filtert irrelevante Informationen, um sicherzustellen, dass nur relevante Daten für Modellvorhersagen genutzt werden. Dies unterstützt die Fähigkeit, 
+    Entscheidungen in Echtzeit zu treffen.
+   
+    \item \textbf{Deployment und Aktualisierung der Modelle}: Eine zentrale Herausforderung in industriellen Umgebungen ist das flexible Deployment von ML-Modellen auf 
+    verschiedenen Geräten (SPS, IPCs etc.). Das Framework ermöglicht eine einfache Bereitstellung neuer oder aktualisierter Modelle, ohne den Produktionsprozess zu stören, 
+    und bietet ein robustes Update-Management für nahtlose Integration in bestehende Systeme.
+  
+    \item \textbf{Priorisierung von Aufgaben}: In Produktionsumgebungen ist die Priorisierung bestimmter Aufgaben zur Erfüllung von Betriebsanforderungen notwendig. 
+    Das Framework bevorzugt daher priorisierte ML-Tasks gegenüber weniger kritischen Aufgaben, was insbesondere bei begrenzten Ressourcen und parallelem Prozessbetrieb entscheidend ist.
+   
+    \item \textbf{Logging und Überwachung}: Um die Systemausführung und -wartung zu unterstützen, integriert das Framework ein umfassendes Logging- und Überwachungssystem. 
+    Dieses protokolliert Modellvorhersagen sowie Systemstatusinformationen (z.B. Ressourcenauslastung, Latenzen) und dient der Identifikation von Fehlern, der 
+    Leistungsüberwachung und der langfristigen Wartung des Systems.
+  
+    \item \textbf{Sicherstellung der Echtzeitfähigkeit}: Da viele industrielle Anwendungen Echtzeitanforderungen erfordern, stellt das Framework sicher, dass 
+    Vorhersagen innerhalb vorgegebener Zeitgrenzen getroffen werden. Dies erfordert eine optimierte Laufzeitleistung und die Einhaltung zeitlicher Anforderungen des Produktionsprozesses.
+   
+    \item \textbf{Einfache Integration in bestehende industrielle Steuerungssysteme}: Das Framework ist so konzipiert, dass es sich problemlos in bestehende Steuerungsarchitekturen 
+    (wie IPC oder SPS) integriert, um den Einsatz ohne grundlegende Änderungen an der Infrastruktur zu ermöglichen.
 \end{itemize}
 
-Das Framework wurde als Middleware konzipiert, die als Adapter zwischen den ML-Modellen und den Zielsystemen (SPS, IPC) fungiert. 
-Es unterstützt verschiedene Optimierungstechniken, um die Ausführung der Modelle auf hardwarebeschränkten Systemen zu ermöglichen.
+Das Framework wird als Middleware entwickelt, die als Adapter zwischen den ML-Modellen und den Zielsystemen (SPS, IPC) fungiert. Es unterstützt verschiedene Optimierungstechniken, 
+um die Ausführung der Modelle auf hardwarebeschränkten Systemen zu ermöglichen.
 
 \section{Programmiersprachen und Entwicklungsumgebungen}
 

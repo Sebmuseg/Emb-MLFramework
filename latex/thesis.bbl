@@ -1,3 +1,53 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{10}
+
+\bibitem{s23042131}
+Amin Biglari and Wei Tang.
+\newblock A review of embedded machine learning based on hardware, application, and sensing scheme.
+\newblock {\em Sensors}, 23(4), 2023.
+
+\bibitem{10087221}
+Nerea~Gómez Larrakoetxea, Joseba~Eskubi Astobiza, Iker~Pastor López, Borja~Sanz Urquijo, Jon~García Barruetabeńa, and Agustin~Zubillaga Rego.
+\newblock Efficient machine learning on edge computing through data compression techniques.
+\newblock {\em IEEE Access}, 11:31676--31685, 2023.
+
+\bibitem{article}
+Jungme Park, Pawan Aryal, Sai Mandumula, and Ritwik Asolkar.
+\newblock An optimized dnn model for real-time inferencing on an embedded device.
+\newblock {\em Sensors}, 23:3992, 04 2023.
+
+\bibitem{telecom4010011}
+Itilekha Podder, Tamas Fischl, and Udo Bub.
+\newblock Artificial intelligence applications for mems-based sensors and manufacturing process optimization.
+\newblock {\em Telecom}, 4(1):165--197, 2023.
+
+\bibitem{10212294}
+Satyam, P.~Geetha, K.S. Shashikala, and N.~Ashok Kumar.
+\newblock Ai-enabled edge computing models: Trends, developments, and future implications.
+\newblock In {\em 2023 2nd International Conference on Edge Computing and Applications (ICECAA)}, pages 63--67, July 2023.
+
+\bibitem{Soldatos2024}
+John Soldatos, editor.
+\newblock {\em Artificial Intelligence in Manufacturing: Enabling Intelligent, Flexible and Cost-Effective Production Through AI}.
+\newblock Springer Cham, 1 edition, 2024.
+
+\bibitem{8119409}
+Xifan Yao, Jiajun Zhou, Jiangming Zhang, and Claudio~R. Boër.
+\newblock From intelligent manufacturing to smart manufacturing for industry 4.0 driven by next generation artificial intelligence and further on.
+\newblock In {\em 2017 5th International Conference on Enterprise Systems (ES)}, pages 311--318, 2017.
+
+\bibitem{phdthesis}
+Dilara Yesilbas.
+\newblock {\em Deep Learning in Automatic Optical Inspection - Selected Studies in the Context of an Automotive Supplier}.
+\newblock PhD thesis, 01 2022.
+
+\bibitem{articleQuantization}
+Yiren Zhou, Seyed-Mohsen Moosavi-Dezfooli, Ngai-Man Cheung, and Pascal Frossard.
+\newblock Adaptive quantization for deep neural network.
+\newblock {\em Proceedings of the AAAI Conference on Artificial Intelligence}, 32, 12 2017.
+
+\bibitem{inbook}
+Ramazan Ünlü and İsmet Söylemez.
+\newblock {\em AI-Driven Predictive Maintenance}, pages 207--233.
+\newblock 09 2024.
 
 \end{thebibliography}

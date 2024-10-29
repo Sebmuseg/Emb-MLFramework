@@ -1,0 +1,42 @@
+\chapter{Theoretischer Hintergrund}
+\label{chap:theoretische_hintergrund}
+
+Um den aktuellen Stand der Technik und die wichtigsten Konzepte im Bereich der Embedded Systems und des Machine Learning in der Industrie 4.0 zu untersuchen, wurde eine strukturierte Literaturrecherche durchgeführt. Diese Methodik gewährleistet eine umfassende und wissenschaftlich fundierte Darstellung des Themas, die auf relevanten Fachartikeln, Büchern und Konferenzberichten basiert. Der Fokus lag auf der Identifizierung und Analyse von Herausforderungen und Lösungsansätzen für die Implementierung von Machine Learning (ML) auf Embedded Systems unter den Bedingungen der Industrie 4.0. Durch die strukturierte Recherche konnten folgende Kernbereiche für das Kapitel ermittelt werden: die Rolle von Embedded Systems und ML in der Industrie 4.0, spezifische technische Herausforderungen sowie Ansätze zur Optimierung von ML-Modellen für ressourcenbeschränkte Umgebungen.
+
+\section{Embedded Systems und Machine Learning in der Industrie 4.0}
+
+\subsection{Embedded Systems}
+
+Embedded Systems sind spezialisierte Computersysteme, die in größere Maschinen oder Geräte integriert sind, um spezifische Aufgaben zu erfüllen. Sie sind oft in Umgebungen mit strengen Anforderungen an Zuverlässigkeit, Echtzeitfähigkeit und Energieeffizienz im Einsatz. Beispiele für Embedded Systems finden sich in Automobilen, medizinischen Geräten, Industrieanlagen und Haushaltsgeräten. In der Industrie 4.0 spielen Embedded Systems eine Schlüsselrolle, da sie die intelligente Vernetzung und Steuerung von Maschinen ermöglichen.
+
+\subsection{Industrie 4.0}
+
+Der Begriff „Industrie 4.0“ beschreibt die vierte industrielle Revolution, die durch die Digitalisierung und Vernetzung von Produktionsprozessen gekennzeichnet ist. Diese Transformation ermöglicht die Schaffung intelligenter Fabriken, in denen Maschinen und Systeme miteinander kommunizieren und autonom Entscheidungen treffen können. Embedded Systems sind dabei das Rückgrat der Industrie 4.0, da sie die notwendige Hardwarebasis für die Integration von Sensoren, Aktoren und Kommunikationsschnittstellen bieten.
+
+\subsection{Machine Learning in der Industrie 4.0}
+
+Machine Learning ist ein zentraler Bestandteil der Industrie 4.0, da es die Analyse großer Datenmengen und die Ableitung von Entscheidungen in Echtzeit ermöglicht. In Produktionsumgebungen wird ML zur vorausschauenden Wartung, Qualitätskontrolle, Prozessoptimierung und vielen weiteren Anwendungen eingesetzt. Dabei müssen ML-Modelle häufig auf Embedded Systems ausgeführt werden, um Entscheidungen direkt vor Ort treffen zu können. Dies stellt jedoch besondere Anforderungen an die Modellgröße, Rechenleistung und Energieeffizienz.
+
+\section{Herausforderungen bei der Implementierung von Machine Learning auf Embedded Systems}
+
+\subsection{Rechenleistung und Ressourcenbeschränkungen}
+
+Ein Hauptproblem bei der Implementierung von ML auf Embedded Systems ist die begrenzte Rechenleistung und der eingeschränkte Speicherplatz. Im Gegensatz zu leistungsstarken Servern oder Cloud-Umgebungen verfügen Embedded Systems, insbesondere speicherprogrammierbare Steuerungen (SPS) und Industrie-PCs (IPC), über deutlich weniger Ressourcen. SPS sind speziell für industrielle Automatisierungsaufgaben optimiert, haben jedoch nicht die Rechenkapazität, um komplexe ML-Algorithmen auszuführen. IPCs sind zwar leistungsfähiger, stoßen jedoch ebenfalls schnell an ihre Grenzen, wenn große ML-Modelle oder rechenintensive Aufgaben direkt auf der Hardware ausgeführt werden sollen.
+
+\subsection{Echtzeitanforderungen}
+
+Viele industrielle Anwendungen erfordern Echtzeitentscheidungen. Das bedeutet, dass die Zeit, die ein ML-Algorithmus für die Verarbeitung und Entscheidung benötigt, extrem kurz sein muss. Echtzeitsysteme müssen garantieren, dass eine Entscheidung innerhalb einer festgelegten Frist getroffen wird. Dies stellt eine enorme Herausforderung für ML-Modelle dar, die in der Regel große Datenmengen verarbeiten und komplexe Berechnungen durchführen. In ressourcenbeschränkten Umgebungen wie Embedded Systems kann dies zu signifikanten Latenzen führen, die in Echtzeitsystemen nicht toleriert werden können.
+
+Beispiel: Ein Produktionsband in einer Automobilfabrik verwendet ML zur Qualitätsüberwachung von Karosserieteilen. Jedes Teil wird von Kameras gescannt, und die Daten werden in Echtzeit verarbeitet, um Defekte zu erkennen. Wenn das ML-System nicht innerhalb von wenigen Millisekunden eine Entscheidung trifft, ob das Teil in Ordnung ist oder aussortiert werden muss, kann das gesamte Produktionsband verzögert werden. Diese Verzögerungen führen zu Produktionsausfällen und erhöhen die Kosten.
+
+\subsection{Modellkomplexität und Optimierung}
+
+Die Komplexität der ML-Modelle muss für den Einsatz auf Embedded Systems reduziert werden. Moderne ML-Modelle, wie tiefe neuronale Netze (Deep Neural Networks, DNNs), sind oft sehr groß und benötigen erhebliche Rechenleistung. Um diese Modelle auf Embedded Systemen auszuführen, müssen sie optimiert werden. Techniken wie Model Pruning (das Entfernen von unwichtigen Teilen des Modells) und Quantisierung (die Reduktion der Genauigkeit von Modellparametern) werden häufig verwendet, um die Modelle kleiner und effizienter zu machen. Diese Optimierungstechniken sind jedoch oft mit einem Verlust an Genauigkeit verbunden, was den Einsatz in sicherheitskritischen Systemen einschränken kann.
+
+\subsection{Energieeffizienz}
+
+In vielen industriellen Anwendungen, insbesondere im Kontext der Industrie 4.0, spielt die Energieeffizienz eine entscheidende Rolle. Embedded Systems sind oft batteriebetrieben oder müssen in energiearmen Umgebungen arbeiten. Das bedeutet, dass ML-Modelle so optimiert werden müssen, dass sie möglichst wenig Energie verbrauchen. Der Einsatz energieeffizienter Algorithmen und die Optimierung der Hardware, beispielsweise durch die Verwendung von Low-Power-Chips, sind essenziell, um ML-Modelle in eingebetteten Systemen langlebig und nachhaltig zu betreiben.
+
+\section{Fazit}
+
+Zusammenfassend lässt sich sagen, dass Embedded Systems und Machine Learning wesentliche Bausteine der Industrie 4.0 sind. Die Implementierung von ML auf Embedded Systems birgt jedoch signifikante Herausforderungen, insbesondere in Bezug auf Rechenleistung, Echtzeitanforderungen, Modellkomplexität und Energieeffizienz. Diese Herausforderungen müssen überwunden werden, um ML-Modelle effektiv in industriellen Produktionsumgebungen einzusetzen und den Nutzen von intelligenten, autonomen Systemen voll auszuschöpfen.
