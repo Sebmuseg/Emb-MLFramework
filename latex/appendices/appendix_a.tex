@@ -5,21 +5,8 @@
 
 In diesem Anhang werden zusätzliche Informationen bereitgestellt, die für die Ausarbeitung relevant sind, aber den Lesefluss im Hauptteil unterbrechen würden.
 
-\section{Tabellen und Diagramme}
 
-Hier könnten detaillierte Tabellen oder Diagramme stehen, die im Haupttext nur kurz erwähnt wurden.
 
-\begin{table}[h!]
-\centering
-\begin{tabular}{|c|c|c|}
-\hline
-Kriterium 1 & Kriterium 2 & Kriterium 3 \\ \hline
-Wert 1     & Wert 2     & Wert 3     \\ \hline
-Wert 4     & Wert 5     & Wert 6     \\ \hline
-\end{tabular}
-\caption{Eine detaillierte Tabelle mit zusätzlichen Daten.}
-\label{tab:appendix_table}
-\end{table}
 
 \section{Codebeispiele}
 
@@ -35,3 +22,30 @@ def beispiel_funktion():
 
 Falls nötig, kannst du hier zusätzliche Erklärungen oder Hintergrundinformationen bereitstellen.
 
+\begin{sidewaystable}[h!]
+    \centering
+    \caption{Vergleich von Optimierungstechniken für ML-Modelle}
+    \begin{tabular}{|l|p{4cm}|p{4cm}|p{4cm}|p{4cm}|}
+    \hline
+    \textbf{Optimierungstechnik} & \textbf{Modellgröße} & \textbf{Effizienz (Latenz/Durchsatz)} & \textbf{Einfluss auf Genauigkeit} & \textbf{Anwendungsbeispiel} \\ \hline
+    \textbf{Quantisierung} & Reduziert Speicherbedarf stark (durch Umwandlung in 8-Bit-Ganzzahlen) & Signifikant verbessert, besonders bei Inferenzzeiten & Geringer Einfluss bei sorgfältiger Anwendung, besonders mit Quantization-Aware Training & Mikrocontroller und Systeme mit geringer Rechenleistung \\ \hline
+    \textbf{Pruning} & Reduziert Größe durch Entfernen unnötiger Verbindungen & Effizienz verbessert, aber erfordert zusätzliche Schritte im Training & Minimaler Einfluss bei unstrukturiertem Pruning; strukturiertes Pruning kann leicht die Genauigkeit senken & Tiefe neuronale Netze auf SPS und IPCs \\ \hline
+    \textbf{Modellkompression} & Sehr effektive Reduktion redundanter Parameter, besonders bei großen Modellen & Effizienz gesteigert durch schnelleren Zugriff auf Speicher & Kaum signifikante Einbußen bei großen, komplexen Modellen & Edge-Devices und Systeme mit variierenden Speicheranforderungen \\ \hline
+    \textbf{Knowledge Distillation} & Reduziert Größe erheblich, da komplexes Modell durch kleineres „Schülermodell“ ersetzt wird & Effizienz durch geringeren Speicherverbrauch und schnellere Berechnungen erhöht & Kann zu leichtem Genauigkeitsverlust führen; abhängig von der Distillation-Methode & Mobile Geräte und Echtzeitsysteme \\ \hline
+    \textbf{Weight Clustering} & Mittlere Reduktion, da gleiche Gewichte gruppiert und komprimiert werden & Geringfügige Effizienzverbesserung & Bei grober Clusterung kann die Genauigkeit leiden & Geringfügig ressourcenbeschränkte Systeme \\ \hline
+    \end{tabular}
+    \label{tab:appendix_table}
+\end{sidewaystable}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|}
+    \hline
+    Kriterium 1 & Kriterium 2 & Kriterium 3 \\ \hline
+    Wert 1     & Wert 2     & Wert 3     \\ \hline
+    Wert 4     & Wert 5     & Wert 6     \\ \hline
+    \end{tabular}
+    \caption{Eine detaillierte Tabelle mit zusätzlichen Daten.}
+    
+    \end{table}
+    

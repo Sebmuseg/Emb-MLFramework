@@ -1,84 +1,119 @@
 \chapter{Evaluation}
 \label{chap:evaluation}
 
-In diesem Kapitel wird die Leistung des entwickelten Frameworks anhand verschiedener Metriken evaluiert. Dabei stehen die Latenzzeiten, 
-der Durchsatz, die Ressourcenauslastung sowie die Modellgenauigkeit im Vordergrund. Die Evaluation wurde auf verschiedenen \Emb durchgeführt, 
-um sicherzustellen, dass das Framework den spezifischen Anforderungen der Zielsysteme entspricht und in Echtzeitanwendungen robust und effizient funktioniert.
+Dieses Kapitel evaluiert die Leistung des entwickelten Frameworks anhand verschiedener Metriken. 
+Die Schwerpunkte liegen auf Latenzzeiten, Durchsatz, Ressourcenauslastung und Modellgenauigkeit. 
+Die Evaluation erfolgt auf verschiedenen Embedded Systemen, um sicherzustellen, dass das Framework 
+die spezifischen Anforderungen der Zielsysteme erfüllt und in Echtzeitanwendungen sowohl robust als auch effizient arbeitet.
 
 \section{Zielsetzung der Evaluation}
-Die Evaluation verfolgt das Ziel, die folgenden Fragen zu beantworten:
+
+Die Evaluation verfolgt das Ziel, die Effektivität und Eignung des Frameworks durch den Vergleich verschiedener 
+Methodiken nachzuweisen. Die Hauptfragestellungen umfassen:
 \begin{itemize}
-    \item Wie gut erfüllt das Framework die Echtzeitanforderungen industrieller Anwendungen?
-    \item Wie hoch ist die Latenz und der Durchsatz der Modelle auf verschiedenen \Emb?
-    \item Inwieweit wurde die Modellgröße durch die angewendeten Optimierungstechniken reduziert?
+    \item Erfüllt das Framework die Echtzeitanforderungen industrieller Anwendungen?
+    \item Wie verhalten sich Latenz und Durchsatz der Modelle auf unterschiedlichen Embedded Systemen?
+    \item In welchem Umfang verringern die angewendeten Optimierungstechniken die Modellgröße?
     \item Wie hoch ist die Auslastung der Ressourcen (CPU, Speicher) während der Modellausführung?
     \item Wie robust ist das Framework gegenüber variierenden Eingabebedingungen?
 \end{itemize}
 
-\section{Testumgebung}
-Die Tests wurden auf verschiedenen \Emb durchgeführt, die in typischen industriellen Anwendungen verwendet werden:
-\begin{itemize}
-    \item \textbf{Speicherprogrammierbare Steuerungen (SPS)}: Diese Systeme wurden verwendet, um die Echtzeitleistung in industriellen 
-    Steuerungsumgebungen zu bewerten.
-    \item \textbf{Industrie-PCs (IPCs)}: Die Evaluation auf IPCs ermöglichte die Analyse komplexerer Modelle mit höherer Rechenleistung.
-    \item \textbf{Mikrocontroller}: Mikrocontroller wurden verwendet, um die Leistung des Frameworks auf Geräten mit stark eingeschränkten 
-    Ressourcen zu testen.
-    \item \textbf{Edge-Devices}: Leistungsstarke Edge-Geräte wurden für das Training und die Vorverarbeitung der Modelle eingesetzt.
-\end{itemize}
+\section{Testumgebung und Reproduzierbarkeit der Tests}
+
+Die Tests erfolgen auf verschiedenen Embedded Systemen, die den typischen Anforderungen industrieller 
+Anwendungen entsprechen. Die Auswahl dieser Systeme ermöglicht eine spezifische Bewertung der 
+Eignung des Frameworks für unterschiedliche Hardwareplattformen und die Bestimmung der optimalen Lösung für Echtzeitanwendungen. 
+Zur Sicherstellung der Reproduzierbarkeit wurden alle Tests mehrfach unter identischen Bedingungen durchgeführt. 
+Jede Testreihe umfasst mindestens fünf Durchläufe, um statistisch signifikante und zuverlässige Ergebnisse zu gewährleisten.
+
+\begin{description}
+    \item[Speicherprogrammierbare Steuerungen (SPS):] SPS bieten eine stabile Plattform zur Bewertung der 
+    Echtzeitleistung in industriellen Steuerungsumgebungen. Sie ermöglichen eine Überprüfung der Fähigkeit des Frameworks, strenge Latenzanforderungen einzuhalten.
+    
+    \item[Industrie-PCs (IPCs):] Die Evaluation auf IPCs erlaubt eine detaillierte Analyse der Leistung komplexerer Modelle, die eine höhere Rechenleistung erfordern. 
+    IPCs bieten eine größere Rechenkapazität und ermöglichen die Ausführung anspruchsvoller Datenverarbeitungsaufgaben.
+    
+    \item[Mikrocontroller:] Mikrocontroller stellen eine ressourcenbeschränkte Umgebung dar, in der die Effizienz der Optimierungstechniken geprüft wird. 
+    Hier werden insbesondere Techniken wie Quantisierung und Pruning unter den Bedingungen eingeschränkter Ressourcen getestet.
+    
+    \item[Edge-Devices:] Leistungsstarke Edge-Geräte dienen der Vorverarbeitung und dem Training der Modelle. Sie ermöglichen eine Beurteilung der Eignung des 
+    Frameworks für Aufgaben mit höherem Rechenbedarf und größerem Datenvolumen, bevor die Modelle auf den Embedded Systemen bereitgestellt werden.
+\end{description}
+
+Durch den Einsatz dieser verschiedenen Hardwareplattformen und die mehrfache Wiederholung der Tests wird ein umfassender 
+Vergleich der Leistung und Effizienz des Frameworks ermöglicht. Dies belegt, dass die gewählten Methodiken die optimale Lösung darstellen, 
+da sie den spezifischen Anforderungen jeder Plattform gerecht werden und eine zuverlässige Echtzeitausführung sicherstellen.
 
 \section{Bewertete Metriken}
 
-\subsection{Latenz und Echtzeitfähigkeit}
-Die Latenz der ML-Modelle wurde gemessen, um zu überprüfen, ob die Echtzeitanforderungen erfüllt werden. Die Tests wurden für verschiedene 
-Szenarien durchgeführt, um die folgenden Aspekte zu bewerten:
-\begin{itemize}
-    \item \textbf{Durchschnittliche Latenz pro Vorhersage}: Die durchschnittliche Zeit, die das Modell benötigt, um eine Vorhersage zu treffen.
-    \item \textbf{Maximale Latenz}: Die maximale Zeit, die für eine Vorhersage benötigt wurde, um die Einhaltung der Echtzeitanforderungen zu 
-    garantieren.
-    \item \textbf{Jitter}: Die Varianz der Latenz bei mehreren Vorhersagen unter denselben Bedingungen.
-\end{itemize}
+Die Leistung des Frameworks wird anhand mehrerer Metriken bewertet, um sicherzustellen, dass die optimierten ML-Modelle die 
+Anforderungen an Echtzeitfähigkeit, Durchsatz und Ressourcennutzung erfüllen. Die Auswahl der Metriken basiert auf der Relevanz 
+für industrielle Echtzeitanwendungen und ermöglicht eine umfassende Analyse der Effizienz und Stabilität des Systems.
 
-\subsection{Durchsatz}
-Der Durchsatz beschreibt die Anzahl der Vorhersagen, die das System pro Sekunde durchführen kann. Diese Metrik ist besonders wichtig in Szenarien, 
-in denen das System in kurzer Zeit eine große Anzahl von Sensordaten verarbeiten muss:
-\begin{itemize}
-    \item \textbf{Vorhersagen pro Sekunde (Throughput)}: Die Anzahl der pro Sekunde durchgeführten Vorhersagen.
-    \item \textbf{Maximale Datenrate}: Die maximale Anzahl von Eingabedaten, die das System verarbeiten kann, ohne Verzögerungen zu verursachen.
-\end{itemize}
+\begin{description}
+    \item[Latenz und Echtzeitfähigkeit:] Die Latenz der ML-Modelle wird gemessen, um die Einhaltung der Echtzeitanforderungen 
+    zu überprüfen. Die Tests erfolgen in verschiedenen Szenarien, um die folgenden Aspekte zu bewerten:
+    \begin{itemize}
+        \item \textbf{Durchschnittliche Latenz pro Vorhersage}: Die mittlere Zeit, die das Modell für eine Vorhersage benötigt, 
+        um eine stabile Echtzeitausführung zu gewährleisten.
+        \item \textbf{Maximale Latenz}: Die höchste gemessene Zeit für eine Vorhersage, um sicherzustellen, dass die Echtzeitanforderungen 
+        unter sämtlichen Bedingungen eingehalten werden.
+        \item \textbf{Jitter}: Die Schwankung der Latenz bei mehreren Vorhersagen unter denselben Bedingungen, 
+        was die Konsistenz der Modellausführung reflektiert.
+    \end{itemize}
 
-\subsection{Ressourcenauslastung}
-Die Auslastung der CPU und des Speichers wurde während der Modellausführung gemessen. Dies ist besonders wichtig, um sicherzustellen, 
-dass das System auch bei begrenzten Ressourcen stabil und effizient arbeitet.
-\begin{itemize}
-    \item \textbf{CPU-Auslastung}: Der Prozentsatz der CPU-Ressourcen, die während der Modellausführung genutzt werden.
-    \item \textbf{Speicherverbrauch}: Der statische und dynamische Speicherverbrauch des Frameworks und der ausgeführten Modelle.
-\end{itemize}
+    \item[Durchsatz:] Der Durchsatz bewertet die Anzahl an Vorhersagen, die das System pro Sekunde verarbeiten kann. 
+    Diese Metrik ist besonders in Szenarien von Bedeutung, in denen große Datenmengen in kurzer Zeit analysiert werden müssen:
+    \begin{itemize}
+        \item \textbf{Vorhersagen pro Sekunde (Throughput)}: Die Anzahl an Vorhersagen, die das System pro Sekunde durchführt, 
+        um eine effiziente Datenverarbeitung sicherzustellen.
+        \item \textbf{Maximale Datenrate}: Die höchste Menge an Eingabedaten, die das System ohne Verzögerungen verarbeiten kann, 
+        um eine zuverlässige Leistung zu gewährleisten.
+    \end{itemize}
+
+    \item[Ressourcenauslastung:] Die CPU- und Speicherauslastung wird während der Modellausführung überwacht, um die Stabilität und 
+    Effizienz des Systems auch bei eingeschränkten Ressourcen zu gewährleisten.
+    \begin{itemize}
+        \item \textbf{CPU-Auslastung}: Der Anteil der CPU-Ressourcen, die während der Modellausführung verwendet werden, 
+        um die Effizienz des Frameworks auf Geräten mit begrenzter Leistung sicherzustellen.
+        \item \textbf{Speicherverbrauch}: Der statische und dynamische Speicherverbrauch des Frameworks und der ausgeführten Modelle, 
+        um die Eignung für ressourcenbeschränkte Umgebungen zu evaluieren.
+    \end{itemize}
+\end{description}
 
 \subsection{Modellgenauigkeit und Robustheit}
-Die Genauigkeit der optimierten Modelle wurde evaluiert, um sicherzustellen, dass die angewendeten Optimierungstechniken die Leistung nicht 
-signifikant beeinträchtigen. Zusätzlich wurde die Robustheit des Modells gegenüber fehlerhaften oder verrauschten Eingabedaten getestet.
-\begin{itemize}
-    \item \textbf{Modellgenauigkeit vor und nach der Optimierung}: Die Vorhersagegenauigkeit des Modells wurde sowohl vor als auch nach der 
-    Anwendung von Optimierungstechniken wie Quantisierung und Pruning gemessen.
-    \item \textbf{Robustheit gegen verrauschte Eingaben}: Die Fähigkeit des Modells, auch bei verrauschten oder fehlerhaften Daten 
-    konsistente Vorhersagen zu treffen.
-\end{itemize}
+
+Die Genauigkeit der optimierten Modelle wird evaluiert, um sicherzustellen, dass die angewendeten Optimierungstechniken die Modellleistung 
+nicht signifikant beeinträchtigen. Zusätzlich wird die Robustheit der Modelle gegenüber fehlerhaften oder verrauschten Eingabedaten geprüft. 
+
+\begin{description}
+    \item[Modellgenauigkeit vor und nach der Optimierung:] Die Vorhersagegenauigkeit des Modells wird sowohl vor als auch 
+    nach der Anwendung von Optimierungstechniken wie Quantisierung und Pruning gemessen, um deren Auswirkungen auf die Leistung zu quantifizieren.
+    \item[Robustheit gegenüber verrauschten Eingaben:] Die Fähigkeit des Modells, unter verrauschten oder fehlerhaften 
+    Eingabedaten konsistente Vorhersagen zu treffen, wird getestet, um die Zuverlässigkeit in realen Szenarien sicherzustellen.
+\end{description}
 
 \section{Ergebnisse und Diskussion}
 
-\subsection{Latenz und Durchsatz}
-Die Tests ergaben, dass das Framework in der Lage ist, die vorgegebenen Echtzeitanforderungen zu erfüllen. Die Latenz blieb in den meisten Tests 
-unter der vorgegebenen Grenze, während der Durchsatz den Anforderungen industrieller Anwendungen entsprach.
-
-\subsection{Ressourcenauslastung}
-Die Analyse der CPU- und Speicherauslastung zeigte, dass das Framework effizient arbeitet und die Ressourcen der verschiedenen Embedded-Geräte 
-optimal nutzt. Insbesondere durch die Optimierungstechniken konnte der Speicherverbrauch signifikant reduziert werden.
-
-\subsection{Modellgenauigkeit und Robustheit}
-Die Genauigkeit der Modelle blieb nach der Optimierung weitgehend unverändert. Tests mit verrauschten Eingaben zeigten, dass das Framework 
-robust gegenüber variierenden Eingabebedingungen ist und in den meisten Fällen konsistente Vorhersagen liefern konnte.
+\begin{description}
+    \item[Latenz und Durchsatz:] Die Tests zeigen, dass das Framework in der Lage ist, die vorgegebenen Echtzeitanforderungen zu erfüllen. 
+    Die Latenz bleibt in den meisten Tests unterhalb der vorgegebenen Grenze, und der Durchsatz entspricht den Anforderungen industrieller Anwendungen, 
+    was eine effiziente Datenverarbeitung ermöglicht.
+    
+    \item[Ressourcenauslastung:] Die Analyse der CPU- und Speicherauslastung zeigt, dass das Framework effizient arbeitet und die Ressourcen 
+    der verschiedenen Embedded-Geräte optimal nutzt. Besonders durch die Optimierungstechniken wird der Speicherverbrauch signifikant reduziert, 
+    wodurch das Framework auf Geräten mit begrenztem Speicher stabil läuft.
+    
+    \item[Modellgenauigkeit und Robustheit:] Die Genauigkeit der Modelle bleibt nach der Optimierung nahezu unverändert. 
+    Tests mit verrauschten Eingaben belegen, dass das Framework robust gegenüber variierenden Eingabebedingungen 
+    ist und in den meisten Fällen konsistente und verlässliche Vorhersagen liefert.
+\end{description}
 
 \section{Zusammenfassung der Evaluation}
-Die durchgeführten Tests und die darauf basierenden Ergebnisse zeigen, dass das Framework den festgelegten Anforderungen an Latenz, 
-Durchsatz, Ressourcenauslastung und Modellgenauigkeit entspricht. Das Framework ist in der Lage, effiziente und robuste Vorhersagen 
-auf verschiedenen \Emb zu liefern und erfüllt die Anforderungen für industrielle Echtzeitanwendungen.
+
+Die durchgeführten Tests und die daraus abgeleiteten Ergebnisse zeigen, dass das Framework den festgelegten Anforderungen an Latenz, 
+Durchsatz, Ressourcenauslastung und Modellgenauigkeit entspricht. Das Framework ermöglicht eine effiziente und robuste 
+Vorhersage auf verschiedenen Embedded-Systemen und erfüllt somit die Anforderungen für industrielle Echtzeitanwendungen. 
+Die Vergleichsanalyse der angewendeten Methodiken bestätigt deren Eignung als optimale Lösung zur Umsetzung 
+der gesteckten Leistungsziele. Die Reproduzierbarkeit der Tests durch mehrfache Wiederholungen gewährleistet die 
+Zuverlässigkeit und statistische Validität der erzielten Ergebnisse.

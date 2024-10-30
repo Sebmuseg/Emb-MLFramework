@@ -3,47 +3,55 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: thesis.aux
 The style file: plain.bst
 Database file #1: bibliography.bib
+Warning--entry type for "arewelearningyet" isn't style-file defined
+--line 504 of file bibliography.bib
+Warning--entry type for "ACMDigitalLibrary" isn't style-file defined
+--line 512 of file bibliography.bib
+Warning--entry type for "SpringerLink" isn't style-file defined
+--line 520 of file bibliography.bib
+Warning--entry type for "IEEE_Xplore" isn't style-file defined
+--line 564 of file bibliography.bib
 Warning--empty school in phdthesis
 Warning--empty publisher in inbook
-You've used 10 entries,
+You've used 34 entries,
             2118 wiz_defined-function locations,
-            551 strings with 5857 characters,
-and the built_in function-call counts, 3607 in all, are:
-= -- 339
-> -- 184
-< -- 3
-+ -- 74
-- -- 62
-* -- 260
-:= -- 600
-add.period$ -- 30
-call.type$ -- 10
-change.case$ -- 59
+            680 strings with 10951 characters,
+and the built_in function-call counts, 13362 in all, are:
+= -- 1287
+> -- 644
+< -- 16
++ -- 259
+- -- 220
+* -- 881
+:= -- 2077
+add.period$ -- 106
+call.type$ -- 34
+change.case$ -- 210
 chr.to.int$ -- 0
-cite$ -- 12
-duplicate$ -- 141
-empty$ -- 270
-format.name$ -- 62
-if$ -- 757
+cite$ -- 36
+duplicate$ -- 565
+empty$ -- 1040
+format.name$ -- 220
+if$ -- 2942
 int.to.chr$ -- 0
-int.to.str$ -- 10
-missing$ -- 10
-newline$ -- 53
-num.names$ -- 21
-pop$ -- 65
+int.to.str$ -- 34
+missing$ -- 29
+newline$ -- 173
+num.names$ -- 69
+pop$ -- 265
 preamble$ -- 1
-purify$ -- 51
+purify$ -- 178
 quote$ -- 0
-skip$ -- 105
+skip$ -- 471
 stack$ -- 0
-substring$ -- 198
-swap$ -- 37
-text.length$ -- 3
+substring$ -- 723
+swap$ -- 210
+text.length$ -- 16
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 36
+type$ -- 132
 warning$ -- 2
-while$ -- 30
-width$ -- 12
-write$ -- 110
-(There were 2 warnings)
+while$ -- 106
+width$ -- 36
+write$ -- 380
+(There were 6 warnings)

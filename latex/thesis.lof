@@ -1,10 +1,13 @@
 \babel@toc {ngerman}{}\relax 
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {1.1}{\ignorespaces Die vier industriellen Revolutionen: Mechanisierung, Massenproduktion, Automatisierung, Vernetzte Systeme.}}{9}{figure.1.1}%
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Die vier industriellen Revolutionen: Mechanisierung, Massenproduktion, Automatisierung, Vernetzte Systeme.}}{7}{figure.caption.4}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Arten von Embedded Systems in der Industrie 4.0}}{10}{figure.2.1}%
-\contentsline {figure}{\numberline {2.2}{\ignorespaces ML Modelle und ihre Anwendungen in der Industrie 4.0}}{11}{figure.2.2}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Anwendungen für Embedded Sytems in der Industrie 4.0}}{8}{figure.caption.5}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces ML Modelle und ihre Anwendungen in der Industrie 4.0}}{9}{figure.caption.6}%
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces ONNX Runtime für plattformübergreifende ML-Modelle}}{16}{figure.caption.12}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Beckoff IPCs - C60xx | Ultra-compact Industrial PCs\cite {BeckhoffWebsite}}}{18}{figure.caption.13}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Architektur des Frameworks}}{19}{figure.caption.14}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

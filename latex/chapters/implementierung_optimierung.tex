@@ -1,94 +1,115 @@
 \chapter{Implementierung und Optimierung}
 \label{chap:implementierung_optimierung}
 
-In diesem Kapitel wird die Implementierung und Optimierung von \ML Modellen für den Einsatz auf \Emb detailliert beschrieben. 
-Es werden die angewendeten Optimierungstechniken erläutert sowie der Prozess des Modelldeployments auf Geräten wie SPS, IPCs und Mikrocontrollern. Der Schwerpunkt 
-liegt auf der Anpassung der Modelle an die beschränkten Ressourcen dieser Systeme, um eine effiziente Echtzeitausführung zu gewährleisten.
+Dieses Kapitel beschreibt die Implementierung und Optimierung von ML-Modellen für den Einsatz auf Embedded Systems detailliert. 
+Die zu Verfügung Optimierungstechniken sowie der Prozess des Modelldeployments auf Geräten wie SPS, IPCs und Mikrocontrollern werden dabei erläutert. 
+Der Schwerpunkt liegt auf der Anpassung der Modelle an die beschränkten Ressourcen dieser Systeme, um eine effiziente Echtzeitausführung sicherzustellen.
 
 \section{Optimierung der ML-Modelle}
-Da \Emb nur begrenzte Rechenleistung, Speicher und Energie zur Verfügung haben, mussten die \ML Modelle entsprechend angepasst werden. 
-Verschiedene Optimierungstechniken wurden angewendet, um sicherzustellen, dass die Modelle effizient auf diesen Geräten laufen, ohne die Genauigkeit der Vorhersagen 
-signifikant zu beeinträchtigen.
+Da Embedded Systems nur begrenzte Rechenleistung, Speicher und Energie zur Verfügung haben, werden ML-Modelle entsprechend angepasst. 
+Verschiedene Optimierungstechniken werden angewendet, um sicherzustellen, dass die Modelle effizient auf diesen Geräten laufen, 
+ohne die Genauigkeit der Vorhersagen signifikant zu beeinträchtigen. Ein \textbf{Vergleich} verschiedener Techniken zeigt, 
+dass die gewählte Methodik eine optimale Balance zwischen Modellgröße, Effizienz und Genauigkeit ermöglicht wie in \textbf{Tabelle \ref{tab:appendix_table} im Anhang \ref{appendix_a} beschrieben}.
 
-\subsection{Quantisierung}
-Die Quantisierung wurde verwendet, um die Modellgrößen und die Rechenanforderungen zu reduzieren. Dabei wurden die 32-Bit-Gleitkommazahlen der Modellgewichte in 
-8-Bit-Ganzzahlen umgewandelt, was die Modellgröße und die Anzahl der Berechnungen erheblich reduziert hat.
 
-\begin{itemize}
-    \item \textbf{Post-Training Quantization}: Nach dem Training des Modells wurde die Quantisierung durchgeführt, indem die Gleitkommawerte der Modellparameter 
-    auf Ganzzahlen reduziert wurden. Dies ermöglichte eine geringere Speichernutzung und schnellere Berechnungen.
-    \item \textbf{Quantization-Aware Training (QAT)}: Bei einigen Modellen wurde das Quantization-Aware Training verwendet, um die Auswirkungen der Quantisierung 
-    während des Trainingsprozesses zu simulieren. Dadurch konnte die Modellgenauigkeit nach der Quantisierung besser erhalten bleiben.
-\end{itemize}
+    \section*{Erklärung und Begründung der gewählten Methoden}
+    
+    Quantisierung, Pruning und Modellkompression bieten eine ausgewogene Balance zwischen Modellgröße, Effizienz und Genauigkeit. Hier sind die Gründe für ihre Auswahl:
+    
+    \begin{itemize}
+        \item \textbf{Quantisierung} eignet sich besonders für ressourcenbeschränkte Systeme, wie Mikrocontroller, und reduziert den Speicherbedarf erheblich. Mit Techniken wie Quantization-Aware Training (QAT) bleibt die Modellgenauigkeit weitgehend erhalten, wodurch eine effiziente Inferenzleistung sichergestellt wird.
+        
+        \item \textbf{Pruning} ist vorteilhaft bei tiefen neuronalen Netzen, da viele Verbindungen nur geringen Einfluss auf die Leistung haben. Diese Methode verringert die Modellkomplexität und -größe, ohne die Genauigkeit signifikant zu beeinträchtigen, insbesondere bei unstrukturiertem Pruning. Für spezifische Anforderungen eignet sich strukturiertes Pruning, das die Rechenkomplexität weiter reduziert.
+        
+        \item \textbf{Modellkompression} reduziert redundante Parameter und die Modellgröße erheblich, besonders bei komplexen Modellen. Sie gewährleistet schnelleren Zugriff auf Speicher und kürzere Ladezeiten, was sie ideal für Anwendungen auf Edge-Devices und ressourcenbeschränkten Systemen macht.
+    
+    \end{itemize}
+    
+Zusammenfassend lässt sich sagen, dass die Kombination dieser Techniken den Anforderungen an Embedded Systems gerecht wird, indem sie Speicherplatz, Rechenressourcen und Inferenzzeiten optimiert. 
+Dabei bleiben die Vorhersagegenauigkeit und die Effizienz des Modells erhalten, was diese Methodenauswahl zur optimalen Lösung für industrielle Anwendungen macht.
 
-\subsection{Pruning}
-Pruning wurde angewendet, um unnötige Gewichte und Verbindungen aus neuronalen Netzen zu entfernen. Dies reduzierte die Komplexität und Größe der Modelle erheblich, 
-ohne die Genauigkeit der Vorhersagen zu stark zu beeinträchtigen.
+\begin{description}
+    \item[Quantisierung:] Die Quantisierung reduziert Modellgröße und Rechenanforderungen durch die Umwandlung der 32-Bit-Gleitkommazahlen der Modellgewichte 
+    in 8-Bit-Ganzzahlen. Dies führt zu einer erheblichen Reduzierung der Modellgröße und Berechnungen.
+    \begin{itemize}
+        \item \textbf{Post-Training Quantization}: Nach dem Training wird eine Quantisierung durchgeführt, bei der die Gleitkommawerte der 
+        Modellparameter auf Ganzzahlen reduziert werden. Diese Methode verringert die Speichernutzung und beschleunigt Berechnungen.
+        \item \textbf{Quantization-Aware Training (QAT)}: Bei bestimmten Modellen wird das Quantization-Aware Training genutzt, 
+        um die Effekte der Quantisierung bereits während des Trainings zu simulieren. Dadurch bleibt die Modellgenauigkeit nach der Quantisierung weitgehend erhalten.
+    \end{itemize}
 
-\begin{itemize}
-    \item \textbf{Unstrukturierter Pruning}: Durch das Entfernen einzelner Verbindungen zwischen Neuronen, die als weniger wichtig für die Modellleistung eingestuft wurden, 
-    konnte die Rechenkomplexität reduziert werden.
-    \item \textbf{Strukturierter Pruning}: Hierbei wurden ganze Neuronen oder Filter entfernt, um die Modelle schlanker zu machen und gleichzeitig die Berechnungseffizienz 
-    zu steigern.
-\end{itemize}
+    \item[Pruning:] Pruning entfernt unnötige Gewichte und Verbindungen aus neuronalen Netzen, was die Komplexität und Größe der Modelle deutlich reduziert, 
+    ohne die Vorhersagegenauigkeit wesentlich zu beeinträchtigen.
+    \begin{itemize}
+        \item \textbf{Unstrukturierter Pruning}: Durch das Entfernen einzelner, für die Modellleistung weniger wichtiger Verbindungen zwischen Neuronen wird die 
+        Rechenkomplexität reduziert.
+        \item \textbf{Strukturierter Pruning}: Ganze Neuronen oder Filter werden entfernt, um die Modelle schlanker und die Berechnungseffizienz zu steigern.
+    \end{itemize}
 
-\subsection{Modellkompression}
-Neben Pruning und Quantisierung wurde Modellkompression verwendet, um die Gesamtgröße der Modelle zu verringern. Hierbei wurden spezielle Algorithmen eingesetzt, 
-die redundante Parameter im Modell identifizierten und diese komprimierten, ohne die Vorhersageleistung wesentlich zu beeinflussen.
+    \item[Modellkompression:] Neben Pruning und Quantisierung dient Modellkompression dazu, die Gesamtgröße der Modelle zu verringern. 
+    Hierbei werden redundante Parameter identifiziert und komprimiert, ohne die Vorhersageleistung wesentlich zu beeinflussen.
 
-\subsection{Optimierung für spezifische Hardware}
-Da die Rechenkapazitäten von \Emb variieren, wurden die Modelle für unterschiedliche Hardware-Plattformen optimiert. Verschiedene Hardware-Spezifika, 
-wie die Anzahl der verfügbaren Prozessoren oder die Größe des Speichers, wurden berücksichtigt, um die optimale Leistung auf Geräten wie SPS, IPCs und Mikrocontrollern 
-zu gewährleisten.
-
-\begin{itemize}
-    \item \textbf{TensorFlow Lite}: TensorFlow Lite wurde verwendet, um Modelle für Mikrocontroller und andere ressourcenbeschränkte Geräte zu optimieren. 
-    Es bot Funktionen wie Quantisierung und eine optimierte Inferenzlaufzeit.
-    \item \textbf{ONNX Runtime}: ONNX Runtime wurde eingesetzt, um die Modelle auf verschiedenen Embedded-Plattformen auszuführen. Es ermöglichte eine 
-    plattformübergreifende Optimierung und das Deployment auf heterogenen Hardware-Umgebungen.
-\end{itemize}
+    \item[Optimierung für spezifische Hardware:] Da die Rechenkapazitäten von Embedded Systems variieren, erfolgt eine spezifische Optimierung der Modelle 
+    für verschiedene Hardware-Plattformen. Unterschiede in der Anzahl der Prozessoren und der Speichergröße werden berücksichtigt, um optimale Leistung auf 
+    Geräten wie SPS, IPCs und Mikrocontrollern zu gewährleisten.
+    \begin{itemize}
+        \item \textbf{TensorFlow Lite}: TensorFlow Lite optimiert Modelle für Mikrocontroller und andere ressourcenbeschränkte Geräte, 
+        bietet Quantisierung und eine optimierte Inferenzlaufzeit.
+        \item \textbf{ONNX Runtime}: ONNX Runtime ermöglicht die plattformübergreifende Optimierung und das Deployment der Modelle auf heterogenen Embedded-Plattformen.
+    \end{itemize}
+\end{description}
 
 \section{Deployment der optimierten Modelle}
-Nachdem die Modelle optimiert waren, wurde der nächste Schritt das Deployment auf den \Emb. Dieser Abschnitt beschreibt den Prozess der Modellbereitstellung 
-und die Herausforderungen, die bei der Ausführung der Modelle in Echtzeit auf Embedded-Hardware auftraten.
 
-\subsection{Modellbereitstellung auf SPS und IPCs}
-SPS- und IPC-Systeme wurden verwendet, um die optimierten Modelle in einer industriellen Umgebung auszuführen. Aufgrund der unterschiedlichen Rechenleistung und 
-Speicherkapazität dieser Systeme war es notwendig, spezifische Deployment-Strategien zu implementieren.
+Nach der Optimierung der Modelle folgt das Deployment auf den Embedded-Systemen. Dieser Abschnitt beschreibt den Prozess der Modellbereitstellung 
+und die spezifischen Herausforderungen, die bei der Echtzeitausführung auf Embedded-Hardware auftreten. Ein Vergleich der verschiedenen 
+Deployment-Methoden belegt die Auswahl als optimale Lösung, da sowohl Echtzeitanforderungen als auch Ressourcenbeschränkungen berücksichtigt werden.
 
-\begin{itemize}
-    \item \textbf{Lokale Ausführung}: Modelle wurden direkt auf den Geräten ausgeführt, um Verzögerungen zu minimieren und Echtzeitanforderungen zu erfüllen.
-    \item \textbf{Remote Deployment}: In einigen Fällen wurden Modelle auf Edge-Geräten bereitgestellt, die eng mit den SPS und IPCs verbunden waren, um eine 
-    effizientere Berechnung durchzuführen und gleichzeitig die Hauptsysteme zu entlasten.
-\end{itemize}
+\begin{description}
+    \item[Modellbereitstellung auf SPS und IPCs:] SPS- und IPC-Systeme dienen der Ausführung der optimierten Modelle in industriellen Umgebungen. 
+    Da diese Systeme hinsichtlich Rechenleistung und Speicherkapazität variieren, wurden spezifische Deployment-Strategien implementiert, 
+    um eine zuverlässige und performante Ausführung sicherzustellen.
+    \begin{itemize}
+        \item \textbf{Lokale Ausführung}: Die Modelle werden direkt auf den Geräten ausgeführt, was die Latenz minimiert und Echtzeitanforderungen erfüllt.
+        \item \textbf{Remote Deployment}: Für bestimmte Anwendungsfälle erfolgt das Deployment auf Edge-Geräten, die eng mit den SPS und IPCs verbunden sind. 
+        Dadurch werden rechenintensive Aufgaben effizient ausgelagert und die Hauptsysteme entlastet.
+    \end{itemize}
+    
+    \item[Verwaltung des Modelldepots:] Ein zentrales Modelldepot ermöglicht eine effiziente Verwaltung und Bereitstellung verschiedener Modellversionen. 
+    Durch die zentrale Speicherung und Bereitstellung auf den Embedded-Systemen wird eine unkomplizierte Aktualisierung und Versionskontrolle der Modelle gewährleistet. 
+    Der Vergleich zwischen dezentralen und zentralen Speicherstrategien zeigt, dass das zentrale Depot die Verwaltung erheblich vereinfacht.
 
-\subsection{Verwaltung des Modelldepots}
-Ein zentrales Modelldepot wurde implementiert, um die Verwaltung und Bereitstellung verschiedener Modellversionen zu erleichtern. Dieses Depot ermöglichte es, 
-Modelle zentral zu speichern und von dort aus auf den Embedded-Systemen bereitzustellen. Dies ermöglichte eine einfache Aktualisierung der Modelle und eine bessere 
-Verwaltung der Modellversionen.
-
-\subsection{Echtzeitausführung und Priorisierung}
-Da viele industrielle Anwendungen strenge Echtzeitanforderungen haben, musste sichergestellt werden, dass die Modelle in vorgegebenen Zeitrahmen ausgeführt werden. 
-Dies erforderte eine Priorisierung der Aufgaben und eine enge Überwachung der Laufzeitleistung. Dabei wurden folgende Maßnahmen ergriffen:
-
-\begin{itemize}
-    \item \textbf{Task-Priorisierung}: Die Modellvorhersagen wurden priorisiert, um sicherzustellen, dass zeitkritische Aufgaben zuerst ausgeführt werden.
-    \item \textbf{Überwachung der Ausführungszeit}: Die Laufzeitleistung wurde kontinuierlich überwacht, um sicherzustellen, dass die Echtzeitanforderungen 
-    eingehalten wurden.
-\end{itemize}
-
-\subsection{Tests und Validierung der Laufzeitleistung}
-Nach der Bereitstellung der optimierten Modelle wurden umfangreiche Tests durchgeführt, um die Laufzeitleistung und die Genauigkeit der Vorhersagen zu überprüfen. 
-Diese Tests beinhalteten:
-
-\begin{itemize}
-    \item \textbf{Unit-Tests}: Zur Validierung der Funktionalität des Frameworks und der korrekt ausgeführten Vorhersagen.
-    \item \textbf{Performance-Benchmarks}: Die Ausführungszeiten wurden gemessen und mit den zuvor festgelegten Echtzeitanforderungen verglichen.
-    \item \textbf{Hardware-in-the-Loop (HIL)-Tests}: Diese Tests simulierten reale Hardware-Interaktionen, um die Robustheit und Leistung des Systems zu überprüfen.
-\end{itemize}
+    \item[Echtzeitausführung und Priorisierung:] Viele industrielle Anwendungen stellen strenge Echtzeitanforderungen. Um die Ausführung innerhalb der 
+    definierten Zeitrahmen sicherzustellen, erfolgt eine Aufgabenpriorisierung und kontinuierliche Überwachung der Laufzeitleistung.
+    \begin{itemize}
+        \item \textbf{Task-Priorisierung}: Durch Priorisierung der Modellvorhersagen werden zeitkritische Aufgaben bevorzugt behandelt, 
+        wodurch die Einhaltung der Echtzeitanforderungen sichergestellt wird.
+        \item \textbf{Überwachung der Ausführungszeit}: Die Laufzeitleistung wird kontinuierlich überwacht, um zu gewährleisten, 
+        dass die vorgegebenen Echtzeitanforderungen erfüllt werden.
+    \end{itemize}
+    
+    \item[Tests und Validierung der Laufzeitleistung:] Nach dem Deployment der optimierten Modelle werden umfangreiche Tests zur Validierung der Laufzeitleistung 
+    und der Vorhersagegenauigkeit durchgeführt. Diese Tests belegen, dass die gewählte Methodik für die Echtzeitanforderungen geeignet ist.
+    \begin{itemize}
+        \item \textbf{Unit-Tests}: Zur Validierung der Funktionalität und der korrekten Modellvorhersagen.
+        \item \textbf{Performance-Benchmarks}: Die Ausführungszeiten werden gemessen und mit den festgelegten Echtzeitanforderungen verglichen, 
+        um die Effizienz der Optimierungen zu bestätigen.
+        \item \textbf{Hardware-in-the-Loop (HIL)-Tests}: Diese Tests simulieren reale Hardware-Interaktionen, um die Robustheit und Stabilität des Systems unter 
+        industriellen Bedingungen zu überprüfen.
+    \end{itemize}
+\end{description}
 
 \section{Zusammenfassung}
-Die Implementierung und Optimierung der Machine-Learning-Modelle für \Emb erfolgte durch den Einsatz von Techniken wie Quantisierung, Pruning und Modellkompression. 
-Die optimierten Modelle wurden erfolgreich auf verschiedenen Hardwareplattformen, einschließlich SPS, IPCs und Mikrocontrollern, bereitgestellt und in Echtzeitanwendungen 
-integriert. Durch die laufende Überwachung und Priorisierung der Aufgaben konnte sichergestellt werden, dass die Modelle den strengen Echtzeitanforderungen der 
-industriellen Umgebung entsprachen.
+
+Die Implementierung und Optimierung der Machine-Learning-Modelle für Embedded Systems erfolgt durch den gezielten Einsatz von Techniken wie Quantisierung, 
+Pruning und Modellkompression. Diese Methodiken werden aufgrund ihrer Effizienz und Eignung für ressourcenbeschränkte Umgebungen ausgewählt und gegenüber 
+alternativen Ansätzen geprüft. Quantisierung und Pruning bieten eine optimale Balance zwischen Modellgenauigkeit und reduzierten Speicheranforderungen, 
+während die Modellkompression eine signifikante Verringerung der Modellgröße bei minimalem Einfluss auf die Leistung gewährleistet.
+
+Die optimierten Modelle sind erfolgreich auf verschiedenen Hardwareplattformen – einschließlich SPS, IPCs und Mikrocontrollern – bereitgestellt und in 
+Echtzeitanwendungen integriert. Die Auswahl dieser Methodiken erweist sich als optimal, da sie eine flexible Anpassung an die spezifischen 
+Ressourcenanforderungen der jeweiligen Hardware ermöglichen und gleichzeitig die notwendige Modellgenauigkeit beibehalten.
+
+Durch die kontinuierliche Überwachung und Priorisierung der Aufgaben stellt das Framework sicher, dass die Modelle die strengen Echtzeitanforderungen der 
+industriellen Umgebung zuverlässig erfüllen. Die Kombination aus Optimierungstechniken und spezifischen Deployment-Strategien bildet eine robuste Grundlage 
+für den langfristigen Einsatz der Machine-Learning-Modelle in ressourcenbeschränkten industriellen Anwendungen.
