@@ -1,15 +1,29 @@
 % Formatierungseinstellungen für das Dokument
 
 % Seitenränder einstellen
-\usepackage[a4paper, margin=2.5cm]{geometry}
-
+\usepackage{geometry}
+\geometry{
+    a4paper,
+    left=3cm, 
+    right=4cm, 
+    top=2cm,
+    bottom=2cm
+}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
 % Zeilenabstand
 \usepackage{setspace}
-\onehalfspacing  % 1.5-facher Zeilenabstand
+\onehalfspacing  
 
 % Schriften einstellen
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}  % Verwende die Latin Modern Schrift
+\renewcommand{\baselinestretch}{1.5}
+\usepackage{mathptmx} % Times New Roman-like font for text
+\usepackage[scaled=.90]{helvet} % Helvetica (Arial-like) for captions and tables
+\renewcommand{\familydefault}{\rmdefault}
 
 % Kopf- und Fußzeilen anpassen
 \usepackage{fancyhdr}
@@ -38,3 +52,6 @@
 \usepackage[autostyle=true]{csquotes}  % Load csquotes without language options
 
 \usepackage{rotating}
+
+
+

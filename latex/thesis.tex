@@ -1,20 +1,47 @@
-\documentclass[a4paper]{report}  
+\documentclass[a4paper]{report}
 
 \input{settings/packages}  % Paketdefinitione
 \input{settings/commands}  % Eigene Befehle und Abkürzungen
 \input{settings/format}    % Formatierungseinstellungen
 
 \begin{document}
+% Centering everything on the title page
+\begin{titlepage}
+    \centering
+    % Logo
+    \includegraphics[width=0.7\textwidth]{wbh-logo-2023.jpg}
+    \vspace{1.5cm}
 
-\title{Framework für Embedded/Edge ML - Optimiertes Modell Deployment auf Embedded Systemen in der Fertigung}
-\author{Sebastian Munoz Segovia}
-\date{\today}
-\maketitle
+    % Faculty section
+    \textbf{\large Fachbereich} \\
+    Informatik
+    \vspace{2.5cm}
+
+    % Title of the thesis
+    {\Huge \textbf{Framework für Embedded/Edge ML - Optimiertes Modell Deployment auf Embedded Systemen in der Fertigung}}
+    \vspace{0.5cm}
+
+    % Subtitle
+    {\large Abschlussarbeit Studium Technische Informatik}
+    \vspace{2cm}
+
+    % Author and student information
+    von \\
+    \textbf{Sebastian Munoz Segovia} \\
+    Matr. Nr. 850049
+    \vspace{2cm}
+
+    % Supervisor information
+    \textbf{Betreuung: Michael Fleury M.Eng.}
+    \vspace{2cm}
+
+\end{titlepage}
 
 \tableofcontents
 \listoffigures
 \listoftables
 
+\input{chapters/abstract}
 \input{chapters/einleitung}
 \input{chapters/theoretische_hintergrund}
 \input{chapters/methodik}

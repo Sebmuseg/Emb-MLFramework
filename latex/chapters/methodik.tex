@@ -28,11 +28,32 @@ Parallel zur Literaturrecherche wird eine Anforderungsanalyse durchgeführt, um 
 \begin{quote}
 \textbf{Prozess:}
 \begin{enumerate}
-\item \textbf{Interviews und Workshops mit Industriepartnern}: Zur Identifikation praxisrelevanter Anforderungen werden Interviews und Workshops mit Industriepartnern durchgeführt, die Embedded Systems im Produktionsumfeld einsetzen. Hier werden Anforderungen bezüglich Rechenleistung, Energieeffizienz, Echtzeitanforderungen und Modellflexibilität identifiziert.
-\item \textbf{Analyse der technischen Dokumentationen}: Technische Spezifikationen der verwendeten Hardware (z. B. SPS und IPC) werden untersucht, um Hardware-Einschränkungen und Schnittstellenanforderungen zu berücksichtigen.
-\item \textbf{Kategorisierung der Anforderungen}: Die identifizierten Anforderungen werden in technische und funktionale Anforderungen unterteilt. Technische Anforderungen beziehen sich auf die Hardwareeinschränkungen und notwendige Optimierungstechniken, während funktionale Anforderungen Aspekte wie Echtzeitfähigkeit und Robustheit umfassen.
-\item \textbf{Priorisierung}: Anforderungen sind priorisiert, um sicherzustellen, dass die wichtigsten Kriterien wie Echtzeitanforderungen und Effizienz bei der Entwicklung des Frameworks berücksichtigt sind.
+    \item \textbf{Planung der Experteninterviews und Workshops}: Die erste Phase umfasst die Festlegung der Ziele, der Zielgruppe und des Umfangs der Anforderungsanalyse. Da das Ziel darin besteht, praxisnahe Anforderungen der Industriepartner zu ermitteln, werden Industrievertreter, technische Experten und potenzielle Nutzer des Frameworks identifiziert und eingeladen. Ziel dieser ersten Phase ist es, ein umfassendes Verständnis der Erwartungen und Anforderungen an das Framework zu gewinnen.
+    \item \textbf{Entwicklung des Interviewleitfadens}: Für die Durchführung der Experteninterviews wird ein Leitfaden entwickelt, um einheitliche und vergleichbare Ergebnisse zu gewährleisten. Der Leitfaden wird auf die folgenden Schwerpunkte ausgerichtet:
+    \begin{itemize}
+        \item \textbf{Rechenleistung und Hardwareanforderungen}: Welche Anforderungen bestehen hinsichtlich der Rechenleistung und welche Hardware-Beschränkungen sind zu berücksichtigen?
+        \item \textbf{Energieeffizienz}: Inwieweit spielt der Energieverbrauch eine Rolle und wie wichtig ist die Energieeffizienz im praktischen Einsatz?
+        \item \textbf{Echtzeitanforderungen}: Welche zeitlichen Anforderungen (z. B. Latenz, Durchsatz) sind für den produktiven Einsatz des Frameworks erforderlich?
+        \item \textbf{Flexibilität und Erweiterbarkeit des Modells}: Welche Anforderungen bestehen hinsichtlich der Anpassbarkeit und Erweiterbarkeit der ML-Modelle?
+        \item \textbf{Integration in bestehende Systeme}: Welche Herausforderungen bestehen in Bezug auf die Integration des Frameworks in bestehende Steuerungssysteme und Architekturen?
+    \end{itemize}
+    Der Leitfaden ist im Anhang \ref{appendix:interviewleitfaden} dokumentiert, um die Transparenz und Nachvollziehbarkeit der erhobenen Anforderungen zu gewährleisten. 
+
+    \item \textbf{Durchführung der Experteninterviews und Workshops}: Die Interviews und Workshops werden in einem strukturierten Format abgehalten, um sowohl offene als auch gezielte Fragen zu stellen. Die Workshops bestehen typischerweise aus:
+    \begin{itemize}
+        \item \textbf{Einführungsrunde und Zielsetzung}: Einleitend werden die Ziele der Anforderungsanalyse erläutert und die Bedeutung der erhobenen Anforderungen für die Entwicklung des Frameworks betont.
+        \item \textbf{Diskussionsrunde zu den Hauptanforderungen}: In moderierten Diskussionsrunden werden die Themen Rechenleistung, Energieeffizienz, Echtzeitanforderungen und Modellflexibilität besprochen. Die Teilnehmer werden angeleitet, praktische Herausforderungen und Bedürfnisse zu benennen und zu priorisieren.
+        \item \textbf{Abschluss und Zusammenfassung der Ergebnisse}: Am Ende jedes Workshops werden die wichtigsten Erkenntnisse zusammengefasst und den Teilnehmern zur Bestätigung präsentiert, um eine präzise Dokumentation sicherzustellen.
+    \end{itemize}
+
+    \item \textbf{Analyse und Synthese der Anforderungen}: Die im Rahmen der Interviews und Workshops erhobenen Anforderungen werden systematisch analysiert und in technische und funktionale Anforderungen kategorisiert. Diese Anforderungen fließen in den Entwurf und die Implementierung des Frameworks ein und werden im Kapitel zur Entwicklung berücksichtigt.
+
+    \item \textbf{Priorisierung und Validierung der Anforderungen}: Die Anforderungen werden auf Basis der Rückmeldungen der Industriepartner und der technischen Machbarkeit priorisiert. Eine abschließende Validierung der Anforderungen erfolgt durch eine schriftliche Zusammenfassung der Ergebnisse, die an die Teilnehmer zur Überprüfung versendet wird.
 \end{enumerate}
+Die Interviews und Workshops mit den Industriepartnern identifizierten zentrale Anforderungen an das ML-Framework: Im Fokus standen die effiziente Ressourcennutzung, 
+die Einhaltung von Echtzeitanforderungen sowie die Flexibilität des Frameworks, um zukünftige Modelle leicht zu integrieren und anzupassen. 
+Die Teilnehmer betonten zudem die Wichtigkeit einer stabilen Integration in bestehende Steuerungssysteme ohne umfangreiche Anpassungen. 
+Diese Kernergebnisse bilden die Grundlage für die Anforderungen an das Framework und spiegeln die zentralen Bedürfnisse der Industriepartner wider.
 \end{quote}
 
 \section{Framework-Entwurf}

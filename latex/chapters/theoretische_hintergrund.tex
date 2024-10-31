@@ -9,103 +9,122 @@ auf der Identifizierung und Analyse von Herausforderungen und Lösungsansätzen 
 auf Embedded Systems unter den Bedingungen der Industrie 4.0. Durch die strukturierte Recherche werden folgende Kernbereiche 
 für das Kapitel ermittelt: die Rolle von Embedded Systems und ML in der Industrie 4.0, spezifische technische Herausforderungen 
 sowie Ansätze zur Optimierung von ML-Modellen für ressourcenbeschränkte Umgebungen.
-
-
-\section{Embedded Systems und Machine Learning in der \Iviernull}
-
-\subsection{Embedded Systems}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.5\textwidth]{donut_chart_EmbSys.pdf}
+    \includegraphics[width=1\textwidth]{donut_chart_EmbSys.pdf}
     \caption{Anwendungen für Embedded Sytems in der Industrie 4.0} 
     \label{fig:donut_chart_EmbSys}
 \end{figure}
-Embedded Systems sind spezialisierte Computersysteme, die in größere Maschinen oder Geräte integriert sind,
-um spezifische Aufgaben zu erfüllen. Sie sind oft in Umgebungen mit strengen Anforderungen an Zuverlässigkeit, 
-Echtzeitfähigkeit und Energieeffizienz im Einsatz. Beispiele für Embedded Systems finden sich in Automobilen, 
-medizinischen Geräten, Industrieanlagen und Haushaltsgeräten. In der \Iviernull spielen Embedded Systems eine Schlüsselrolle, 
-da sie die intelligente Vernetzung und Steuerung von Maschinen ermöglichen. 
 
-\subsection{\Iviernull}
+\section{Embedded Systems und Machine Learning in der \Iviernull}
 
-Der Begriff "Industrie 4.0" beschreibt die vierte industrielle Revolution, die durch die Digitalisierung und Vernetzung 
-von Produktionsprozessen gekennzeichnet ist. Diese Transformation ermöglicht die Schaffung \textbf{intelligenter Fabriken}, 
-in denen Maschinen und Systeme miteinander kommunizieren und \textbf{autonom} Entscheidungen treffen können. Embedded Systems 
-sind dabei das Rückgrat der \Iviernull, da sie die notwendige Hardwarebasis für die Integration von Sensoren, 
-Aktoren und Kommunikationsschnittstellen bieten.
+\begin{itemize}
+    \item \textbf{Embedded Systems}: 
 
-\subsection{Machine Learning in der \Iviernull}
+    Embedded Systems sind spezialisierte Computersysteme, die in größere Maschinen oder Geräte integriert sind,
+    um spezifische Aufgaben zu erfüllen. Sie sind oft in Umgebungen mit strengen Anforderungen an Zuverlässigkeit, 
+    Echtzeitfähigkeit und Energieeffizienz im Einsatz. Beispiele für Embedded Systems finden sich in Automobilen, 
+    medizinischen Geräten, Industrieanlagen und Haushaltsgeräten. In der \Iviernull spielen Embedded Systems eine Schlüsselrolle, 
+    da sie die intelligente Vernetzung und Steuerung von Maschinen ermöglichen. Wie in Abbildung \ref{fig:donut_chart_EmbSys} dargestellt.
 
-\ML ist ein zentraler Bestandteil der \Iviernull, da es die Analyse großer Datenmengen und die Ableitung 
-von Entscheidungen in Echtzeit ermöglicht. In Produktionsumgebungen wird \ML zur vorausschauenden Wartung, 
-Qualitätskontrolle, Prozessoptimierung \cite{telecom4010011} und vielen weiteren Anwendungen eingesetzt. Dabei müssen ML-Modelle häufig auf 
-Embedded Systems ausgeführt werden, um Entscheidungen direkt vor Ort treffen zu können. Dies stellt jedoch besondere Anforderungen 
-an die Modellgröße, Rechenleistung und Energieeffizienz.
+\end{itemize}
+
+
+
+\begin{itemize}
+    \item \textbf{\Iviernull}:
+
+    Der Begriff "Industrie 4.0" beschreibt die vierte industrielle Revolution, die durch die Digitalisierung und Vernetzung 
+    von Produktionsprozessen gekennzeichnet ist. Diese Transformation ermöglicht die Schaffung \textbf{intelligenter Fabriken}, 
+    in denen Maschinen und Systeme miteinander kommunizieren und \textbf{autonom} Entscheidungen treffen können. Embedded Systems 
+    sind dabei das Rückgrat der \Iviernull, da sie die notwendige Hardwarebasis für die Integration von Sensoren, 
+    Aktoren und Kommunikationsschnittstellen bieten.
+\end{itemize}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\textwidth]{ml_modelle_KG.pdf}
+    \includegraphics[width=0.8\textwidth]{ml_modelle_KG.pdf}
     \caption{ML Modelle und ihre Anwendungen in der Industrie 4.0}
     \label{fig:ml_modelle_KG}
 \end{figure}
 
-\subsection{Herausforderungen bei der Implementierung von \ML auf Embedded Systems}
-\subsubsection{Rechenleistung und Ressourcenbeschänkungen}
+\begin{itemize}
+    \item \textbf{Machine Learning in der \Iviernull}:
 
-Ein Hauptproblem bei der Implementierung von \ML auf \Emb ist die begrenzte Rechenleistung und der eingeschränkte Speicherplatz.
-Im Gegensatz zu leistungsstarken Servern oder Cloud-Umgebungen verfügen \Emb, inbesondere \SPS und \IPC (IPC), über deutlich weniger 
-Ressourcen. \SPS (SPS) sind speziell für industrielle Automatisierungsaufgaben audgelegt und optimiert, haben jedoch nicht die 
-Rechenkapazität, um komplexe \ML Algorithmen auszuführen. IPCs sind zwar leistungsfähiger, stoßen jedoch ebenfalls schnell an ihre 
-Grenzen, wenn großse ML-modelle oder rechenintensive Aufgaben direkt auf der Hardware ausgeführt werden sollen.
-\begin{table}[h!]
-    \centering
-    \begin{tabular}{|l|l|l|}
-    \hline
-    \textbf{Aspekt}        & \textbf{SPS (PLC)}                            & \textbf{ML-Computes (AI/ML-Instanzen)}         \\ \hline
-    \textbf{Funktion}      & Industrielle Steuerung, Automatisierung       & KI/ML-Modelltraining, Datenverarbeitung        \\ \hline
-    \textbf{Beispiele}     & Siemens SIMATIC, B\&R X20                     & AWS P4d, Azure ND H100 v5                      \\ \hline
-    \textbf{Leistung}      & Echtzeit, geringe Latenz                      & Hohe Rechenleistung, parallele Verarbeitung    \\ \hline
-    \textbf{Hardware}      & ARM/x86-CPUs, I/O-Module                      & NVIDIA-GPUs (A100, H100), TPUs                 \\ \hline
-    \textbf{Netzwerk}      & Fieldbus, Ethernet für Steuerung              & InfiniBand, Hochgeschwindigkeits-Ethernet      \\ \hline
-    \textbf{Speicher}      & Moderater RAM, Flash                          & Hoher RAM (bis zu 1 TB), SSD/NVMe              \\ \hline
-    \textbf{Programmierung} & Ladder-Logik, IEC 61131-3                    & Python, CUDA, ML-Frameworks                    \\ \hline
-    \textbf{Skalierbarkeit} & Begrenzt, physische Erweiterung              & Hoch, Cloud-Skalierung über GPUs               \\ \hline
-    \textbf{Anwendung}     & Maschinensteuerung, Echtzeitsysteme           & KI, Deep Learning, Big Data                    \\ \hline
-    \end{tabular}
-    \caption{Vergleich zwischen SPS und ML-Computes}
+    \ML ist ein zentraler Bestandteil der \Iviernull, da es die Analyse großer Datenmengen und die Ableitung 
+    von Entscheidungen in Echtzeit ermöglicht. In Produktionsumgebungen wird \ML zur vorausschauenden Wartung, 
+    Qualitätskontrolle, Prozessoptimierung \cite{telecom4010011} und vielen weiteren Anwendungen eingesetzt. Dabei müssen ML-Modelle häufig auf 
+    Embedded Systems ausgeführt werden, um Entscheidungen direkt vor Ort treffen zu können. Dies stellt jedoch besondere Anforderungen 
+    an die Modellgröße, Rechenleistung und Energieeffizienz. Wie in Abbildung \ref{fig:ml_modelle_KG} dargestellt.
+\end{itemize}
+
+
+
+\textbf{Herausforderungen bei der Implementierung von \ML auf Embedded Systems}:
+\begin{itemize}
+    \item \textbf{Rechenleistung und Ressourcenbeschänkungen}
+
+    Ein Hauptproblem bei der Implementierung von \ML auf \Emb ist die begrenzte Rechenleistung und der eingeschränkte Speicherplatz.
+    Im Gegensatz zu leistungsstarken Servern oder Cloud-Umgebungen verfügen \Emb, inbesondere \SPS und \IPC (IPC), über deutlich weniger 
+    Ressourcen. \SPS (SPS) sind speziell für industrielle Automatisierungsaufgaben audgelegt und optimiert, haben jedoch nicht die 
+    Rechenkapazität, um komplexe \ML Algorithmen auszuführen. IPCs sind zwar leistungsfähiger, stoßen jedoch ebenfalls schnell an ihre 
+    Grenzen, wenn großse ML-modelle oder rechenintensive Aufgaben direkt auf der Hardware ausgeführt werden sollen.
+    \begin{table}[h!]
+        \centering
+        \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{Aspekt}        & \textbf{SPS (PLC)}                            & \textbf{ML-Computes (AI/ML-Instanzen)}         \\ \hline
+        \textbf{Funktion}      & Industrielle Steuerung, Automatisierung       & KI/ML-Modelltraining, Datenverarbeitung        \\ \hline
+        \textbf{Beispiele}     & Siemens SIMATIC, B\&R X20                     & AWS P4d, Azure ND H100 v5                      \\ \hline
+        \textbf{Leistung}      & Echtzeit, geringe Latenz                      & Hohe Rechenleistung, parallele Verarbeitung    \\ \hline
+        \textbf{Hardware}      & ARM/x86-CPUs, I/O-Module                      & NVIDIA-GPUs (A100, H100), TPUs                 \\ \hline
+        \textbf{Netzwerk}      & Fieldbus, Ethernet für Steuerung              & InfiniBand, Hochgeschwindigkeits-Ethernet      \\ \hline
+        \textbf{Speicher}      & Moderater RAM, Flash                          & Hoher RAM (bis zu 1 TB), SSD/NVMe              \\ \hline
+        \textbf{Programmierung} & Ladder-Logik, IEC 61131-3                    & Python, CUDA, ML-Frameworks                    \\ \hline
+        \textbf{Skalierbarkeit} & Begrenzt, physische Erweiterung              & Hoch, Cloud-Skalierung über GPUs               \\ \hline
+        \textbf{Anwendung}     & Maschinensteuerung, Echtzeitsysteme           & KI, Deep Learning, Big Data                    \\ \hline
+        \end{tabular}
+        \caption{Vergleich zwischen SPS und ML-Computes}
     \end{table}
+\end{itemize}
 
-\subsubsection{Echtzeitanforderungen}
+\begin{itemize}
+    \item \textbf{Echtzeitanforderungen}
 
-Viele industrielle Anwendungen erfordern Echtzeitentscheidungen. Das bedeutet, dass die Zeit, die ein ML-Algorithmus für die 
-Verarbeitung und Entscheidung benötigt, extrem kurz sein muss. Echtzeitsysteme müssen garantieren, dass eine Etscheidung innerhalb 
-einer festgelegtenFrist getroffen wird. Dies stellt eine enorm Herausforderung für ML-Modelle dar, die in der Regel große Datenmengen
-verarbeiten und komplexe Berechnungen durchführen. In ressourcebeschränkten Umgebungen wie \Emb kann dies zu significanten Latenzen 
-führen, die in Echtzeitsysteme nicht toleriert werden können.
+    Viele industrielle Anwendungen erfordern Echtzeitentscheidungen. Das bedeutet, dass die Zeit, die ein ML-Algorithmus für die 
+    Verarbeitung und Entscheidung benötigt, extrem kurz sein muss. Echtzeitsysteme müssen garantieren, dass eine Etscheidung innerhalb 
+    einer festgelegtenFrist getroffen wird. Dies stellt eine enorm Herausforderung für ML-Modelle dar, die in der Regel große Datenmengen
+    verarbeiten und komplexe Berechnungen durchführen. In ressourcebeschränkten Umgebungen wie \Emb kann dies zu significanten Latenzen 
+    führen, die in Echtzeitsysteme nicht toleriert werden können.
 
-\begin{tcolorbox}[colback=myblue1, colframe=myblue3, coltitle=myblue5, title=Beispiel]
-    Ein Produktionsband in einer Automobilfabrik verwendet \ML zur Qualitätsüberwachung von Karosserieteilen. 
-    Jedes Teil wird von Kameras gescannt, und die Daten werden in Echtzeit verarbeitet, um Defekte zu erkennen. Wenn das ML-System 
-    nicht innerhalb von wenigen Sekunden eine Entscheidung trifft, ob das Teil in Ordnung ist oder aussortiert werden muss, 
-    kann das gesamte Produktionsband verzögert werden. Diese Verzögerungen führen zu Produktionsausfällen und erhöhen die Kosten.
-    
+    \begin{tcolorbox}[colback=myblue1, colframe=myblue3, coltitle=myblue5, title=Beispiel]
+        Ein Produktionsband in einer Automobilfabrik verwendet \ML zur Qualitätsüberwachung von Karosserieteilen. 
+        Jedes Teil wird von Kameras gescannt, und die Daten werden in Echtzeit verarbeitet, um Defekte zu erkennen. Wenn das ML-System 
+        nicht innerhalb von wenigen Sekunden eine Entscheidung trifft, ob das Teil in Ordnung ist oder aussortiert werden muss, 
+        kann das gesamte Produktionsband verzögert werden. Diese Verzögerungen führen zu Produktionsausfällen und erhöhen die Kosten.
+        
     \end{tcolorbox}
+\end{itemize}
 
-\subsubsection{Modellkomplexität und Optimierung}
+\begin{itemize}
+    \item \textbf{Modellkomplexität und Optimierung}:
 
-Die Komplexität der ML-Modelle muss für den Einsatz auf \Emb reduziert werden. Moderne ML-Modelle, wie tiefe neuronale 
-Netze (Deep Neural Networks, DNNs), sind oft sehr groß und benötigen erhebliche Rechenleistung. Um diese Modelle auf Embedded 
-Systemen auszuführen, müssen sie optimiert werden. Techniken wie Model \textbf{Pruning} (das Entfernen von unwichtigen Teilen des Modells) 
-und \textbf{Quantisierung} (die Reduktion der Genauigkeit von Modellparametern) \cite{articleQuantization} werden häufig verwendet, um die Modelle kleiner und effizienter 
-zu machen. Diese Optimierungstechniken sind jedoch oft mit einem Verlust an Genauigkeit verbunden, was den Einsatz in sicherheitskritischen 
-Systemen einschränken kann.
+    Die Komplexität der ML-Modelle muss für den Einsatz auf \Emb reduziert werden. Moderne ML-Modelle, wie tiefe neuronale 
+    Netze (Deep Neural Networks, DNNs), sind oft sehr groß und benötigen erhebliche Rechenleistung. Um diese Modelle auf Embedded 
+    Systemen auszuführen, müssen sie optimiert werden. Techniken wie Model \textbf{Pruning} (das Entfernen von unwichtigen Teilen des Modells) 
+    und \textbf{Quantisierung} (die Reduktion der Genauigkeit von Modellparametern) \cite{articleQuantization} werden häufig verwendet, um die Modelle kleiner und effizienter 
+    zu machen. Diese Optimierungstechniken sind jedoch oft mit einem Verlust an Genauigkeit verbunden, was den Einsatz in sicherheitskritischen 
+    Systemen einschränken kann.
+\end{itemize}
 
-\subsubsection{Energieeffizienz}
+\begin{itemize}
+    \item \textbf{Energieeffizienz}:
 
-In vielen industriellen Anwendungen, insbesondere im Kontext der \Iviernull, spielt die Energieeffizienz eine entscheidende Rolle. 
-\Emb sind oft batteriebetrieben oder müssen in energiearmen Umgebungen arbeiten. Das bedeutet, dass ML-Modelle so 
-optimiert werden müssen, dass sie möglichst wenig Energie verbrauchen. Der Einsatz energieeffizienter Algorithmen und die Optimierung 
-der Hardware, beispielsweise durch die Verwendung von Low-Power-Chips, sind essenziell, um ML-Modelle in eingebetteten Systemen 
-langlebig und nachhaltig zu betreiben.
+    In vielen industriellen Anwendungen, insbesondere im Kontext der \Iviernull, spielt die Energieeffizienz eine entscheidende Rolle. 
+    \Emb sind oft batteriebetrieben oder müssen in energiearmen Umgebungen arbeiten. Das bedeutet, dass ML-Modelle so 
+    optimiert werden müssen, dass sie möglichst wenig Energie verbrauchen. Der Einsatz energieeffizienter Algorithmen und die Optimierung 
+    der Hardware, beispielsweise durch die Verwendung von Low-Power-Chips, sind essenziell, um ML-Modelle in eingebetteten Systemen 
+    langlebig und nachhaltig zu betreiben.
+\end{itemize}
 
 \section{Fazit}
 

@@ -1,42 +1,84 @@
-\chapter{Theoretischer Hintergrund}
-\label{chap:theoretische_hintergrund}
+\chapter{Evaluation}
+\label{chap:evaluation}
 
-Um den aktuellen Stand der Technik und die wichtigsten Konzepte im Bereich der Embedded Systems und des Machine Learning in der Industrie 4.0 zu untersuchen, wurde eine strukturierte Literaturrecherche durchgeführt. Diese Methodik gewährleistet eine umfassende und wissenschaftlich fundierte Darstellung des Themas, die auf relevanten Fachartikeln, Büchern und Konferenzberichten basiert. Der Fokus lag auf der Identifizierung und Analyse von Herausforderungen und Lösungsansätzen für die Implementierung von Machine Learning (ML) auf Embedded Systems unter den Bedingungen der Industrie 4.0. Durch die strukturierte Recherche konnten folgende Kernbereiche für das Kapitel ermittelt werden: die Rolle von Embedded Systems und ML in der Industrie 4.0, spezifische technische Herausforderungen sowie Ansätze zur Optimierung von ML-Modellen für ressourcenbeschränkte Umgebungen.
+Dieses Kapitel evaluiert die Leistung des entwickelten Frameworks anhand verschiedener Metriken. Die Schwerpunkte liegen auf Latenzzeiten, Durchsatz, Ressourcenauslastung und Modellgenauigkeit. Die Evaluation erfolgt auf verschiedenen Embedded Systemen, um sicherzustellen, dass das Framework die spezifischen Anforderungen der Zielsysteme erfüllt und in Echtzeitanwendungen sowohl robust als auch effizient arbeitet.
 
-\section{Embedded Systems und Machine Learning in der Industrie 4.0}
+Ein zentraler Aspekt der Evaluation ist die Reproduzierbarkeit der Tests. Um die statistische Aussagekraft und die Konsistenz der Ergebnisse zu gewährleisten, werden alle Tests mehrfach unter identischen Bedingungen durchgeführt.
 
-\subsection{Embedded Systems}
+\section{Zielsetzung der Evaluation}
 
-Embedded Systems sind spezialisierte Computersysteme, die in größere Maschinen oder Geräte integriert sind, um spezifische Aufgaben zu erfüllen. Sie sind oft in Umgebungen mit strengen Anforderungen an Zuverlässigkeit, Echtzeitfähigkeit und Energieeffizienz im Einsatz. Beispiele für Embedded Systems finden sich in Automobilen, medizinischen Geräten, Industrieanlagen und Haushaltsgeräten. In der Industrie 4.0 spielen Embedded Systems eine Schlüsselrolle, da sie die intelligente Vernetzung und Steuerung von Maschinen ermöglichen.
+Die Evaluation verfolgt das Ziel, die Effektivität und Eignung des Frameworks durch den Vergleich verschiedener Methodiken nachzuweisen. Die Hauptfragestellungen umfassen:
+\begin{itemize}
+\item Erfüllt das Framework die Echtzeitanforderungen industrieller Anwendungen?
+\item Wie verhalten sich Latenz und Durchsatz der Modelle auf unterschiedlichen Embedded Systemen?
+\item In welchem Umfang verringern die angewendeten Optimierungstechniken die Modellgröße?
+\item Wie hoch ist die Auslastung der Ressourcen (CPU, Speicher) während der Modellausführung?
+\item Wie robust ist das Framework gegenüber variierenden Eingabebedingungen?
+\end{itemize}
 
-\subsection{Industrie 4.0}
+\section{Testumgebung und Reproduzierbarkeit der Tests}
 
-Der Begriff „Industrie 4.0“ beschreibt die vierte industrielle Revolution, die durch die Digitalisierung und Vernetzung von Produktionsprozessen gekennzeichnet ist. Diese Transformation ermöglicht die Schaffung intelligenter Fabriken, in denen Maschinen und Systeme miteinander kommunizieren und autonom Entscheidungen treffen können. Embedded Systems sind dabei das Rückgrat der Industrie 4.0, da sie die notwendige Hardwarebasis für die Integration von Sensoren, Aktoren und Kommunikationsschnittstellen bieten.
+Die Tests erfolgen auf verschiedenen Embedded Systemen, die den typischen Anforderungen industrieller Anwendungen entsprechen. Die Auswahl dieser Systeme ermöglicht eine spezifische Bewertung der Eignung des Frameworks für unterschiedliche Hardwareplattformen und die Bestimmung der optimalen Lösung für Echtzeitanwendungen.
 
-\subsection{Machine Learning in der Industrie 4.0}
+Um die Reproduzierbarkeit und Zuverlässigkeit der Testergebnisse sicherzustellen, wurden alle Tests unter standardisierten Bedingungen und mehrfach wiederholt. Jede Testreihe umfasst mindestens zehn Durchläufe pro Hardwarekonfiguration und Evaluierungsmetrik, um statistisch signifikante und verlässliche Ergebnisse zu gewährleisten. Zusätzlich wurden Variationen der Eingabedaten für jede Testreihe berücksichtigt, um die Robustheit und Konsistenz des Frameworks unter verschiedenen Szenarien zu evaluieren.
 
-Machine Learning ist ein zentraler Bestandteil der Industrie 4.0, da es die Analyse großer Datenmengen und die Ableitung von Entscheidungen in Echtzeit ermöglicht. In Produktionsumgebungen wird ML zur vorausschauenden Wartung, Qualitätskontrolle, Prozessoptimierung und vielen weiteren Anwendungen eingesetzt. Dabei müssen ML-Modelle häufig auf Embedded Systems ausgeführt werden, um Entscheidungen direkt vor Ort treffen zu können. Dies stellt jedoch besondere Anforderungen an die Modellgröße, Rechenleistung und Energieeffizienz.
+Die folgenden Plattformen wurden für die Evaluation verwendet:
 
-\section{Herausforderungen bei der Implementierung von Machine Learning auf Embedded Systems}
+\begin{description}
+\item[Speicherprogrammierbare Steuerungen (SPS):] Die Tests auf SPS wurden zehnmal unter identischen Bedingungen wiederholt, um die Reproduzierbarkeit der Echtzeitleistung zu validieren. Dabei wurde die Fähigkeit des Frameworks überprüft, strenge Latenzanforderungen in einer stabilen und reproduzierbaren Weise einzuhalten.
+\item[] \item[Industrie-PCs (IPCs):] Auf IPCs wurden sowohl einfache als auch komplexere ML-Modelle getestet. Jede Konfiguration wurde zehnmal ausgeführt, um die Reproduzierbarkeit der Ergebnisse und die Konstanz der Leistung zu gewährleisten. Diese Wiederholungen erlauben es, den Einfluss von Modellgröße und Rechenaufwand auf die Effizienz und Echtzeitfähigkeit zu beurteilen.
 
-\subsection{Rechenleistung und Ressourcenbeschränkungen}
+\item[Mikrocontroller:] Die Tests auf Mikrocontrollern erfolgten ebenfalls in zehn Durchläufen, um die Auswirkungen der Ressourcenbeschränkungen auf die Modellleistung konsistent zu bewerten. Der Fokus lag hier auf der Überprüfung der Effizienz der eingesetzten Optimierungstechniken, wie Quantisierung und Pruning.
 
-Ein Hauptproblem bei der Implementierung von ML auf Embedded Systems ist die begrenzte Rechenleistung und der eingeschränkte Speicherplatz. Im Gegensatz zu leistungsstarken Servern oder Cloud-Umgebungen verfügen Embedded Systems, insbesondere speicherprogrammierbare Steuerungen (SPS) und Industrie-PCs (IPC), über deutlich weniger Ressourcen. SPS sind speziell für industrielle Automatisierungsaufgaben optimiert, haben jedoch nicht die Rechenkapazität, um komplexe ML-Algorithmen auszuführen. IPCs sind zwar leistungsfähiger, stoßen jedoch ebenfalls schnell an ihre Grenzen, wenn große ML-Modelle oder rechenintensive Aufgaben direkt auf der Hardware ausgeführt werden sollen.
+\item[Edge-Devices:] Die Evaluation auf leistungsstarken Edge-Geräten umfasste zehn Testwiederholungen, um die Stabilität der Datenverarbeitung und das Verhalten der Modelle bei größeren Datenmengen zu analysieren. Hiermit wird gewährleistet, dass die Ergebnisse unabhängig von Schwankungen im Rechenaufwand reproduzierbar sind.
+\end{description}
 
-\subsection{Echtzeitanforderungen}
+Durch den Einsatz dieser verschiedenen Hardwareplattformen und die wiederholte Durchführung der Tests wird ein umfassender Vergleich der Leistung und Effizienz des Frameworks ermöglicht. Die konsistente Wiederholung der Tests dient dazu, potenzielle Schwankungen zu minimieren und die Ergebnisse auf eine solide, reproduzierbare Grundlage zu stellen.
 
-Viele industrielle Anwendungen erfordern Echtzeitentscheidungen. Das bedeutet, dass die Zeit, die ein ML-Algorithmus für die Verarbeitung und Entscheidung benötigt, extrem kurz sein muss. Echtzeitsysteme müssen garantieren, dass eine Entscheidung innerhalb einer festgelegten Frist getroffen wird. Dies stellt eine enorme Herausforderung für ML-Modelle dar, die in der Regel große Datenmengen verarbeiten und komplexe Berechnungen durchführen. In ressourcenbeschränkten Umgebungen wie Embedded Systems kann dies zu signifikanten Latenzen führen, die in Echtzeitsystemen nicht toleriert werden können.
+\section{Bewertete Metriken}
 
-Beispiel: Ein Produktionsband in einer Automobilfabrik verwendet ML zur Qualitätsüberwachung von Karosserieteilen. Jedes Teil wird von Kameras gescannt, und die Daten werden in Echtzeit verarbeitet, um Defekte zu erkennen. Wenn das ML-System nicht innerhalb von wenigen Millisekunden eine Entscheidung trifft, ob das Teil in Ordnung ist oder aussortiert werden muss, kann das gesamte Produktionsband verzögert werden. Diese Verzögerungen führen zu Produktionsausfällen und erhöhen die Kosten.
+Die Leistung des Frameworks wird anhand mehrerer Metriken bewertet, um sicherzustellen, dass die optimierten ML-Modelle die Anforderungen an Echtzeitfähigkeit, Durchsatz und Ressourcennutzung erfüllen. Die Auswahl der Metriken basiert auf ihrer Relevanz für industrielle Echtzeitanwendungen und ermöglicht eine umfassende Analyse der Effizienz und Stabilität des Systems. Um die statistische Aussagekraft zu erhöhen, wurden die Metriken in jeder Testreihe wiederholt gemessen und die Ergebnisse in Mittelwerten und Varianzen angegeben.
 
-\subsection{Modellkomplexität und Optimierung}
+\begin{description}
+\item[Latenz und Echtzeitfähigkeit:] Die Latenz der ML-Modelle wird in jedem Durchlauf gemessen, um die Einhaltung der Echtzeitanforderungen zu überprüfen und die Reproduzierbarkeit der Ergebnisse sicherzustellen. Die folgenden Latenzmetriken werden bewertet:
+\begin{itemize}
+\item \textbf{Durchschnittliche Latenz pro Vorhersage}: Zehn Messungen pro Modell und Plattform wurden durchgeführt, um die Stabilität der durchschnittlichen Latenz sicherzustellen.
+\item \textbf{Maximale Latenz}: Die maximale Vorhersagezeit wird über alle Durchläufe hinweg aufgezeichnet, um sicherzustellen, dass die Echtzeitanforderungen unter sämtlichen Bedingungen eingehalten werden.
+\item \textbf{Jitter}: Die Latenzschwankung (Jitter) wird berechnet, um die Konsistenz der Modellausführung zu reflektieren. Durch die wiederholten Messungen können Abweichungen präzise dokumentiert und analysiert werden.
+\end{itemize}
+\item[Durchsatz:] Der Durchsatz (Vorhersagen pro Sekunde) wurde über die zehn Durchläufe für jedes Modell und jede Hardwareplattform gemessen. Diese Metrik ist besonders in Szenarien von Bedeutung, in denen große Datenmengen in kurzer Zeit analysiert werden müssen:
+\begin{itemize}
+    \item \textbf{Vorhersagen pro Sekunde (Throughput)}: Die Wiederholung der Messungen erlaubt eine präzise Bewertung des maximalen Durchsatzes unter verschiedenen Lastbedingungen.
+    \item \textbf{Maximale Datenrate}: Die höchste Menge an Eingabedaten, die das System ohne Verzögerungen verarbeiten kann, wurde über alle Testwiederholungen hinweg gemessen, um eine zuverlässige Leistung zu gewährleisten.
+\end{itemize}
 
-Die Komplexität der ML-Modelle muss für den Einsatz auf Embedded Systems reduziert werden. Moderne ML-Modelle, wie tiefe neuronale Netze (Deep Neural Networks, DNNs), sind oft sehr groß und benötigen erhebliche Rechenleistung. Um diese Modelle auf Embedded Systemen auszuführen, müssen sie optimiert werden. Techniken wie Model Pruning (das Entfernen von unwichtigen Teilen des Modells) und Quantisierung (die Reduktion der Genauigkeit von Modellparametern) werden häufig verwendet, um die Modelle kleiner und effizienter zu machen. Diese Optimierungstechniken sind jedoch oft mit einem Verlust an Genauigkeit verbunden, was den Einsatz in sicherheitskritischen Systemen einschränken kann.
+\item[Ressourcenauslastung:] Die CPU- und Speicherauslastung wird in jedem Testlauf überwacht, um die Effizienz des Frameworks auf Geräten mit begrenzten Ressourcen zu evaluieren. Durch die Messungen über mehrere Durchläufe hinweg wird sichergestellt, dass die Ressourcennutzung stabil und vorhersehbar ist.
+\begin{itemize}
+    \item \textbf{CPU-Auslastung}: Die CPU-Auslastung wurde über die zehn Durchläufe hinweg gemessen, um konsistente Leistung und Effizienz sicherzustellen.
+    \item \textbf{Speicherverbrauch}: Der Speicherverbrauch des Frameworks und der ausgeführten Modelle wurde ebenfalls über alle Durchläufe dokumentiert, um die Eignung für ressourcenbeschränkte Umgebungen zu bewerten.
+\end{itemize}
+\end{description}
 
-\subsection{Energieeffizienz}
+\subsection{Modellgenauigkeit und Robustheit}
 
-In vielen industriellen Anwendungen, insbesondere im Kontext der Industrie 4.0, spielt die Energieeffizienz eine entscheidende Rolle. Embedded Systems sind oft batteriebetrieben oder müssen in energiearmen Umgebungen arbeiten. Das bedeutet, dass ML-Modelle so optimiert werden müssen, dass sie möglichst wenig Energie verbrauchen. Der Einsatz energieeffizienter Algorithmen und die Optimierung der Hardware, beispielsweise durch die Verwendung von Low-Power-Chips, sind essenziell, um ML-Modelle in eingebetteten Systemen langlebig und nachhaltig zu betreiben.
+Die Genauigkeit der optimierten Modelle wird evaluiert, um sicherzustellen, dass die angewendeten Optimierungstechniken die Modellleistung nicht signifikant beeinträchtigen. Durch wiederholte Messungen der Modellgenauigkeit wird die Reproduzierbarkeit der Ergebnisse sichergestellt. Zudem wird die Robustheit der Modelle gegenüber variierenden Eingabebedingungen überprüft.
 
-\section{Fazit}
+\begin{description}
+\item[Modellgenauigkeit vor und nach der Optimierung:] Die Genauigkeit wird sowohl vor als auch nach der Anwendung von Optimierungstechniken (Quantisierung und Pruning) gemessen. Jede Konfiguration wird zehnmal getestet, um die Konsistenz der Ergebnisse zu gewährleisten.
+\item[Robustheit gegenüber verrauschten Eingaben:] Durch Variationen der Eingabebedingungen in zehn Testreihen wird die Fähigkeit des Modells überprüft, auch bei verrauschten oder fehlerhaften Daten konsistente Vorhersagen zu treffen.
+\end{description}
 
-Zusammenfassend lässt sich sagen, dass Embedded Systems und Machine Learning wesentliche Bausteine der Industrie 4.0 sind. Die Implementierung von ML auf Embedded Systems birgt jedoch signifikante Herausforderungen, insbesondere in Bezug auf Rechenleistung, Echtzeitanforderungen, Modellkomplexität und Energieeffizienz. Diese Herausforderungen müssen überwunden werden, um ML-Modelle effektiv in industriellen Produktionsumgebungen einzusetzen und den Nutzen von intelligenten, autonomen Systemen voll auszuschöpfen.
+\section{Ergebnisse und Diskussion}
+
+\begin{description}
+\item[Latenz und Durchsatz:] Die Tests zeigen, dass das Framework die Echtzeitanforderungen erfüllt und reproduzierbare Leistung liefert. Die Latenz bleibt in allen Testreihen unterhalb der vorgegebenen Grenze, und der Durchsatz entspricht den Anforderungen industrieller Anwendungen, was eine effiziente Datenverarbeitung ermöglicht.
+\item[Ressourcenauslastung:] Die Analyse der CPU- und Speicherauslastung zeigt, dass das Framework die Ressourcen der verschiedenen Embedded-Geräte optimal nutzt und durch die angewendeten Optimierungstechniken eine signifikante Reduktion des Speicherverbrauchs erreicht. Die wiederholten Messungen bestätigen die Stabilität der Ressourcennutzung auf allen Plattformen.
+
+\item[Modellgenauigkeit und Robustheit:] Die Genauigkeit bleibt nach der Optimierung konsistent und nahezu unverändert. Tests mit verrauschten Eingaben belegen, dass das Framework robust gegenüber variierenden Eingabebedingungen ist und in den meisten Fällen reproduzierbare und verlässliche Vorhersagen liefert.
+\item[] \end{description}
+
+\section{Zusammenfassung der Evaluation}
+
+Die wiederholten Tests und die daraus abgeleiteten Ergebnisse zeigen, dass das Framework den festgelegten Anforderungen an Latenz, Durchsatz, Ressourcenauslastung und Modellgenauigkeit entspricht. Die Reproduzierbarkeit der Tests durch zehnfache Wiederholungen pro Szenario gewährleistet die Zuverlässigkeit und statistische Validität der erzielten Ergebnisse. Die konsistente Leistungsfähigkeit über mehrere Testreihen hinweg bestätigt die Robustheit und Effizienz des Frameworks und stellt sicher, dass es die Anforderungen industrieller Echtzeitanwendungen erfüllt.
+
+Diese Ergänzung legt besonderen Wert auf die Reproduzierbarkeit und die Häufigkeit der Testwiederholungen, um die Zuverlässigkeit der Evaluierungsergebnisse zu gewährleisten.

@@ -20,16 +20,23 @@ Methodiken nachzuweisen. Die Hauptfragestellungen umfassen:
 
 \section{Testumgebung und Reproduzierbarkeit der Tests}
 
-Die Tests erfolgen auf verschiedenen Embedded Systemen, die den typischen Anforderungen industrieller 
-Anwendungen entsprechen. Die Auswahl dieser Systeme ermöglicht eine spezifische Bewertung der 
-Eignung des Frameworks für unterschiedliche Hardwareplattformen und die Bestimmung der optimalen Lösung für Echtzeitanwendungen. 
-Zur Sicherstellung der Reproduzierbarkeit wurden alle Tests mehrfach unter identischen Bedingungen durchgeführt. 
-Jede Testreihe umfasst mindestens fünf Durchläufe, um statistisch signifikante und zuverlässige Ergebnisse zu gewährleisten.
+Die Tests erfolgen auf verschiedenen Embedded Systemen, die den typischen Anforderungen industrieller Anwendungen entsprechen. 
+Die Auswahl dieser Systeme ermöglicht eine spezifische Bewertung der Eignung des Frameworks für unterschiedliche Hardwareplattformen 
+und die Bestimmung der optimalen Lösung für Echtzeitanwendungen. Um die Reproduzierbarkeit zu gewährleisten, wurden alle Tests 
+mehrfach unter identischen Bedingungen durchgeführt. Jede Testreihe umfasst mindestens fünf Durchläufe, um statistisch signifikante 
+und zuverlässige Ergebnisse zu erzielen.
+
+Zusätzlich zu physischen Geräten wird die Testumgebung durch Docker-Container und virtualisierte SPS-Plattformen, 
+wie beispielsweise Nexeed von Bosch Connected Industry, erweitert. Diese virtuellen Systeme bieten die Möglichkeit, 
+das Framework unabhängig von der spezifischen Hardwareumgebung zu testen und zu validieren. 
+Durch diese Flexibilität kann das Framework auf eine breitere Palette von Plattformen übertragen werden, 
+ohne dass eine spezielle physische Testhardware erforderlich ist. Virtuelle SPS ermöglichen es zudem, 
+verschiedene Hard- und Softwarekombinationen zu simulieren und die Tests sowohl konsistent als auch skalierbar zu wiederholen.
 
 \begin{description}
-    \item[Speicherprogrammierbare Steuerungen (SPS):] SPS bieten eine stabile Plattform zur Bewertung der 
-    Echtzeitleistung in industriellen Steuerungsumgebungen. Sie ermöglichen eine Überprüfung der Fähigkeit des Frameworks, strenge Latenzanforderungen einzuhalten.
-    
+    \item[Speicherprogrammierbare Steuerungen (SPS):] SPS bieten eine stabile Plattform zur Bewertung der Echtzeitleistung in industriellen Steuerungsumgebungen. 
+    Sie ermöglichen eine Überprüfung der Fähigkeit des Frameworks, strenge Latenzanforderungen einzuhalten. Zusätzlich zu den physischen SPS 
+    wurde eine virtualisierte SPS-Umgebung (z. B. mit Nexeed) genutzt, um die Testbarkeit und Reproduzierbarkeit auf verschiedenen Systemen zu gewährleisten.    
     \item[Industrie-PCs (IPCs):] Die Evaluation auf IPCs erlaubt eine detaillierte Analyse der Leistung komplexerer Modelle, die eine höhere Rechenleistung erfordern. 
     IPCs bieten eine größere Rechenkapazität und ermöglichen die Ausführung anspruchsvoller Datenverarbeitungsaufgaben.
     
@@ -40,10 +47,10 @@ Jede Testreihe umfasst mindestens fünf Durchläufe, um statistisch signifikante
     Frameworks für Aufgaben mit höherem Rechenbedarf und größerem Datenvolumen, bevor die Modelle auf den Embedded Systemen bereitgestellt werden.
 \end{description}
 
-Durch den Einsatz dieser verschiedenen Hardwareplattformen und die mehrfache Wiederholung der Tests wird ein umfassender 
-Vergleich der Leistung und Effizienz des Frameworks ermöglicht. Dies belegt, dass die gewählten Methodiken die optimale Lösung darstellen, 
-da sie den spezifischen Anforderungen jeder Plattform gerecht werden und eine zuverlässige Echtzeitausführung sicherstellen.
-
+Der Einsatz von verschiedenen Hardwareplattformen in Kombination mit Docker-Containern und virtuellen SPS-Lösungen ermöglicht eine umfassende und skalierbare Testumgebung. 
+Dies gewährleistet, dass das Framework unter den spezifischen Anforderungen jeder Plattform eine zuverlässige Echtzeitausführung sicherstellt und die gewählten Methodiken 
+reproduzierbare und valide Ergebnisse liefern. Die Verwendung von Containern und virtuellen SPS-Umgebungen vereinfacht zudem die zukünftige Validierung auf weiteren Plattformen 
+und bietet eine flexible Grundlage für die kontinuierliche Optimierung und Erweiterung des Frameworks.
 \section{Bewertete Metriken}
 
 Die Leistung des Frameworks wird anhand mehrerer Metriken bewertet, um sicherzustellen, dass die optimierten ML-Modelle die 

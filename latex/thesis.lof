@@ -1,19 +1,20 @@
 \babel@toc {ngerman}{}\relax 
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {1.1}{\ignorespaces Die vier industriellen Revolutionen: Mechanisierung, Massenproduktion, Automatisierung, Vernetzte Systeme.}}{6}{figure.caption.4}%
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Die vier industriellen Revolutionen: Mechanisierung, Massenproduktion, Automatisierung, Vernetzte Systeme.}}{2}{figure.caption.1}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Anwendungen für Embedded Sytems in der Industrie 4.0}}{7}{figure.caption.5}%
-\contentsline {figure}{\numberline {2.2}{\ignorespaces ML Modelle und ihre Anwendungen in der Industrie 4.0}}{8}{figure.caption.6}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Anwendungen für Embedded Sytems in der Industrie 4.0}}{4}{figure.caption.2}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces ML Modelle und ihre Anwendungen in der Industrie 4.0}}{5}{figure.caption.3}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces ONNX Runtime für plattformübergreifende ML-Modelle}}{15}{figure.caption.12}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Beckoff IPCs - C60xx | Ultra-compact Industrial PCs\cite {BeckhoffWebsite}}}{17}{figure.caption.13}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Architektur des Frameworks}}{18}{figure.caption.14}%
-\addvspace {10\p@ }
-\addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Modell-Entwicklungslebenszyklus mit MLflow \cite {MLFlow}}}{28}{figure.caption.18}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces ONNX Runtime für plattformübergreifende ML-Modelle}}{14}{figure.caption.5}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Beckoff IPCs - C60xx | Ultra-compact Industrial PCs\cite {BeckhoffWebsite}}}{16}{figure.caption.6}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Architektur des Frameworks}}{17}{figure.caption.7}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Modell-Entwicklungslebenszyklus mit MLflow \cite {MLFlow}}}{29}{figure.caption.10}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {A.1}{\ignorespaces Framework-API mit Swagger UI}}{39}{figure.caption.19}%
-\contentsline {figure}{\numberline {A.2}{\ignorespaces Übersicht über verfügbare ML-Modelle}}{40}{figure.caption.21}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {A.1}{\ignorespaces Framework-API mit Swagger UI}}{40}{figure.caption.11}%
+\contentsline {figure}{\numberline {A.2}{\ignorespaces Übersicht über verfügbare ML-Modelle}}{42}{figure.caption.13}%
+\addvspace {10\p@ }
