@@ -85,6 +85,11 @@ Seung-Ho Lim, Shin-Hyeok Kang, Byeong-Hyun Ko, Jaewon Roh, Chaemin Lim, and Sang
 \newblock Architecture exploration and customization tool of deep neural networks for edge devices.
 \newblock In {\em 2022 IEEE International Conference on Consumer Electronics (ICCE)}, pages 1--2, Jan 2022.
 
+\bibitem{MLFlow}
+{MLFlow}.
+\newblock Mlflow, 2024.
+\newblock Accessed: 25 October 2024.
+
 \bibitem{9919465}
 Ioan~Lucan Orăşan, Ciprian Seiculescu, and Cătălin~Daniel Caleanu.
 \newblock Benchmarking tensorflow lite quantization algorithms for deep neural networks.

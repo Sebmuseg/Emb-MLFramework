@@ -68,37 +68,115 @@ Deployment-Methoden belegt die Auswahl als optimale Lösung, da sowohl Echtzeita
 \begin{description}
     \item[Modellbereitstellung auf SPS und IPCs:] SPS- und IPC-Systeme dienen der Ausführung der optimierten Modelle in industriellen Umgebungen. 
     Da diese Systeme hinsichtlich Rechenleistung und Speicherkapazität variieren, wurden spezifische Deployment-Strategien implementiert, 
-    um eine zuverlässige und performante Ausführung sicherzustellen.
+    um eine zuverlässige und performante Ausführung sicherzustellen. Die Auswahl der Deployment-Strategie richtet sich dabei nach dem Betriebssystem, 
+    den verfügbaren Ressourcen und den Echtzeitanforderungen der Anwendung.
     \begin{itemize}
         \item \textbf{Lokale Ausführung}: Die Modelle werden direkt auf den Geräten ausgeführt, was die Latenz minimiert und Echtzeitanforderungen erfüllt.
         \item \textbf{Remote Deployment}: Für bestimmte Anwendungsfälle erfolgt das Deployment auf Edge-Geräten, die eng mit den SPS und IPCs verbunden sind. 
         Dadurch werden rechenintensive Aufgaben effizient ausgelagert und die Hauptsysteme entlastet.
     \end{itemize}
-    
-    \item[Verwaltung des Modelldepots:] Ein zentrales Modelldepot ermöglicht eine effiziente Verwaltung und Bereitstellung verschiedener Modellversionen. 
-    Durch die zentrale Speicherung und Bereitstellung auf den Embedded-Systemen wird eine unkomplizierte Aktualisierung und Versionskontrolle der Modelle gewährleistet. 
-    Der Vergleich zwischen dezentralen und zentralen Speicherstrategien zeigt, dass das zentrale Depot die Verwaltung erheblich vereinfacht.
 
-    \item[Echtzeitausführung und Priorisierung:] Viele industrielle Anwendungen stellen strenge Echtzeitanforderungen. Um die Ausführung innerhalb der 
-    definierten Zeitrahmen sicherzustellen, erfolgt eine Aufgabenpriorisierung und kontinuierliche Überwachung der Laufzeitleistung.
+    \item[Tools für lokale Ausführung:] Die Bereitstellung auf SPS und IPCs erfordert häufig spezielle Anpassungen, da viele Geräte nicht dafür konzipiert sind, 
+    komplexe Machine-Learning-Modelle zu verarbeiten. Zu den häufig eingesetzten Tools und Techniken zählen:
     \begin{itemize}
-        \item \textbf{Task-Priorisierung}: Durch Priorisierung der Modellvorhersagen werden zeitkritische Aufgaben bevorzugt behandelt, 
-        wodurch die Einhaltung der Echtzeitanforderungen sichergestellt wird.
-        \item \textbf{Überwachung der Ausführungszeit}: Die Laufzeitleistung wird kontinuierlich überwacht, um zu gewährleisten, 
-        dass die vorgegebenen Echtzeitanforderungen erfüllt werden.
+        \item \textbf{Apache TVM}: Ermöglicht die Kompilierung von Modellen für ressourcenbeschränkte Geräte und unterstützt unterschiedliche Hardwareplattformen. Apache TVM bietet eine hohe Inferenzgeschwindigkeit und ist besonders für Systeme geeignet, die keine Python- oder Docker-Unterstützung haben.
+        \item \textbf{TinyML}: Speziell für Embedded-Systeme und Mikrocontroller entwickelt, bietet TinyML eine effiziente Laufzeitumgebung für Machine-Learning-Modelle auf Geräten mit extrem limitierten Ressourcen.
+        \item \textbf{PyInstaller}: Da auf vielen IPCs mit Windows-Betriebssystem weder Python noch Docker installiert ist, ermöglicht PyInstaller die Umwandlung von Python-Anwendungen in ausführbare Dateien. Dadurch können die Modelle als Windows-Service bereitgestellt werden, ohne dass eine Python-Installation erforderlich ist.
+        \item \textbf{Zephyr RTOS}: Dieses Echtzeitbetriebssystem ist besonders geeignet für Systeme, die robuste und schnelle Echtzeitberechnungen erfordern, wie SPS und Mikrocontroller. Zephyr RTOS bietet zudem eine breite Unterstützung für eingebettete Hardware und ermöglicht die zuverlässige Modellbereitstellung unter strengen Echtzeitanforderungen.
+        \item \textbf{ONNX Runtime und TensorFlow Lite}: Diese Frameworks unterstützen eine effiziente Inferenz und sind ideal für ressourcenarme Systeme, die nicht für die Ausführung umfassender Machine-Learning-Frameworks ausgelegt sind. Sie bieten Quantisierung und Optimierung für spezifische Hardwarearchitekturen und eignen sich für die lokale Ausführung auf Embedded-Geräten.
+    \end{itemize}
+
+    \item[Anwendungsfälle und Zielumgebungen:] Die Auswahl der Tools für das Deployment richtet sich nach den Anforderungen des jeweiligen Anwendungsfalls. Einige wichtige Szenarien umfassen:
+    \begin{itemize}
+        \item \textbf{Industrie-PCs (Windows)}: Modelle werden hier häufig mit PyInstaller bereitgestellt, um als Windows-Service ausgeführt zu werden. Anwendungsbeispiele sind industrielle Bildverarbeitungssysteme zur Qualitätskontrolle, die hochauflösende Bilder analysieren und Anomalien erkennen.
+        \item \textbf{Mikrocontroller (TinyML und Zephyr RTOS)}: Mikrocontroller werden oft in Überwachungssystemen eingesetzt, die kontinuierlich Sensordaten in Echtzeit analysieren. Anwendungen umfassen die Überwachung von Maschinenzuständen und die Anomaliedetektion in der Fertigung.
+        \item \textbf{Edge-Devices (Apache TVM und ONNX Runtime)}: Diese Geräte eignen sich für datenintensive Anwendungen, wie z.B. das Erfassen und Verarbeiten von Echtzeitbildern in Automated Optical Inspection (AOI)-Systemen.
+    \end{itemize}
+
+    \begin{table}[h!]
+        \centering
+        \caption{Optimierte Modellbereitstellung auf Embedded-Systemen in der industriellen Fertigung}
+        \resizebox{\textwidth}{!}{ % Resize the table to fit within text width
+            \begin{tabular}{|l|l|p{3.5cm}|l|l|}
+                \hline
+                \textbf{Zielgerät} & \textbf{Betriebssystem} & \textbf{Tools} & \textbf{Anwendungsfall} & \textbf{Technische Anforderungen} \\ \hline
+                IPC & Windows & 
+                \parbox{3.5cm}{\centering \vspace{0.2cm} PyInstaller \\ ONNX Runtime \vspace{0.2cm}} & 
+                Bildverarbeitung, Qualitätskontrolle & 
+                16 GB RAM, CPU > 2 GHz, keine Python-Umgebung erforderlich \\ \hline
+                SPS & Linux-basiert / proprietär & 
+                \parbox{3.5cm}{\centering \vspace{0.2cm} ONNX Runtime \\ Zephyr RTOS \vspace{0.2cm}} & 
+                Maschinenüberwachung, prädiktive Wartung & 
+                2-4 GB RAM, Echtzeitanforderungen, geringer Stromverbrauch \\ \hline
+                Mikrocontroller & TinyML / Zephyr RTOS & 
+                \parbox{3.5cm}{\centering \vspace{0.2cm} TinyML \\ Zephyr RTOS \vspace{0.2cm}} & 
+                Anomaliedetektion, Sensordatenanalyse & 
+                < 1 GB RAM, < 1 GHz, geringer Stromverbrauch \\ \hline
+                Edge-Device & Linux / proprietär & 
+                \parbox{3.5cm}{\centering \vspace{0.2cm} Apache TVM \\ ONNX Runtime \vspace{0.2cm}} & 
+                Optische Inspektion (AOI), Echtzeitbilderkennung & 
+                8 GB RAM, GPU-Unterstützung, schnelle Bildverarbeitung \\ \hline
+            \end{tabular}
+        }
+        \label{tab:optimized_deployment}
+    \end{table}
+
+
+    \item[Verwaltung des Modelldepots:] 
+Ein zentrales Modelldepot ermöglicht eine effiziente Verwaltung und Bereitstellung verschiedener Modellversionen. Durch die zentrale Speicherung und Bereitstellung auf den Embedded-Systemen wird eine unkomplizierte 
+Aktualisierung und Versionskontrolle der Modelle gewährleistet. Der Vergleich zwischen dezentralen und zentralen Speicherstrategien zeigt, dass das zentrale Depot die Verwaltung erheblich vereinfacht und gleichzeitig 
+die Konsistenz der Modellversionen sicherstellt.
+
+\textbf{MLflow als zentrales Tool für die Modellverwaltung} \\
+MLflow ist ein Open-Source-Tool zur Verwaltung des Machine-Learning-Lebenszyklus und umfasst vier zentrale Komponenten:
+\begin{itemize}
+    \item \textbf{MLflow Tracking}: Erfasst und speichert alle Parameter, Metriken und Artefakte von Modellen während des Trainings. Dies ermöglicht eine umfassende Dokumentation der Experimente und vereinfacht die Reproduzierbarkeit.
+    \item \textbf{MLflow Projects}: Standardisiert die Struktur von ML-Projekten und fördert so die Wiederverwendbarkeit und den einheitlichen Aufbau.
+    \item \textbf{MLflow Models}: Unterstützt die Speicherung von Modellen in einem plattformübergreifenden Format, wodurch die Bereitstellung in verschiedenen Umgebungen vereinfacht wird.
+    \item \textbf{MLflow Model Registry}: Ein zentrales Modellregister, das eine Versionskontrolle, Modellbereitstellung und Übergangsphasen (z.B. „Staging“, „Production“) für Modelle bietet.
+\end{itemize}
+
+\textbf{Beispiel für den Einsatz von MLflow im Framework-Workflow} \\
+Die Nutzung von MLflow innerhalb des Frameworks ermöglicht eine nahtlose Verwaltung und Bereitstellung von Modellen. Der folgende Workflow beschreibt den Einsatz von MLflow zur Verwaltung und Aktualisierung von Modellen in einer industriellen Umgebung:
+
+\begin{enumerate}
+    \item \textbf{Modelltraining und Experiment-Tracking}:
+    Während des Modelltrainings werden alle relevanten Parameter und Metriken (z.B. Genauigkeit, Verlustfunktion) durch MLflow Tracking erfasst. Dies ermöglicht eine umfassende Dokumentation der Experimente und erleichtert die Vergleichbarkeit von Modellen.
+
+    \item \textbf{Modellregistrierung und Versionierung}:
+    Nach dem Training wird das optimierte Modell in der MLflow Model Registry gespeichert und versioniert. Hierbei erhält das Modell eine eindeutige Versionsnummer und kann in verschiedene Phasen (z.B. „Staging“ oder „Production“) überführt werden.
+
+    \item \textbf{Deployment des Modells auf Embedded-Systemen}:
+    Das Modell wird aus der MLflow Registry abgerufen und auf das Embedded-System bereitgestellt. Für ein Embedded-System ohne Python-Umgebung kann das Modell z.B. durch PyInstaller in eine ausführbare Datei konvertiert oder mit TensorFlow Lite kompiliert werden.
+
+    \item \textbf{Überwachung und kontinuierliche Aktualisierung}:
+    Während der Laufzeit werden Performance-Daten (z.B. Latenzzeiten und Genauigkeit) gesammelt und regelmäßig in MLflow gespeichert. Basierend auf diesen Daten können Anpassungen vorgenommen und neue Modellversionen in der Registry hinterlegt werden, um eine kontinuierliche Verbesserung zu gewährleisten.
+\end{enumerate}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1\textwidth]{model-dev-lifecycle.png} 
+    \caption{Modell-Entwicklungslebenszyklus mit MLflow \cite{MLFlow}} 
+    \label{fig:architecture}
+\end{figure}
+
+    \item[Echtzeitausführung und Priorisierung:] Viele industrielle Anwendungen stellen strenge Echtzeitanforderungen. Um die Ausführung innerhalb der definierten 
+    Zeitrahmen sicherzustellen, erfolgt eine Aufgabenpriorisierung und kontinuierliche Überwachung der Laufzeitleistung.
+    \begin{itemize}
+        \item \textbf{Task-Priorisierung}: Durch Priorisierung der Modellvorhersagen werden zeitkritische Aufgaben bevorzugt behandelt, wodurch die Einhaltung der Echtzeitanforderungen sichergestellt wird.
+        \item \textbf{Überwachung der Ausführungszeit}: Die Laufzeitleistung wird kontinuierlich überwacht, um zu gewährleisten, dass die vorgegebenen Echtzeitanforderungen erfüllt werden. 
+        Diese Überwachung umfasst das regelmäßige Protokollieren von Laufzeiten und die dynamische Anpassung der Ressourcennutzung.
     \end{itemize}
     
-    \item[Tests und Validierung der Laufzeitleistung:] Nach dem Deployment der optimierten Modelle werden umfangreiche Tests zur Validierung der Laufzeitleistung 
-    und der Vorhersagegenauigkeit durchgeführt. Diese Tests belegen, dass die gewählte Methodik für die Echtzeitanforderungen geeignet ist.
+    \item[Tests und Validierung der Laufzeitleistung:] Nach dem Deployment der optimierten Modelle werden umfangreiche Tests zur Validierung der Laufzeitleistung und der Vorhersagegenauigkeit durchgeführt. 
+    Diese Tests belegen, dass die gewählte Methodik für die Echtzeitanforderungen geeignet ist.
     \begin{itemize}
         \item \textbf{Unit-Tests}: Zur Validierung der Funktionalität und der korrekten Modellvorhersagen.
-        \item \textbf{Performance-Benchmarks}: Die Ausführungszeiten werden gemessen und mit den festgelegten Echtzeitanforderungen verglichen, 
-        um die Effizienz der Optimierungen zu bestätigen.
-        \item \textbf{Hardware-in-the-Loop (HIL)-Tests}: Diese Tests simulieren reale Hardware-Interaktionen, um die Robustheit und Stabilität des Systems unter 
-        industriellen Bedingungen zu überprüfen.
+        \item \textbf{Performance-Benchmarks}: Die Ausführungszeiten werden gemessen und mit den festgelegten Echtzeitanforderungen verglichen, um die Effizienz der Optimierungen zu bestätigen.
+        \item \textbf{Hardware-in-the-Loop (HIL)-Tests}: Diese Tests simulieren reale Hardware-Interaktionen, um die Robustheit und Stabilität des Systems unter industriellen Bedingungen zu überprüfen. 
+        Die Tests werden regelmäßig wiederholt, um die Reproduzierbarkeit und Zuverlässigkeit der Ergebnisse sicherzustellen.
     \end{itemize}
 \end{description}
-
 \section{Zusammenfassung}
 
 Die Implementierung und Optimierung der Machine-Learning-Modelle für Embedded Systems erfolgt durch den gezielten Einsatz von Techniken wie Quantisierung, 
